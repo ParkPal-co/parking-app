@@ -4,6 +4,35 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../firebase/config";
 import { Event, ParkingSpot } from "../types";
 
+// Function to calculate distance between two points using Haversine formula
+function calculateDistance(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number
+): number {
+  const R = 3959; // Earth's radius in miles (instead of 6371 km)
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+// Function to safely convert a date value from Firestore
+function convertToDate(dateValue: any): Date {
+  if (!dateValue) return new Date();
+  if (typeof dateValue === "string") return new Date(dateValue);
+  if (dateValue.toDate && typeof dateValue.toDate === "function")
+    return dateValue.toDate();
+  return new Date();
+}
+
 export default function RentPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const eventQuery = searchParams.get("event");
@@ -15,42 +44,137 @@ export default function RentPage() {
   const [parkingSpots, setParkingSpots] = useState<ParkingSpot[]>([]);
   const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
 
-  // Search for events based on query
-  useEffect(() => {
-    const searchEvents = async () => {
-      if (!eventQuery) {
-        setLoading(false);
-        return;
-      }
+  // Location state
+  const [userLocation, setUserLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
+  const [locationError, setLocationError] = useState<string>("");
+  const [isRequestingLocation, setIsRequestingLocation] = useState(false);
 
+  // Request user's location
+  const requestLocation = () => {
+    setIsRequestingLocation(true);
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+          setLocationError("");
+          setIsRequestingLocation(false);
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          setLocationError("Could not get your location. Please try again.");
+          setIsRequestingLocation(false);
+        }
+      );
+    } else {
+      setLocationError("Geolocation is not supported by your browser");
+      setIsRequestingLocation(false);
+    }
+  };
+
+  // Fetch all upcoming events and sort by location if available
+  useEffect(() => {
+    const fetchEvents = async () => {
       try {
+        console.log("Fetching events...");
         const eventsRef = collection(db, "events");
         const q = query(eventsRef);
 
         const querySnapshot = await getDocs(q);
+        console.log("Query snapshot:", querySnapshot.size, "documents found");
+
         const eventResults: Event[] = [];
-        const searchLower = eventQuery.toLowerCase();
+        const searchLower = eventQuery?.toLowerCase() || "";
 
         querySnapshot.forEach((doc) => {
-          const eventData = doc.data() as Event;
-          if (
-            eventData.title.toLowerCase().includes(searchLower) &&
-            eventData.status === "upcoming"
-          ) {
-            eventResults.push({ id: doc.id, ...eventData });
+          const eventData = doc.data();
+          console.log("Event data from Firestore:", eventData);
+
+          try {
+            // Convert Firestore Timestamp to Date and ensure all required fields
+            const event: Event = {
+              id: doc.id,
+              title: eventData.title || "Untitled Event",
+              description: eventData.description || "",
+              location: eventData.location || {
+                address: "Location TBD",
+                coordinates: null,
+              },
+              expectedAttendance: eventData.expectedAttendance || 0,
+              status: eventData.status || "upcoming",
+              startDate: convertToDate(eventData.startDate),
+              endDate: convertToDate(eventData.endDate),
+              createdAt: convertToDate(eventData.createdAt),
+              imageUrl: eventData.imageUrl || "",
+            };
+
+            if (
+              !eventQuery ||
+              event.title.toLowerCase().includes(searchLower)
+            ) {
+              // Calculate distance if user location is available
+              if (userLocation && event.location?.coordinates) {
+                console.log("Calculating distance for event:", event.title);
+                console.log("User location:", userLocation);
+                console.log("Event coordinates:", event.location.coordinates);
+
+                // Ensure coordinates exist and are numbers
+                if (
+                  typeof event.location.coordinates.lat === "number" &&
+                  typeof event.location.coordinates.lng === "number"
+                ) {
+                  const distance = calculateDistance(
+                    userLocation.latitude,
+                    userLocation.longitude,
+                    event.location.coordinates.lat,
+                    event.location.coordinates.lng
+                  );
+                  event.distance = Number(distance.toFixed(1)); // Round to 1 decimal place
+                  console.log("Calculated distance:", event.distance);
+                } else {
+                  console.log(
+                    "Invalid coordinates format:",
+                    event.location.coordinates
+                  );
+                }
+              }
+
+              eventResults.push(event);
+              console.log("Added event to results:", event);
+            }
+          } catch (err) {
+            console.error("Error processing event document:", doc.id, err);
           }
         });
 
+        console.log("Final event results:", eventResults);
+
+        // Sort by distance if location is available, otherwise sort by date
+        if (userLocation) {
+          eventResults.sort(
+            (a, b) => (a.distance || Infinity) - (b.distance || Infinity)
+          );
+        } else {
+          eventResults.sort(
+            (a, b) => a.startDate.getTime() - b.startDate.getTime()
+          );
+        }
+
         setEvents(eventResults);
       } catch (error) {
-        console.error("Error searching events:", error);
+        console.error("Error fetching events:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    searchEvents();
-  }, [eventQuery]);
+    fetchEvents();
+  }, [eventQuery, userLocation]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -115,52 +239,115 @@ export default function RentPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Search Interface */}
+      {/* Header Section */}
       {!selectedEvent && (
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-6">
             Find Parking Near Your Event
           </h1>
-          <form onSubmit={handleSearch} className="max-w-2xl mx-auto">
-            <div className="flex gap-4">
-              <input
-                type="text"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                placeholder="Search for an event..."
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
-              />
-              <button
-                type="submit"
-                className="px-6 py-2 bg-black text-white rounded-md hover:bg-gray-800"
-              >
-                Search
-              </button>
-            </div>
-          </form>
+
+          <div className="max-w-4xl mx-auto">
+            {/* Location Permission */}
+            {!userLocation && !locationError && (
+              <div className="mb-6 p-4 bg-blue-50 rounded-lg text-center">
+                <p className="text-blue-800 mb-2">
+                  See events happening near you!
+                </p>
+                <button
+                  onClick={requestLocation}
+                  disabled={isRequestingLocation}
+                  className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+                >
+                  {isRequestingLocation ? (
+                    "Getting location..."
+                  ) : (
+                    <>
+                      <span className="mr-2">📍</span>
+                      Show Nearby Events
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
+
+            {/* Location Error */}
+            {locationError && (
+              <div className="mb-6 p-4 bg-red-50 rounded-lg text-center">
+                <p className="text-red-800">{locationError}</p>
+                <button
+                  onClick={requestLocation}
+                  className="mt-2 text-red-600 hover:text-red-800"
+                >
+                  Try again
+                </button>
+              </div>
+            )}
+
+            {/* Search Form */}
+            <form onSubmit={handleSearch} className="mb-8">
+              <div className="flex gap-4">
+                <input
+                  type="text"
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  placeholder="Search for a specific event..."
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+                />
+                <button
+                  type="submit"
+                  className="px-6 py-2 bg-black text-white rounded-md hover:bg-gray-800"
+                >
+                  Search
+                </button>
+              </div>
+            </form>
+
+            {/* Location Status */}
+            {userLocation && (
+              <div className="mb-6 p-4 bg-green-50 rounded-lg text-center">
+                <p className="text-green-800">
+                  📍 Showing events near your location
+                  <button
+                    onClick={() => setUserLocation(null)}
+                    className="ml-4 text-green-600 hover:text-green-800 underline"
+                  >
+                    Clear location
+                  </button>
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
       {/* Loading State */}
       {loading && (
         <div className="text-center py-8">
-          <p>Loading...</p>
+          <p>Loading events...</p>
         </div>
       )}
 
       {/* No Results Message */}
-      {!loading && eventQuery && events.length === 0 && (
+      {!loading && events.length === 0 && (
         <div className="text-center py-8">
           <p className="text-gray-600">
-            No events found matching "{eventQuery}"
+            {eventQuery
+              ? `No events found matching "${eventQuery}"`
+              : "No upcoming events found"}
           </p>
         </div>
       )}
 
-      {/* Event Search Results */}
-      {events.length > 0 && !selectedEvent && (
+      {/* Event Results */}
+      {!loading && events.length > 0 && !selectedEvent && (
         <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-4">Events</h2>
+          <h2 className="text-2xl font-bold mb-4">
+            {eventQuery
+              ? `Search Results${userLocation ? " Near You" : ""}`
+              : userLocation
+              ? "Upcoming Events Near You"
+              : "Upcoming Events"}
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {events.map((event) => (
               <div
@@ -173,6 +360,11 @@ export default function RentPage() {
                 <p className="text-sm text-gray-500">
                   {new Date(event.startDate).toLocaleDateString()}
                 </p>
+                {typeof event.distance === "number" && (
+                  <p className="text-sm text-blue-600 mt-2">
+                    {event.distance.toFixed(1)} mi away
+                  </p>
+                )}
               </div>
             ))}
           </div>
@@ -191,6 +383,11 @@ export default function RentPage() {
             </button>
             <h1 className="text-3xl font-bold">{selectedEvent.title}</h1>
             <p className="text-gray-600">{selectedEvent.location.address}</p>
+            {typeof selectedEvent.distance === "number" && (
+              <p className="text-blue-600 mt-2">
+                {selectedEvent.distance.toFixed(1)} mi away
+              </p>
+            )}
           </div>
 
           <div className="mb-6 flex justify-between items-center">
