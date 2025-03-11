@@ -17,8 +17,8 @@ export interface Event {
   location: {
     address: string;
     coordinates: {
-      latitude: number;
-      longitude: number;
+      lat: number;
+      lng: number;
     };
   };
   startDate: Date;
@@ -27,6 +27,7 @@ export interface Event {
   imageUrl?: string;
   createdAt: Date;
   status: 'upcoming' | 'ongoing' | 'completed';
+  distance?: number; // Distance from user's location in kilometers
 }
 
 export interface ParkingSpot {
