@@ -31,23 +31,22 @@ export interface Event {
 }
 
 export interface ParkingSpot {
-  id: string;
-  hostId: string;
+  id?: string;
+  eventId: string;
   address: string;
   description: string;
   price: number;
   images: string[];
   availability: {
-    start: Date;
-    end: Date;
+    start: string;
+    end: string;
   };
   amenities: string[];
   coordinates: {
-    latitude: number;
-    longitude: number;
+    lat: number;
+    lng: number;
   };
-  createdAt: Date;
-  eventId?: string; // Reference to the event this spot is listed for
+  createdAt: string;
 }
 
 export interface Booking {
