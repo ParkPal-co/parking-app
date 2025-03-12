@@ -16,6 +16,7 @@ import AccountPage from "./pages/AccountPage";
 import BookingsPage from "./pages/BookingsPage";
 import MyListingsPage from "./pages/MyListingsPage";
 import AdminPage from "./pages/AdminPage";
+import MapPage from "./pages/MapPage";
 import { useAuthContext } from "./contexts/AuthContext";
 
 // Protected Route wrapper
@@ -56,6 +57,7 @@ function AppRoutes() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/rent" element={<RentPage />} />
+      <Route path="/map" element={<MapPage />} />
       <Route
         path="/list"
         element={

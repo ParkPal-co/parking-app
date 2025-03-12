@@ -1,8 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../firebase/config";
 import { Event, ParkingSpot } from "../types";
+import {
+  GoogleMap,
+  LoadScript,
+  MarkerF as Marker,
+  InfoWindow,
+  useLoadScript,
+} from "@react-google-maps/api";
+
+// Near the top of the file, add this line
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "";
+
+if (!GOOGLE_MAPS_API_KEY) {
+  console.error("Google Maps API key is missing! Check your .env file.");
+}
 
 // Function to calculate distance between two points using Haversine formula
 function calculateDistance(
@@ -33,7 +47,7 @@ function convertToDate(dateValue: any): Date {
   return new Date();
 }
 
-export default function RentPage() {
+const RentPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const eventQuery = searchParams.get("event");
   const [searchInput, setSearchInput] = useState(eventQuery || "");
@@ -51,6 +65,24 @@ export default function RentPage() {
   } | null>(null);
   const [locationError, setLocationError] = useState<string>("");
   const [isRequestingLocation, setIsRequestingLocation] = useState(false);
+
+  const [isMapView, setIsMapView] = useState(false);
+  const [selectedSpot, setSelectedSpot] = useState<ParkingSpot | null>(null);
+  const [mapCenter, setMapCenter] = useState({
+    lat: 40.7608, // Default to SLC center
+    lng: -111.891,
+  });
+
+  const [isMapLoading, setIsMapLoading] = useState(false);
+
+  // Add new state for map errors
+  const [mapError, setMapError] = useState<string | null>(null);
+
+  const navigate = useNavigate();
+
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
+  });
 
   // Request user's location
   const requestLocation = () => {
@@ -209,6 +241,29 @@ export default function RentPage() {
     fetchParkingSpots();
   }, [selectedEvent]);
 
+  const handleEventSelect = async (event: Event) => {
+    setSelectedEvent(event);
+    setMapCenter({
+      lat: event.location.coordinates.lat,
+      lng: event.location.coordinates.lng,
+    });
+  };
+
+  const handleSpotClick = (spot: ParkingSpot) => {
+    setSelectedSpot(spot);
+    setMapCenter({
+      lat: spot.coordinates.lat,
+      lng: spot.coordinates.lng,
+    });
+  };
+
+  // Map container styles
+  const mapContainerStyle = {
+    width: "100%",
+    height: "calc(100vh - 200px)", // Adjust height to fill the viewport
+    borderRadius: "12px",
+  };
+
   const renderParkingSpotCard = (spot: ParkingSpot) => (
     <div
       key={spot.id}
@@ -353,7 +408,7 @@ export default function RentPage() {
               <div
                 key={event.id}
                 className="bg-white p-4 rounded-lg shadow cursor-pointer hover:shadow-md transition-shadow"
-                onClick={() => setSelectedEvent(event)}
+                onClick={() => handleEventSelect(event)}
               >
                 <h3 className="font-semibold">{event.title}</h3>
                 <p className="text-gray-600">{event.location.address}</p>
@@ -390,48 +445,110 @@ export default function RentPage() {
             )}
           </div>
 
-          <div className="mb-6 flex justify-between items-center">
-            <h2 className="text-2xl font-semibold">Available Parking Spots</h2>
-            <div className="flex space-x-2">
-              <button
-                onClick={() => setViewMode("grid")}
-                className={`px-4 py-2 rounded-md ${
-                  viewMode === "grid"
-                    ? "bg-black text-white"
-                    : "bg-gray-200 text-gray-700"
-                }`}
-              >
-                Grid View
-              </button>
-              <button
-                onClick={() => setViewMode("map")}
-                className={`px-4 py-2 rounded-md ${
-                  viewMode === "map"
-                    ? "bg-black text-white"
-                    : "bg-gray-200 text-gray-700"
-                }`}
-              >
-                Map View
-              </button>
-            </div>
-          </div>
-
-          {loading ? (
-            <div>Loading parking spots...</div>
-          ) : viewMode === "grid" ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {parkingSpots.map(renderParkingSpotCard)}
-            </div>
-          ) : (
-            <div className="h-[600px] bg-gray-100 rounded-lg">
-              {/* Map view will be implemented later */}
-              <div className="flex items-center justify-center h-full">
-                <p className="text-gray-500">Map view coming soon!</p>
+          <div className="flex gap-6">
+            {/* Left side - Grid View */}
+            <div
+              className="w-1/2 overflow-y-auto"
+              style={{ maxHeight: "calc(100vh - 200px)" }}
+            >
+              <h2 className="text-2xl font-semibold mb-6">
+                Available Parking Spots
+              </h2>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {parkingSpots.map(renderParkingSpotCard)}
               </div>
             </div>
-          )}
+
+            {/* Right side - Map View */}
+            <div className="w-1/2">
+              {loadError && (
+                <div className="h-[600px] flex items-center justify-center bg-red-50 rounded-lg">
+                  <p className="text-red-600">
+                    Error loading Google Maps: {loadError.message}
+                  </p>
+                </div>
+              )}
+
+              {!isLoaded ? (
+                <div className="h-[600px] flex items-center justify-center bg-gray-50 rounded-lg">
+                  <p className="text-gray-600">Loading map...</p>
+                </div>
+              ) : (
+                <GoogleMap
+                  mapContainerStyle={mapContainerStyle}
+                  center={mapCenter}
+                  zoom={14}
+                  onLoad={() => {
+                    console.log("Map loaded successfully");
+                    console.log("Map center:", mapCenter);
+                    setIsMapLoading(false);
+                  }}
+                >
+                  {selectedEvent && selectedEvent.location?.coordinates && (
+                    <Marker
+                      position={{
+                        lat: selectedEvent.location.coordinates.lat,
+                        lng: selectedEvent.location.coordinates.lng,
+                      }}
+                      icon={{
+                        url: "https://maps.google.com/mapfiles/ms/icons/red-dot.png",
+                        scaledSize: new window.google.maps.Size(40, 40),
+                      }}
+                    />
+                  )}
+
+                  {parkingSpots.map((spot) => (
+                    <Marker
+                      key={spot.id}
+                      position={{
+                        lat: spot.coordinates.lat,
+                        lng: spot.coordinates.lng,
+                      }}
+                      onClick={() => handleSpotClick(spot)}
+                      label={{
+                        text: `$${spot.price}`,
+                        color: "white",
+                        fontWeight: "bold",
+                        fontSize: "14px",
+                      }}
+                    />
+                  ))}
+
+                  {selectedSpot && (
+                    <InfoWindow
+                      position={{
+                        lat: selectedSpot.coordinates.lat,
+                        lng: selectedSpot.coordinates.lng,
+                      }}
+                      onCloseClick={() => setSelectedSpot(null)}
+                    >
+                      <div className="p-2">
+                        <h3 className="font-bold mb-2">
+                          ${selectedSpot.price}/day
+                        </h3>
+                        <p className="mb-2">{selectedSpot.address}</p>
+                        <p className="text-gray-600 mb-3">
+                          {selectedSpot.description}
+                        </p>
+                        <button
+                          onClick={() =>
+                            navigate(`/confirm/${selectedSpot.id}`)
+                          }
+                          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                        >
+                          Book Now
+                        </button>
+                      </div>
+                    </InfoWindow>
+                  )}
+                </GoogleMap>
+              )}
+            </div>
+          </div>
         </>
       )}
     </div>
   );
-}
+};
+
+export default RentPage;

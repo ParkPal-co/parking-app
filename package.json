@@ -11,6 +11,8 @@
     "add-dummy-data": "tsx src/scripts/addDummyData.ts"
   },
   "dependencies": {
+    "@react-google-maps/api": "^2.20.6",
+    "@types/google-maps-react": "^2.0.4",
     "firebase": "^11.4.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
