@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../firebase/config";
 import { Event, ParkingSpot } from "../types";
 import {
   GoogleMap,
-  LoadScript,
-  MarkerF as Marker,
   InfoWindow,
   useLoadScript,
+  MarkerF,
 } from "@react-google-maps/api";
 
-// Near the top of the file, add this line
+// Near the top of the file, add these lines
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "";
+const GOOGLE_MAPS_ID = "afe7d1d7d3545aa4";
 
 if (!GOOGLE_MAPS_API_KEY) {
   console.error("Google Maps API key is missing! Check your .env file.");
@@ -47,6 +47,28 @@ function convertToDate(dateValue: any): Date {
   return new Date();
 }
 
+const styles = `
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+  }
+`;
+
+const styleSheet = document.createElement("style");
+styleSheet.type = "text/css";
+styleSheet.innerText = styles;
+document.head.appendChild(styleSheet);
+
 const RentPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const eventQuery = searchParams.get("event");
@@ -79,6 +101,8 @@ const RentPage: React.FC = () => {
   const [mapError, setMapError] = useState<string | null>(null);
 
   const navigate = useNavigate();
+
+  const mapRef = useRef<google.maps.Map | null>(null);
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
@@ -478,27 +502,65 @@ const RentPage: React.FC = () => {
                   mapContainerStyle={mapContainerStyle}
                   center={mapCenter}
                   zoom={14}
-                  onLoad={() => {
+                  options={{
+                    mapId: GOOGLE_MAPS_ID,
+                    mapTypeId: "satellite",
+                    // Disable all default UI controls except zoom and fullscreen
+                    disableDefaultUI: true,
+                    zoomControl: true,
+                    fullscreenControl: true,
+                    // Disable POI and transit labels
+                    styles: [
+                      {
+                        featureType: "all",
+                        elementType: "labels",
+                        stylers: [{ visibility: "off" }],
+                      },
+                      {
+                        featureType: "poi",
+                        stylers: [{ visibility: "off" }],
+                      },
+                      {
+                        featureType: "transit",
+                        stylers: [{ visibility: "off" }],
+                      },
+                    ],
+                  }}
+                  onLoad={(map) => {
                     console.log("Map loaded successfully");
                     console.log("Map center:", mapCenter);
+                    mapRef.current = map;
                     setIsMapLoading(false);
                   }}
                 >
-                  {selectedEvent && selectedEvent.location?.coordinates && (
-                    <Marker
+                  {/* Event Marker */}
+                  {selectedEvent?.location?.coordinates && (
+                    <MarkerF
                       position={{
                         lat: selectedEvent.location.coordinates.lat,
                         lng: selectedEvent.location.coordinates.lng,
                       }}
+                      label={{
+                        text: "Event",
+                        color: "white",
+                        fontWeight: "bold",
+                        fontSize: "14px",
+                        className: "marker-label",
+                      }}
                       icon={{
-                        url: "https://maps.google.com/mapfiles/ms/icons/red-dot.png",
-                        scaledSize: new window.google.maps.Size(40, 40),
+                        path: window.google.maps.SymbolPath.CIRCLE,
+                        fillColor: "#000000",
+                        fillOpacity: 1,
+                        strokeColor: "#FFFFFF",
+                        strokeWeight: 2,
+                        scale: 24,
                       }}
                     />
                   )}
 
+                  {/* Parking Spot Markers */}
                   {parkingSpots.map((spot) => (
-                    <Marker
+                    <MarkerF
                       key={spot.id}
                       position={{
                         lat: spot.coordinates.lat,
@@ -510,10 +572,20 @@ const RentPage: React.FC = () => {
                         color: "white",
                         fontWeight: "bold",
                         fontSize: "14px",
+                        className: "marker-label",
+                      }}
+                      icon={{
+                        path: window.google.maps.SymbolPath.CIRCLE,
+                        fillColor: "#000000",
+                        fillOpacity: 1,
+                        strokeColor: "#FFFFFF",
+                        strokeWeight: 2,
+                        scale: 20,
                       }}
                     />
                   ))}
 
+                  {/* Info Window */}
                   {selectedSpot && (
                     <InfoWindow
                       position={{
@@ -521,20 +593,35 @@ const RentPage: React.FC = () => {
                         lng: selectedSpot.coordinates.lng,
                       }}
                       onCloseClick={() => setSelectedSpot(null)}
+                      options={{
+                        pixelOffset: new google.maps.Size(0, -20),
+                      }}
                     >
-                      <div className="p-2">
-                        <h3 className="font-bold mb-2">
+                      <div
+                        className="p-2 animate-fade-in"
+                        style={{ maxWidth: "300px" }}
+                      >
+                        <div className="mb-3">
+                          <img
+                            src={selectedSpot.images[0]}
+                            alt={selectedSpot.address}
+                            className="w-full h-40 object-cover rounded-md"
+                          />
+                        </div>
+                        <h3 className="font-bold text-xl mb-2">
                           ${selectedSpot.price}/day
                         </h3>
-                        <p className="mb-2">{selectedSpot.address}</p>
-                        <p className="text-gray-600 mb-3">
+                        <p className="font-medium mb-1">
+                          {selectedSpot.address}
+                        </p>
+                        <p className="text-gray-600 text-sm mb-3">
                           {selectedSpot.description}
                         </p>
                         <button
                           onClick={() =>
                             navigate(`/confirm/${selectedSpot.id}`)
                           }
-                          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                          className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-colors duration-200 w-full"
                         >
                           Book Now
                         </button>
