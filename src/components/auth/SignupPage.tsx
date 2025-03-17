@@ -44,7 +44,7 @@ export default function SignupPage() {
       }
 
       // Create user account with all fields
-      await signup(
+      const userData = await signup(
         email,
         password,
         name,
@@ -54,7 +54,16 @@ export default function SignupPage() {
         isHost ? address : undefined
       );
 
-      navigate("/dashboard");
+      // Redirect based on user type and whether they need to set up their space
+      if (isHost) {
+        if (!address) {
+          navigate("/list"); // Redirect to listing creation if they haven't set up their space
+        } else {
+          navigate("/my-listings"); // Redirect to their listings if they provided an address
+        }
+      } else {
+        navigate("/rent"); // Redirect to rent page for regular users
+      }
     } catch (err) {
       setError("Failed to create an account.");
     } finally {
