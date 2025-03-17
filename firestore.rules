@@ -19,7 +19,7 @@ service cloud.firestore {
 
     // Parking spots rules
     match /parkingSpots/{spotId} {
-      allow read: if isAuthenticated();
+      allow read: if true;  // Allow public read access
       allow create: if isAuthenticated();
       allow update, delete: if isAuthenticated() && isOwner(resource.data.ownerId);
     }
