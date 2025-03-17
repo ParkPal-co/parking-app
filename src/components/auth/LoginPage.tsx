@@ -21,8 +21,16 @@ export default function LoginPage() {
     try {
       setError("");
       setLoading(true);
-      await login(email, password);
-      navigate("/dashboard");
+      const userData = await login(email, password);
+      if (userData?.isHost) {
+        if (!userData.address) {
+          navigate("/list"); // Redirect to listing creation if they haven't set up their space
+        } else {
+          navigate("/my-listings"); // Redirect to their listings if they have an address
+        }
+      } else {
+        navigate("/rent"); // Redirect to rent page for regular users
+      }
     } catch (err) {
       setError("Failed to sign in. Please check your credentials.");
     } finally {
@@ -33,8 +41,10 @@ export default function LoginPage() {
   const handleGoogleSignIn = async () => {
     try {
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
-      navigate("/dashboard");
+      const result = await signInWithPopup(auth, provider);
+      const userData = result.user;
+      // You'll need to fetch the user's data from Firestore here
+      navigate("/rent"); // Default to rent page for social sign-ins
     } catch (err) {
       setError("Failed to sign in with Google.");
     }
@@ -43,8 +53,10 @@ export default function LoginPage() {
   const handleFacebookSignIn = async () => {
     try {
       const provider = new FacebookAuthProvider();
-      await signInWithPopup(auth, provider);
-      navigate("/dashboard");
+      const result = await signInWithPopup(auth, provider);
+      const userData = result.user;
+      // You'll need to fetch the user's data from Firestore here
+      navigate("/rent"); // Default to rent page for social sign-ins
     } catch (err) {
       setError("Failed to sign in with Facebook.");
     }
