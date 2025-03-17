@@ -8,12 +8,15 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "add-dummy-data": "tsx src/scripts/addDummyData.ts"
+    "add-dummy-data": "tsx src/scripts/addDummyData.ts",
+    "add-dummy-data-admin": "tsx src/scripts/addDummyDataAdmin.ts"
   },
   "dependencies": {
     "@react-google-maps/api": "^2.20.6",
     "@types/google-maps-react": "^2.0.4",
+    "dotenv": "^16.4.7",
     "firebase": "^11.4.0",
+    "firebase-admin": "^11.4.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.3.0"

@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../firebase/config";
 import { Event, ParkingSpot } from "../types";
+import { useAuth } from "../hooks/useAuth";
 import {
   GoogleMap,
   InfoWindow,
@@ -70,6 +71,7 @@ styleSheet.innerText = styles;
 document.head.appendChild(styleSheet);
 
 const RentPage: React.FC = () => {
+  const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const eventQuery = searchParams.get("event");
   const [searchInput, setSearchInput] = useState(eventQuery || "");
@@ -250,10 +252,24 @@ const RentPage: React.FC = () => {
 
         const querySnapshot = await getDocs(q);
         const spotResults: ParkingSpot[] = [];
+        const seenCoordinates = new Set<string>();
+
         querySnapshot.forEach((doc) => {
-          spotResults.push({ id: doc.id, ...doc.data() } as ParkingSpot);
+          const spotData = doc.data() as ParkingSpot;
+          const coordKey = `${spotData.coordinates.lat},${spotData.coordinates.lng}`;
+
+          // Only add the spot if we haven't seen these coordinates before
+          if (!seenCoordinates.has(coordKey)) {
+            seenCoordinates.add(coordKey);
+            spotResults.push({ id: doc.id, ...spotData });
+          } else {
+            console.log(`Duplicate spot found at coordinates: ${coordKey}`);
+          }
         });
 
+        console.log(
+          `Found ${querySnapshot.size} total spots, ${spotResults.length} unique spots`
+        );
         setParkingSpots(spotResults);
       } catch (error) {
         console.error("Error fetching parking spots:", error);
@@ -469,169 +485,183 @@ const RentPage: React.FC = () => {
             )}
           </div>
 
-          <div className="flex gap-6">
-            {/* Left side - Grid View */}
-            <div
-              className="w-1/2 overflow-y-auto"
-              style={{ maxHeight: "calc(100vh - 200px)" }}
-            >
-              <h2 className="text-2xl font-semibold mb-6">
-                Available Parking Spots
-              </h2>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {parkingSpots.map(renderParkingSpotCard)}
+          {!user ? (
+            <div className="text-center py-8">
+              <p className="text-xl mb-4">
+                Sign in to view available parking spots for this event
+              </p>
+              <button
+                onClick={() => navigate("/login")}
+                className="px-6 py-2 bg-black text-white rounded-md hover:bg-gray-800"
+              >
+                Sign In
+              </button>
+            </div>
+          ) : (
+            <div className="flex gap-6">
+              {/* Left side - Grid View */}
+              <div
+                className="w-1/2 overflow-y-auto"
+                style={{ maxHeight: "calc(100vh - 200px)" }}
+              >
+                <h2 className="text-2xl font-semibold mb-6">
+                  Available Parking Spots
+                </h2>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  {parkingSpots.map(renderParkingSpotCard)}
+                </div>
+              </div>
+
+              {/* Right side - Map View */}
+              <div className="w-1/2">
+                {loadError && (
+                  <div className="h-[600px] flex items-center justify-center bg-red-50 rounded-lg">
+                    <p className="text-red-600">
+                      Error loading Google Maps: {loadError.message}
+                    </p>
+                  </div>
+                )}
+
+                {!isLoaded ? (
+                  <div className="h-[600px] flex items-center justify-center bg-gray-50 rounded-lg">
+                    <p className="text-gray-600">Loading map...</p>
+                  </div>
+                ) : (
+                  <GoogleMap
+                    mapContainerStyle={mapContainerStyle}
+                    center={mapCenter}
+                    zoom={14}
+                    options={{
+                      mapId: GOOGLE_MAPS_ID,
+                      mapTypeId: "satellite",
+                      // Disable all default UI controls except zoom and fullscreen
+                      disableDefaultUI: true,
+                      zoomControl: true,
+                      fullscreenControl: true,
+                      // Disable POI and transit labels
+                      styles: [
+                        {
+                          featureType: "all",
+                          elementType: "labels",
+                          stylers: [{ visibility: "off" }],
+                        },
+                        {
+                          featureType: "poi",
+                          stylers: [{ visibility: "off" }],
+                        },
+                        {
+                          featureType: "transit",
+                          stylers: [{ visibility: "off" }],
+                        },
+                      ],
+                    }}
+                    onLoad={(map) => {
+                      console.log("Map loaded successfully");
+                      console.log("Map center:", mapCenter);
+                      mapRef.current = map;
+                      setIsMapLoading(false);
+                    }}
+                  >
+                    {/* Event Marker */}
+                    {selectedEvent?.location?.coordinates && (
+                      <MarkerF
+                        position={{
+                          lat: selectedEvent.location.coordinates.lat,
+                          lng: selectedEvent.location.coordinates.lng,
+                        }}
+                        label={{
+                          text: "Event",
+                          color: "white",
+                          fontWeight: "bold",
+                          fontSize: "14px",
+                          className: "marker-label",
+                        }}
+                        icon={{
+                          path: window.google.maps.SymbolPath.CIRCLE,
+                          fillColor: "#000000",
+                          fillOpacity: 1,
+                          strokeColor: "#FFFFFF",
+                          strokeWeight: 2,
+                          scale: 24,
+                        }}
+                      />
+                    )}
+
+                    {/* Parking Spot Markers */}
+                    {parkingSpots.map((spot) => (
+                      <MarkerF
+                        key={spot.id}
+                        position={{
+                          lat: spot.coordinates.lat,
+                          lng: spot.coordinates.lng,
+                        }}
+                        onClick={() => handleSpotClick(spot)}
+                        label={{
+                          text: `$${spot.price}`,
+                          color: "white",
+                          fontWeight: "bold",
+                          fontSize: "14px",
+                          className: "marker-label",
+                        }}
+                        icon={{
+                          path: window.google.maps.SymbolPath.CIRCLE,
+                          fillColor: "#000000",
+                          fillOpacity: 1,
+                          strokeColor: "#FFFFFF",
+                          strokeWeight: 2,
+                          scale: 20,
+                        }}
+                      />
+                    ))}
+
+                    {/* Info Window */}
+                    {selectedSpot && (
+                      <InfoWindow
+                        position={{
+                          lat: selectedSpot.coordinates.lat,
+                          lng: selectedSpot.coordinates.lng,
+                        }}
+                        onCloseClick={() => setSelectedSpot(null)}
+                        options={{
+                          pixelOffset: new google.maps.Size(0, -20),
+                        }}
+                      >
+                        <div
+                          className="p-2 animate-fade-in"
+                          style={{ maxWidth: "300px" }}
+                        >
+                          <div className="mb-3">
+                            <img
+                              src={selectedSpot.images[0]}
+                              alt={selectedSpot.address}
+                              className="w-full h-40 object-cover rounded-md"
+                            />
+                          </div>
+                          <h3 className="font-bold text-xl mb-2">
+                            ${selectedSpot.price}/day
+                          </h3>
+                          <p className="font-medium mb-1">
+                            {selectedSpot.address}
+                          </p>
+                          <p className="text-gray-600 text-sm mb-3">
+                            {selectedSpot.description}
+                          </p>
+                          <button
+                            onClick={() =>
+                              navigate(`/confirm/${selectedSpot.id}`)
+                            }
+                            className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-colors duration-200 w-full"
+                          >
+                            Book Now
+                          </button>
+                        </div>
+                      </InfoWindow>
+                    )}
+                  </GoogleMap>
+                )}
               </div>
             </div>
-
-            {/* Right side - Map View */}
-            <div className="w-1/2">
-              {loadError && (
-                <div className="h-[600px] flex items-center justify-center bg-red-50 rounded-lg">
-                  <p className="text-red-600">
-                    Error loading Google Maps: {loadError.message}
-                  </p>
-                </div>
-              )}
-
-              {!isLoaded ? (
-                <div className="h-[600px] flex items-center justify-center bg-gray-50 rounded-lg">
-                  <p className="text-gray-600">Loading map...</p>
-                </div>
-              ) : (
-                <GoogleMap
-                  mapContainerStyle={mapContainerStyle}
-                  center={mapCenter}
-                  zoom={14}
-                  options={{
-                    mapId: GOOGLE_MAPS_ID,
-                    mapTypeId: "satellite",
-                    // Disable all default UI controls except zoom and fullscreen
-                    disableDefaultUI: true,
-                    zoomControl: true,
-                    fullscreenControl: true,
-                    // Disable POI and transit labels
-                    styles: [
-                      {
-                        featureType: "all",
-                        elementType: "labels",
-                        stylers: [{ visibility: "off" }],
-                      },
-                      {
-                        featureType: "poi",
-                        stylers: [{ visibility: "off" }],
-                      },
-                      {
-                        featureType: "transit",
-                        stylers: [{ visibility: "off" }],
-                      },
-                    ],
-                  }}
-                  onLoad={(map) => {
-                    console.log("Map loaded successfully");
-                    console.log("Map center:", mapCenter);
-                    mapRef.current = map;
-                    setIsMapLoading(false);
-                  }}
-                >
-                  {/* Event Marker */}
-                  {selectedEvent?.location?.coordinates && (
-                    <MarkerF
-                      position={{
-                        lat: selectedEvent.location.coordinates.lat,
-                        lng: selectedEvent.location.coordinates.lng,
-                      }}
-                      label={{
-                        text: "Event",
-                        color: "white",
-                        fontWeight: "bold",
-                        fontSize: "14px",
-                        className: "marker-label",
-                      }}
-                      icon={{
-                        path: window.google.maps.SymbolPath.CIRCLE,
-                        fillColor: "#000000",
-                        fillOpacity: 1,
-                        strokeColor: "#FFFFFF",
-                        strokeWeight: 2,
-                        scale: 24,
-                      }}
-                    />
-                  )}
-
-                  {/* Parking Spot Markers */}
-                  {parkingSpots.map((spot) => (
-                    <MarkerF
-                      key={spot.id}
-                      position={{
-                        lat: spot.coordinates.lat,
-                        lng: spot.coordinates.lng,
-                      }}
-                      onClick={() => handleSpotClick(spot)}
-                      label={{
-                        text: `$${spot.price}`,
-                        color: "white",
-                        fontWeight: "bold",
-                        fontSize: "14px",
-                        className: "marker-label",
-                      }}
-                      icon={{
-                        path: window.google.maps.SymbolPath.CIRCLE,
-                        fillColor: "#000000",
-                        fillOpacity: 1,
-                        strokeColor: "#FFFFFF",
-                        strokeWeight: 2,
-                        scale: 20,
-                      }}
-                    />
-                  ))}
-
-                  {/* Info Window */}
-                  {selectedSpot && (
-                    <InfoWindow
-                      position={{
-                        lat: selectedSpot.coordinates.lat,
-                        lng: selectedSpot.coordinates.lng,
-                      }}
-                      onCloseClick={() => setSelectedSpot(null)}
-                      options={{
-                        pixelOffset: new google.maps.Size(0, -20),
-                      }}
-                    >
-                      <div
-                        className="p-2 animate-fade-in"
-                        style={{ maxWidth: "300px" }}
-                      >
-                        <div className="mb-3">
-                          <img
-                            src={selectedSpot.images[0]}
-                            alt={selectedSpot.address}
-                            className="w-full h-40 object-cover rounded-md"
-                          />
-                        </div>
-                        <h3 className="font-bold text-xl mb-2">
-                          ${selectedSpot.price}/day
-                        </h3>
-                        <p className="font-medium mb-1">
-                          {selectedSpot.address}
-                        </p>
-                        <p className="text-gray-600 text-sm mb-3">
-                          {selectedSpot.description}
-                        </p>
-                        <button
-                          onClick={() =>
-                            navigate(`/confirm/${selectedSpot.id}`)
-                          }
-                          className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-colors duration-200 w-full"
-                        >
-                          Book Now
-                        </button>
-                      </div>
-                    </InfoWindow>
-                  )}
-                </GoogleMap>
-              )}
-            </div>
-          </div>
+          )}
         </>
       )}
     </div>

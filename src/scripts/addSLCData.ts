@@ -65,14 +65,30 @@ const slcEvents = [
 ];
 
 const createParkingSpots = (eventId: string, eventLocation: { lat: number, lng: number }): ParkingSpot[] => {
-  // Create spots within 0.5 mile radius with slight coordinate variations
+  // Create spots within 0.5 mile radius with unique coordinate variations
   const spots: ParkingSpot[] = [];
-  const latVariations = [-0.002, -0.001, 0.001, 0.002];
-  const lngVariations = [-0.002, -0.001, 0.001, 0.002];
+  const seenCoordinates = new Set<string>();
   
-  latVariations.forEach((latVar) => {
-    lngVariations.forEach((lngVar) => {
-      if (Math.random() > 0.5) { // Randomly select about half of possible spots
+  // Create a grid of coordinate variations
+  const variations = [
+    { lat: -0.003, lng: -0.003 },
+    { lat: -0.003, lng: 0 },
+    { lat: -0.003, lng: 0.003 },
+    { lat: 0, lng: -0.003 },
+    { lat: 0, lng: 0.003 },
+    { lat: 0.003, lng: -0.003 },
+    { lat: 0.003, lng: 0 },
+    { lat: 0.003, lng: 0.003 },
+  ];
+  
+  variations.forEach((variation) => {
+    if (Math.random() > 0.3) { // 70% chance to create a spot at each location
+      const lat = eventLocation.lat + variation.lat;
+      const lng = eventLocation.lng + variation.lng;
+      const coordKey = `${lat},${lng}`;
+      
+      if (!seenCoordinates.has(coordKey)) {
+        seenCoordinates.add(coordKey);
         spots.push({
           eventId,
           address: `${Math.floor(Math.random() * 1000)} ${['Park', 'Main', 'State', 'Temple', 'Highland'][Math.floor(Math.random() * 5)]} St`,
@@ -82,7 +98,7 @@ const createParkingSpots = (eventId: string, eventLocation: { lat: number, lng: 
             "Spacious driveway with security camera",
             "Private spot with direct path to venue"
           ][Math.floor(Math.random() * 4)],
-          price: Math.floor(Math.random() * 30) + 20, // Random price between 20-50
+          price: Math.floor(Math.random() * 20) + 30, // Random price between $30-50
           images: ["https://placehold.co/600x400"],
           availability: {
             start: new Date().toISOString(),
@@ -90,13 +106,13 @@ const createParkingSpots = (eventId: string, eventLocation: { lat: number, lng: 
           },
           amenities: ["Security Camera", "Well Lit", "Easy Access"],
           coordinates: {
-            lat: eventLocation.lat + latVar,
-            lng: eventLocation.lng + lngVar
+            lat,
+            lng
           },
           createdAt: new Date().toISOString()
         });
       }
-    });
+    }
   });
   
   return spots;
