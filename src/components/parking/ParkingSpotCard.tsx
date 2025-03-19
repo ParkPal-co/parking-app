@@ -8,35 +8,46 @@ import { ParkingSpot } from "../../types";
 
 interface ParkingSpotCardProps {
   spot: ParkingSpot;
+  isSelected?: boolean;
+  onSelect?: (spot: ParkingSpot) => void;
   onBook: (spot: ParkingSpot) => void;
 }
 
 export const ParkingSpotCard: React.FC<ParkingSpotCardProps> = ({
   spot,
+  isSelected = false,
+  onSelect,
   onBook,
 }) => {
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
-      <img
-        src={spot.images[0]}
-        alt={spot.address}
-        className="w-full h-48 object-cover"
-      />
-      <div className="p-4">
-        <h3 className="text-lg font-semibold">{spot.address}</h3>
-        <p className="text-gray-600">{spot.description}</p>
-        <div className="mt-4 flex justify-between items-center">
-          <span className="text-2xl font-bold">${spot.price}</span>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onBook(spot);
-            }}
-            className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800"
-          >
-            Book Now
-          </button>
+    <div
+      className={`bg-white rounded-lg shadow-md overflow-hidden border-2 transition-all ${
+        isSelected ? "border-black" : "border-transparent"
+      } ${onSelect ? "cursor-pointer" : ""}`}
+      onClick={() => onSelect?.(spot)}
+    >
+      <div className="relative h-48">
+        <img
+          src={spot.images[0] || "https://placehold.co/600x400"}
+          alt={spot.address}
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute top-2 right-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-lg">
+          ${spot.price}
         </div>
+      </div>
+      <div className="p-4">
+        <h3 className="text-lg font-semibold mb-2">{spot.address}</h3>
+        <p className="text-gray-600 mb-4">{spot.description}</p>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onBook(spot);
+          }}
+          className="w-full bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-colors"
+        >
+          Book Now
+        </button>
       </div>
     </div>
   );
