@@ -244,4 +244,4 @@ prohibited:
 - Use `any` type in TypeScript without justification
 - Directly mutate Firestore documents without validation
 - Deploy without security rules in Firestore
-
+- Adding a new file without making sure it doesn't already exist by thoroughly searching the codebase

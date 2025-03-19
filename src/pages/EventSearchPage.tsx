@@ -1,91 +1,128 @@
 /**
  * src/pages/EventSearchPage.tsx
- * Page for searching and selecting events
+ * Landing page with a prominent search bar for finding events
  */
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { EventSearch } from "../components/events/EventSearch";
-import { EventCard } from "../components/events/EventCard";
-import { LocationPrompt } from "../components/location/LocationPrompt";
 import { useEvents } from "../hooks/useEvents";
-import { useLocation } from "../hooks/useLocation";
+import { Event } from "../types";
 
 export const EventSearchPage: React.FC = () => {
   const navigate = useNavigate();
-  const { events, loading, error, searchInput, setSearchInput, handleSearch } =
-    useEvents();
-  const {
-    userLocation,
-    locationError,
-    isRequestingLocation,
-    requestLocation,
-    clearLocation,
-  } = useLocation();
+  const { searchInput, setSearchInput, handleSearch, events } = useEvents();
+  const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
+  const [showResults, setShowResults] = useState(false);
 
-  const handleEventSelect = (event: Event) => {
-    navigate(`/rent?event=${event.id}`);
+  useEffect(() => {
+    console.log("Events from useEvents:", events);
+    if (searchInput.trim() && Array.isArray(events)) {
+      const filtered = events.filter((event) => {
+        if (!event) return false;
+
+        const searchLower = searchInput.toLowerCase();
+        return (
+          event.title?.toLowerCase().includes(searchLower) ||
+          event.location?.address?.toLowerCase().includes(searchLower)
+        );
+      });
+      console.log("Filtered events:", filtered);
+      setFilteredEvents(filtered || []);
+      setShowResults(true);
+    } else {
+      setFilteredEvents([]);
+      setShowResults(false);
+    }
+  }, [searchInput, events]);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log("Form submitted with search input:", searchInput);
+    if (searchInput.trim()) {
+      handleSearch();
+      console.log("Navigating to events page");
+      navigate(`/events?q=${encodeURIComponent(searchInput)}`);
+    }
   };
 
-  if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center">Loading events...</div>
-      </div>
-    );
-  }
+  const handleEventSelect = (event: Event) => {
+    console.log("Event selected:", event);
+    if (event?.id) {
+      console.log("Navigating to rent page with event ID:", event.id);
+      navigate(`/rent?event=${event.id}`);
+    }
+  };
 
-  if (error) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center text-red-600">{error}</div>
-      </div>
-    );
-  }
+  const handleClickOutside = () => {
+    setShowResults(false);
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-6">
-          Find Parking Near Your Event
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+      <div className="max-w-2xl w-full px-4">
+        <h1 className="text-4xl font-bold text-center mb-8 text-gray-900">
+          Where is your next event?
         </h1>
 
-        <div className="max-w-4xl mx-auto">
-          <LocationPrompt
-            onRequestLocation={requestLocation}
-            onClearLocation={clearLocation}
-            isRequestingLocation={isRequestingLocation}
-            locationError={locationError}
-            hasLocation={!!userLocation}
-          />
-
-          <EventSearch
-            searchInput={searchInput}
-            onSearchInputChange={setSearchInput}
-            onSubmit={handleSearch}
-          />
-        </div>
-      </div>
-
-      {events.length === 0 ? (
-        <div className="text-center py-8">
-          <p className="text-gray-600">
-            {searchInput
-              ? `No events found matching "${searchInput}"`
-              : "No upcoming events found"}
-          </p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {events.map((event) => (
-            <EventCard
-              key={event.id}
-              event={event}
-              onClick={handleEventSelect}
+        <form
+          onSubmit={handleSubmit}
+          className="w-full relative"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="relative">
+            <input
+              type="text"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onFocus={() => setShowResults(true)}
+              placeholder="Search for events..."
+              className="w-full px-6 py-4 text-lg border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black shadow-lg"
             />
-          ))}
-        </div>
-      )}
+            <button
+              type="submit"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-black text-white px-6 py-2 rounded-md hover:bg-gray-800 transition-colors"
+            >
+              Search
+            </button>
+          </div>
+          <div className="text-center mt-4">
+            <button
+              type="button"
+              onClick={() => navigate("/events?nearby=true")}
+              className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:border-black hover:text-black transition-colors text-gray-600"
+            >
+              events near me
+            </button>
+          </div>
+
+          {showResults && filteredEvents.length > 0 && (
+            <div className="absolute w-full mt-1 bg-white rounded-lg shadow-xl border border-gray-200 max-h-96 overflow-y-auto z-10">
+              {filteredEvents.map((event) => (
+                <div
+                  key={event.id}
+                  onClick={() => handleEventSelect(event)}
+                  className="px-6 py-4 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                >
+                  <h3 className="font-semibold text-gray-900">{event.title}</h3>
+                  <p className="text-sm text-gray-600">
+                    {event.location.address}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {new Date(event.startDate).toLocaleDateString()}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </form>
+      </div>
     </div>
   );
 };
