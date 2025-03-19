@@ -1,38 +1,31 @@
+/**
+ * src/pages/RegisterPage.tsx
+ * Page component for user registration
+ */
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  GoogleAuthProvider,
-  FacebookAuthProvider,
-  signInWithPopup,
-} from "firebase/auth";
-import { auth } from "../../firebase/config";
-import { useAuthContext } from "../../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 
-export default function LoginPage() {
+export const RegisterPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [isHost, setIsHost] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuthContext();
+  const { signup, loginWithGoogle } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setError("");
       setLoading(true);
-      const userData = await login(email, password);
-      if (userData?.isHost) {
-        if (!userData.address) {
-          navigate("/list"); // Redirect to listing creation if they haven't set up their space
-        } else {
-          navigate("/my-listings"); // Redirect to their listings if they have an address
-        }
-      } else {
-        navigate("/rent"); // Redirect to rent page for regular users
-      }
+      await signup(email, password, name, isHost);
+      navigate("/");
     } catch (err) {
-      setError("Failed to sign in. Please check your credentials.");
+      setError("Failed to create an account.");
     } finally {
       setLoading(false);
     }
@@ -40,25 +33,14 @@ export default function LoginPage() {
 
   const handleGoogleSignIn = async () => {
     try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      const userData = result.user;
-      // You'll need to fetch the user's data from Firestore here
-      navigate("/rent"); // Default to rent page for social sign-ins
+      setError("");
+      setLoading(true);
+      await loginWithGoogle();
+      navigate("/");
     } catch (err) {
       setError("Failed to sign in with Google.");
-    }
-  };
-
-  const handleFacebookSignIn = async () => {
-    try {
-      const provider = new FacebookAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      const userData = result.user;
-      // You'll need to fetch the user's data from Firestore here
-      navigate("/rent"); // Default to rent page for social sign-ins
-    } catch (err) {
-      setError("Failed to sign in with Facebook.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -67,7 +49,7 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
+            Create your account
           </h2>
         </div>
         {error && (
@@ -79,11 +61,21 @@ export default function LoginPage() {
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
               <input
+                type="text"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-black focus:border-black focus:z-10 sm:text-sm"
+                placeholder="Full name"
+              />
+            </div>
+            <div>
+              <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-black focus:border-black focus:z-10 sm:text-sm"
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-black focus:border-black focus:z-10 sm:text-sm"
                 placeholder="Email address"
               />
             </div>
@@ -99,13 +91,28 @@ export default function LoginPage() {
             </div>
           </div>
 
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              checked={isHost}
+              onChange={(e) => setIsHost(e.target.checked)}
+              className="h-4 w-4 text-black focus:ring-black border-gray-300 rounded"
+            />
+            <label
+              htmlFor="is-host"
+              className="ml-2 block text-sm text-gray-900"
+            >
+              I want to rent out my driveway
+            </label>
+          </div>
+
           <div>
             <button
               type="submit"
               disabled={loading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
             >
-              Sign in
+              Create Account
             </button>
           </div>
         </form>
@@ -122,36 +129,29 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div className="mt-6 grid grid-cols-2 gap-3">
+          <div className="mt-6">
             <button
               onClick={handleGoogleSignIn}
               className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
             >
               <span className="sr-only">Sign in with Google</span>
-              Google
-            </button>
-            <button
-              onClick={handleFacebookSignIn}
-              className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
-            >
-              <span className="sr-only">Sign in with Facebook</span>
-              Facebook
+              Sign in with Google
             </button>
           </div>
         </div>
 
         <div className="text-center">
           <p className="text-sm text-gray-600">
-            Don't have an account?{" "}
+            Already have an account?{" "}
             <button
-              onClick={() => navigate("/signup")}
+              onClick={() => navigate("/login")}
               className="font-medium text-black hover:text-gray-800"
             >
-              Sign up
+              Sign in
             </button>
           </p>
         </div>
       </div>
     </div>
   );
-}
+};
