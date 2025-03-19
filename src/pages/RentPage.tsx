@@ -322,6 +322,10 @@ const RentPage: React.FC = () => {
 
   const handleSignInConfirm = () => {
     setIsSignInModalOpen(false);
+    const spotId = pendingSpotToBook?.id;
+    if (spotId) {
+      sessionStorage.setItem("returnTo", `/confirm/${spotId}`);
+    }
     navigate("/login");
   };
 
