@@ -8,7 +8,72 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { Event, ParkingSpot } from "../types";
 import { fetchEventById } from "../services/eventService";
 import { fetchParkingSpotById } from "../services/parkingSpotService";
+import { createBooking } from "../services/bookingService";
 import { useAuth } from "../hooks/useAuth";
+import {
+  PaymentElement,
+  useStripe,
+  useElements,
+  Elements,
+} from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+
+// Initialize Stripe
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+
+const BookingForm: React.FC<{
+  event: Event;
+  spot: ParkingSpot;
+  onSuccess: () => void;
+  onError: (error: string) => void;
+}> = ({ event, spot, onSuccess, onError }) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!stripe || !elements) return;
+
+    try {
+      setLoading(true);
+
+      // Create the booking
+      const booking = await createBooking(
+        spot,
+        spot.ownerId,
+        spot.ownerId, // hostId is the same as ownerId
+        new Date(event.startDate),
+        new Date(event.endDate),
+        spot.price
+      );
+
+      onSuccess();
+    } catch (err) {
+      console.error("Error processing payment:", err);
+      onError(err instanceof Error ? err.message : "Failed to process payment");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <h2 className="text-xl font-semibold mb-4">Payment Details</h2>
+        <PaymentElement />
+      </div>
+
+      <button
+        type="submit"
+        disabled={!stripe || loading}
+        className="w-full bg-black text-white py-3 rounded-md hover:bg-gray-800 disabled:bg-gray-400"
+      >
+        {loading ? "Processing..." : "Confirm Booking"}
+      </button>
+    </form>
+  );
+};
 
 export const BookingConfirmationPage: React.FC = () => {
   const navigate = useNavigate();
@@ -21,6 +86,7 @@ export const BookingConfirmationPage: React.FC = () => {
   const [spot, setSpot] = useState<ParkingSpot | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
 
   useEffect(() => {
     const loadBookingDetails = async () => {
@@ -37,8 +103,30 @@ export const BookingConfirmationPage: React.FC = () => {
           fetchParkingSpotById(spotId),
         ]);
 
+        if (!eventData || !spotData) {
+          setError("Booking details not found");
+          return;
+        }
+
         setEvent(eventData);
         setSpot(spotData);
+
+        // Create a payment intent
+        const response = await fetch(
+          "http://localhost:3001/api/create-payment-intent",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              amount: spotData.price * 100, // Convert to cents
+            }),
+          }
+        );
+
+        const { clientSecret } = await response.json();
+        setClientSecret(clientSecret);
       } catch (err) {
         console.error("Error loading booking details:", err);
         setError("Failed to load booking details");
@@ -50,25 +138,8 @@ export const BookingConfirmationPage: React.FC = () => {
     loadBookingDetails();
   }, [eventId, spotId]);
 
-  const handleConfirmBooking = async () => {
-    if (!user || !event || !spot) {
-      setError("Missing required information");
-      return;
-    }
-
-    try {
-      // TODO: Implement booking confirmation logic with Stripe integration
-      // This would involve:
-      // 1. Creating a booking record in Firestore
-      // 2. Processing payment through Stripe
-      // 3. Updating spot availability
-      // 4. Redirecting to success page
-
-      navigate("/booking-success");
-    } catch (err) {
-      console.error("Error confirming booking:", err);
-      setError("Failed to confirm booking");
-    }
+  const handleSuccess = () => {
+    navigate("/booking-success");
   };
 
   if (loading) {
@@ -87,7 +158,7 @@ export const BookingConfirmationPage: React.FC = () => {
     );
   }
 
-  if (!event || !spot) {
+  if (!event || !spot || !clientSecret) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center text-red-600">
@@ -99,37 +170,59 @@ export const BookingConfirmationPage: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold mb-8">Confirm Your Booking</h1>
 
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4">Event Details</h2>
-          <p className="text-gray-600">{event.title}</p>
-          <p className="text-gray-600">
-            {event.startDate.toLocaleDateString()} -{" "}
-            {event.endDate.toLocaleDateString()}
-          </p>
-        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Left side - Booking details */}
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h2 className="text-xl font-semibold mb-4">Event Details</h2>
+              <p className="text-gray-600">{event.title}</p>
+              <p className="text-gray-600">
+                {event.startDate.toLocaleDateString()} -{" "}
+                {event.endDate.toLocaleDateString()}
+              </p>
+              <p className="text-gray-600">{event.location.address}</p>
+            </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4">Parking Spot Details</h2>
-          <p className="text-gray-600">{spot.address}</p>
-          <p className="text-gray-600">{spot.description}</p>
-          <p className="text-2xl font-bold mt-2">${spot.price}</p>
-        </div>
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h2 className="text-xl font-semibold mb-4">
+                Parking Spot Details
+              </h2>
+              <div className="relative h-48 mb-4">
+                <img
+                  src={spot.images[0] || "https://placehold.co/600x400"}
+                  alt={spot.address}
+                  className="w-full h-full object-cover rounded-md"
+                />
+              </div>
+              <p className="text-gray-600">{spot.address}</p>
+              <p className="text-gray-600">{spot.description}</p>
+              <p className="text-2xl font-bold mt-2">${spot.price}</p>
+            </div>
+          </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4">Payment Details</h2>
-          <p className="text-gray-600">Card ending in ****</p>
-          <p className="text-gray-600">Total: ${spot.price}</p>
+          {/* Right side - Payment form */}
+          <div>
+            <Elements
+              stripe={stripePromise}
+              options={{
+                clientSecret,
+                appearance: {
+                  theme: "stripe",
+                },
+              }}
+            >
+              <BookingForm
+                event={event}
+                spot={spot}
+                onSuccess={handleSuccess}
+                onError={setError}
+              />
+            </Elements>
+          </div>
         </div>
-
-        <button
-          onClick={handleConfirmBooking}
-          className="w-full bg-black text-white py-3 rounded-md hover:bg-gray-800"
-        >
-          Confirm Booking
-        </button>
       </div>
     </div>
   );
