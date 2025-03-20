@@ -9,6 +9,20 @@ import { useEvents } from "../hooks/useEvents";
 import { Event } from "../types";
 import { FloatingQuotesBackground } from "../components/background/FloatingQuotesBackground";
 
+// Add animation keyframes
+const fadeInFromTop = {
+  "@keyframes fadeInFromTop": {
+    "0%": {
+      opacity: "0",
+      transform: "translateY(-20px)",
+    },
+    "100%": {
+      opacity: "1",
+      transform: "translateY(0)",
+    },
+  },
+};
+
 export const EventSearchPage: React.FC = () => {
   const navigate = useNavigate();
   const { searchInput, setSearchInput, handleSearch, events } = useEvents();
@@ -69,13 +83,13 @@ export const EventSearchPage: React.FC = () => {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 relative">
       <FloatingQuotesBackground />
       <div className="max-w-2xl w-full px-4 relative z-10">
-        <h1 className="text-4xl font-bold text-center mb-8 text-gray-900">
+        <h1 className="text-4xl font-bold text-center mb-8 text-gray-900 animate-fade-in-from-top [animation-fill-mode:forwards]">
           Where is your next event?
         </h1>
 
         <form
           onSubmit={handleSubmit}
-          className="w-full relative"
+          className="w-full relative opacity-0 animate-fade-in-from-top [animation-delay:0.2s] [animation-fill-mode:forwards]"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="relative">
@@ -94,7 +108,7 @@ export const EventSearchPage: React.FC = () => {
               Search
             </button>
           </div>
-          <div className="text-center mt-4">
+          <div className="text-center mt-4 opacity-0 animate-fade-in-from-top [animation-delay:0.4s] [animation-fill-mode:forwards]">
             <button
               type="button"
               onClick={() => navigate("/events?nearby=true")}
