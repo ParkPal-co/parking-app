@@ -7,6 +7,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useEvents } from "../hooks/useEvents";
 import { Event } from "../types";
+import { FloatingQuotesBackground } from "../components/background/FloatingQuotesBackground";
 
 export const EventSearchPage: React.FC = () => {
   const navigate = useNavigate();
@@ -65,8 +66,9 @@ export const EventSearchPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
-      <div className="max-w-2xl w-full px-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 relative">
+      <FloatingQuotesBackground />
+      <div className="max-w-2xl w-full px-4 relative z-10">
         <h1 className="text-4xl font-bold text-center mb-8 text-gray-900">
           Where is your next event?
         </h1>
@@ -83,7 +85,7 @@ export const EventSearchPage: React.FC = () => {
               onChange={(e) => setSearchInput(e.target.value)}
               onFocus={() => setShowResults(true)}
               placeholder="Search for events..."
-              className="w-full px-6 py-4 text-lg border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black shadow-lg"
+              className="w-full px-6 py-4 text-lg border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black shadow-lg bg-white"
             />
             <button
               type="submit"
