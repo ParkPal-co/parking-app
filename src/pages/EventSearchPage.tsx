@@ -96,9 +96,9 @@ export const EventSearchPage: React.FC = () => {
             <button
               type="button"
               onClick={() => navigate("/events?nearby=true")}
-              className="text-gray-600 hover:text-black transition-colors text-sm"
+              className="bg-gray-200 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-300 transition-colors text-sm font-medium"
             >
-              Or find events near me
+              events near me
             </button>
           </div>
 
