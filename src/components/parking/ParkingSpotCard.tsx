@@ -38,6 +38,18 @@ export const ParkingSpotCard: React.FC<ParkingSpotCardProps> = ({
       </div>
       <div className="p-4">
         <h3 className="text-lg font-semibold mb-2">{spot.address}</h3>
+        <p className="text-sm text-gray-500 mb-2">
+          Available:{" "}
+          {new Date(spot.availability.start).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}{" "}
+          -{" "}
+          {new Date(spot.availability.end).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        </p>
         <p className="text-gray-600 mb-4">{spot.description}</p>
         <button
           onClick={(e) => {
