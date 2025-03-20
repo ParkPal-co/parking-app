@@ -10,7 +10,8 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "../firebase/config";
 import { useNavigate } from "react-router-dom";
 import { useEvents } from "../hooks/useEvents";
-import { Event } from "../types";
+import { Event, User } from "../types";
+import type { User as FirebaseUser } from "firebase/auth";
 
 interface DrivewayFormData {
   eventId: string;
@@ -115,7 +116,7 @@ export const RegisterDrivewayPage: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      // Upload image to Firebase Storage using the initialized storage instance
+      // Upload image to Firebase Storage using our storage instance
       const imageRef = ref(
         storage,
         `driveways/${user.id}/${Date.now()}_${imageFile.name}`
@@ -156,10 +157,10 @@ export const RegisterDrivewayPage: React.FC = () => {
       };
 
       await addDoc(collection(db, "driveways"), drivewayData);
-      navigate("/my-listings"); // Redirect to my listings page after successful creation
+      navigate("/my-listings");
     } catch (err) {
       console.error("Error registering driveway:", err);
-      setError("Failed to register driveway");
+      setError("Failed to register driveway. Please try again.");
     } finally {
       setLoading(false);
     }
