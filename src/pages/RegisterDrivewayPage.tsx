@@ -7,41 +7,55 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { collection, addDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { db, storage } from "../firebase/config";
+import { db, storage, auth } from "../firebase/config";
 import { useNavigate } from "react-router-dom";
 import { useEvents } from "../hooks/useEvents";
-import { Event, User } from "../types";
+import { Event } from "../types";
+import {
+  verifyAndGeocodeAddress,
+  type AddressComponents,
+  type VerifiedAddress,
+} from "../utils/geocoding";
 import type { User as FirebaseUser } from "firebase/auth";
 
 interface DrivewayFormData {
   eventId: string;
-  address: string;
   description: string;
   price: string;
   imageUrl: string;
   availableFrom: string;
   availableTo: string;
+  address: AddressComponents;
 }
 
 export const RegisterDrivewayPage: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { events, searchInput, setSearchInput, handleSearch } = useEvents();
+  const { events, searchInput, setSearchInput } = useEvents();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [showEventResults, setShowEventResults] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [verifiedAddress, setVerifiedAddress] =
+    useState<VerifiedAddress | null>(null);
+  const [addressVerificationLoading, setAddressVerificationLoading] =
+    useState(false);
 
   const [formData, setFormData] = useState<DrivewayFormData>({
     eventId: "",
-    address: "",
     description: "",
     price: "",
     imageUrl: "",
     availableFrom: "",
     availableTo: "",
+    address: {
+      street: "",
+      city: "",
+      state: "",
+      zipCode: "",
+    },
   });
 
   // Filter events based on search input
@@ -95,15 +109,63 @@ export const RegisterDrivewayPage: React.FC = () => {
     }
   };
 
+  const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      address: {
+        ...prev.address,
+        [name]: value,
+      },
+    }));
+    // Clear verified address when user modifies any address field
+    setVerifiedAddress(null);
+  };
+
+  const handleVerifyAddress = async () => {
+    setAddressVerificationLoading(true);
+    setError(null);
+    try {
+      const verified = await verifyAndGeocodeAddress(formData.address);
+      setVerifiedAddress(verified);
+      // Update form data with verified address components
+      setFormData((prev) => ({
+        ...prev,
+        address: {
+          street: verified.street,
+          city: verified.city,
+          state: verified.state,
+          zipCode: verified.zipCode,
+        },
+      }));
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(`Address verification failed: ${err.message}`);
+      } else {
+        setError(
+          "Address verification failed. Please check the address and try again."
+        );
+      }
+      setVerifiedAddress(null);
+    } finally {
+      setAddressVerificationLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) {
+    if (!user || !auth.currentUser) {
       setError("You must be logged in to register a driveway");
       return;
     }
 
     if (!selectedEvent) {
       setError("Please select an event");
+      return;
+    }
+
+    if (!verifiedAddress) {
+      setError("Please verify the address before submitting");
       return;
     }
 
@@ -116,10 +178,13 @@ export const RegisterDrivewayPage: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      // Upload image to Firebase Storage using our storage instance
+      // Use Firebase Auth currentUser for storage path
+      const userId = auth.currentUser.uid;
+
+      // Upload image to Firebase Storage
       const imageRef = ref(
         storage,
-        `driveways/${user.id}/${Date.now()}_${imageFile.name}`
+        `parkingSpots/${userId}/${Date.now()}_${imageFile.name}`
       );
       await uploadBytes(imageRef, imageFile);
       const imageUrl = await getDownloadURL(imageRef);
@@ -146,21 +211,36 @@ export const RegisterDrivewayPage: React.FC = () => {
         return;
       }
 
-      const drivewayData = {
-        ...formData,
-        price: price,
-        imageUrl,
-        ownerId: user.id,
-        ownerName: user.name,
-        status: "available" as const,
+      const parkingSpotData = {
+        address: verifiedAddress.formattedAddress,
+        amenities: [], // Will be implemented later
+        availability: {
+          start: formData.availableFrom,
+          end: formData.availableTo,
+        },
+        coordinates: verifiedAddress.coordinates,
         createdAt: new Date().toISOString(),
+        description: formData.description,
+        eventId: selectedEvent.id,
+        images: [imageUrl],
+        price,
+        status: "available" as const,
+        ownerId: userId,
+        ownerName: user.name || auth.currentUser.email || "Anonymous",
       };
 
-      await addDoc(collection(db, "driveways"), drivewayData);
+      // Log the data before saving to help with debugging
+      console.log("Saving parking spot data:", parkingSpotData);
+
+      await addDoc(collection(db, "parkingSpots"), parkingSpotData);
       navigate("/my-listings");
     } catch (err) {
-      console.error("Error registering driveway:", err);
-      setError("Failed to register driveway. Please try again.");
+      console.error("Error registering parking spot:", err);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Failed to register parking spot. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -267,120 +347,185 @@ export const RegisterDrivewayPage: React.FC = () => {
             )}
           </div>
 
-          {/* Address */}
-          <div>
-            <label
-              htmlFor="address"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Address
-            </label>
-            <input
-              type="text"
-              name="address"
-              id="address"
-              required
-              value={formData.address}
-              onChange={handleInputChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-black focus:border-black sm:text-sm"
-              placeholder="Enter your driveway's address"
-            />
+          {/* Address Section */}
+          <div className="space-y-4">
+            <h2 className="text-lg font-medium text-gray-700">
+              Address Information
+            </h2>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Street Address
+              </label>
+              <input
+                type="text"
+                name="street"
+                value={formData.address.street}
+                onChange={handleAddressChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                City
+              </label>
+              <input
+                type="text"
+                name="city"
+                value={formData.address.city}
+                onChange={handleAddressChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  State
+                </label>
+                <input
+                  type="text"
+                  name="state"
+                  value={formData.address.state}
+                  onChange={handleAddressChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  ZIP Code
+                </label>
+                <input
+                  type="text"
+                  name="zipCode"
+                  value={formData.address.zipCode}
+                  onChange={handleAddressChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <button
+                type="button"
+                onClick={handleVerifyAddress}
+                disabled={
+                  addressVerificationLoading ||
+                  !formData.address.street ||
+                  !formData.address.city ||
+                  !formData.address.state ||
+                  !formData.address.zipCode
+                }
+                className="px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+              >
+                {addressVerificationLoading ? "Verifying..." : "Verify Address"}
+              </button>
+
+              {verifiedAddress && (
+                <div className="text-green-600 flex items-center">
+                  <svg
+                    className="w-5 h-5 mr-1"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  Address Verified
+                </div>
+              )}
+            </div>
+
+            {verifiedAddress && (
+              <div className="bg-gray-50 p-4 rounded-md">
+                <p className="text-sm text-gray-600">Verified Address:</p>
+                <p className="font-medium">
+                  {verifiedAddress.formattedAddress}
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Description */}
           <div>
-            <label
-              htmlFor="description"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Description
             </label>
             <textarea
               name="description"
-              id="description"
-              required
-              rows={4}
               value={formData.description}
               onChange={handleInputChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-black focus:border-black sm:text-sm"
-              placeholder="Describe your driveway, including any special features or instructions..."
+              rows={4}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
+              required
             />
           </div>
 
           {/* Price */}
           <div>
-            <label
-              htmlFor="price"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Price per Day
             </label>
-            <div className="mt-1 relative rounded-md shadow-sm">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span className="text-gray-500 sm:text-sm">$</span>
-              </div>
+            <div className="relative">
+              <span className="absolute left-3 top-2">$</span>
               <input
                 type="number"
                 name="price"
-                id="price"
-                required
-                min="0"
-                step="0.01"
                 value={formData.price}
                 onChange={handleInputChange}
-                className="block w-full pl-7 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-black focus:border-black sm:text-sm"
+                className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
+                min="0"
+                step="0.01"
+                required
               />
             </div>
           </div>
 
           {/* Availability */}
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <label
-                htmlFor="availableFrom"
-                className="block text-sm font-medium text-gray-700"
-              >
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 Available From
               </label>
               <input
                 type="datetime-local"
                 name="availableFrom"
-                id="availableFrom"
-                required
                 value={formData.availableFrom}
                 onChange={handleInputChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-black focus:border-black sm:text-sm"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
+                required
               />
             </div>
-
             <div>
-              <label
-                htmlFor="availableTo"
-                className="block text-sm font-medium text-gray-700"
-              >
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 Available To
               </label>
               <input
                 type="datetime-local"
                 name="availableTo"
-                id="availableTo"
-                required
                 value={formData.availableTo}
                 onChange={handleInputChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-black focus:border-black sm:text-sm"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
+                required
               />
             </div>
           </div>
 
-          <div className="flex justify-end">
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-black text-white py-2 px-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
-            >
-              {loading ? "Registering..." : "Confirm Listing"}
-            </button>
-          </div>
+          <button
+            type="submit"
+            disabled={loading || !verifiedAddress}
+            className="w-full px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          >
+            {loading ? "Registering..." : "Confirm Listing"}
+          </button>
         </form>
       </div>
     </div>

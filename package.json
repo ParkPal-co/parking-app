@@ -13,6 +13,7 @@
     "add-dummy-data-admin": "tsx src/scripts/addDummyDataAdmin.ts"
   },
   "dependencies": {
+    "@googlemaps/google-maps-services-js": "^3.4.0",
     "@react-google-maps/api": "^2.20.6",
     "@stripe/react-stripe-js": "^3.5.1",
     "@stripe/stripe-js": "^6.1.0",
