@@ -198,7 +198,19 @@ export const BookingConfirmationPage: React.FC = () => {
                 />
               </div>
               <p className="text-gray-600">{spot.address}</p>
-              <p className="text-gray-600">{spot.description}</p>
+              <p className="text-gray-500 text-sm mt-2">
+                Available:{" "}
+                {new Date(spot.availability.start).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}{" "}
+                -{" "}
+                {new Date(spot.availability.end).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </p>
+              <p className="text-gray-600 mt-2">{spot.description}</p>
               <p className="text-2xl font-bold mt-2">${spot.price}</p>
             </div>
           </div>
