@@ -17,6 +17,13 @@ service cloud.firestore {
       allow write: if isAuthenticated() && request.auth.token.admin == true;
     }
 
+    // Driveways rules
+    match /driveways/{drivewayId} {
+      allow read: if true;  // Allow public read access
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && isOwner(resource.data.ownerId);
+    }
+
     // Parking spots rules
     match /parkingSpots/{spotId} {
       allow read: if true;  // Allow public read access
