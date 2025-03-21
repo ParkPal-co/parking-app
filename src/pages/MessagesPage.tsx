@@ -8,6 +8,7 @@ import { useAuth } from "../hooks/useAuth";
 import { useMessages } from "../hooks/useMessages";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/config";
+import { User } from "../types";
 
 export const MessagesPage: React.FC = () => {
   const { user } = useAuth();
@@ -25,11 +26,18 @@ export const MessagesPage: React.FC = () => {
   const [participantNames, setParticipantNames] = useState<{
     [key: string]: string;
   }>({});
+  const [participantProfiles, setParticipantProfiles] = useState<{
+    [key: string]: User;
+  }>({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   // Scroll to bottom of messages
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop =
+        messagesContainerRef.current.scrollHeight;
+    }
   };
 
   useEffect(() => {
@@ -43,30 +51,35 @@ export const MessagesPage: React.FC = () => {
     }
   }, [activeConversation, markConversationAsRead]);
 
-  // Fetch participant names
+  // Fetch participant names and profiles
   useEffect(() => {
-    const fetchParticipantNames = async () => {
+    const fetchParticipantInfo = async () => {
       const names: { [key: string]: string } = {};
+      const profiles: { [key: string]: User } = {};
+
       for (const conversation of conversations) {
         for (const participantId of conversation.participants) {
           if (!names[participantId] && participantId !== user?.id) {
             try {
               const userDoc = await getDoc(doc(db, "users", participantId));
               if (userDoc.exists()) {
-                names[participantId] = userDoc.data().name || "Unknown User";
+                const userData = userDoc.data() as User;
+                names[participantId] = userData.name || "Unknown User";
+                profiles[participantId] = userData;
               }
             } catch (err) {
-              console.error("Error fetching user name:", err);
+              console.error("Error fetching user info:", err);
               names[participantId] = "Unknown User";
             }
           }
         }
       }
       setParticipantNames(names);
+      setParticipantProfiles(profiles);
     };
 
     if (conversations.length > 0) {
-      fetchParticipantNames();
+      fetchParticipantInfo();
     }
   }, [conversations, user?.id]);
 
@@ -99,14 +112,14 @@ export const MessagesPage: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
-      <div className="flex h-[calc(100vh-12rem)] bg-white rounded-lg shadow-lg overflow-hidden">
+    <div className="container mx-auto px-4 py-2 max-w-6xl">
+      <div className="flex h-[90vh] bg-white rounded-lg shadow-lg overflow-hidden">
         {/* Conversations List */}
-        <div className="w-1/3 border-r border-gray-200">
-          <div className="p-4 border-b border-gray-200">
+        <div className="w-1/3 border-r border-gray-200 flex flex-col">
+          <div className="p-3 border-b border-gray-200 flex-shrink-0">
             <h1 className="text-xl font-semibold">Messages</h1>
           </div>
-          <div className="overflow-y-auto h-full">
+          <div className="flex-1 overflow-y-auto">
             {conversations.length === 0 ? (
               <div className="p-4 text-center text-gray-500">
                 No conversations yet
@@ -119,6 +132,9 @@ export const MessagesPage: React.FC = () => {
                 const otherParticipantName = otherParticipantId
                   ? participantNames[otherParticipantId] || "Loading..."
                   : "Unknown User";
+                const otherParticipantProfile = otherParticipantId
+                  ? participantProfiles[otherParticipantId]
+                  : null;
 
                 return (
                   <div
@@ -130,22 +146,38 @@ export const MessagesPage: React.FC = () => {
                         : ""
                     }`}
                   >
-                    <div className="flex justify-between items-start mb-1">
-                      <h3 className="font-medium">{otherParticipantName}</h3>
-                      {conversation.unreadCount > 0 && (
-                        <span className="bg-black text-white text-xs px-2 py-1 rounded-full">
-                          {conversation.unreadCount}
-                        </span>
-                      )}
+                    <div className="flex items-center gap-3">
+                      <div className="flex-shrink-0">
+                        <img
+                          src={
+                            otherParticipantProfile?.profileImageUrl ||
+                            "https://via.placeholder.com/40"
+                          }
+                          alt={otherParticipantName}
+                          className="w-10 h-10 rounded-full object-cover"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex justify-between items-start mb-1">
+                          <h3 className="font-medium truncate">
+                            {otherParticipantName}
+                          </h3>
+                          {conversation.unreadCount > 0 && (
+                            <span className="bg-black text-white text-xs px-2 py-1 rounded-full">
+                              {conversation.unreadCount}
+                            </span>
+                          )}
+                        </div>
+                        {conversation.lastMessage && (
+                          <p className="text-sm text-gray-500 truncate">
+                            {conversation.lastMessage.content}
+                          </p>
+                        )}
+                        <p className="text-xs text-gray-400 mt-1">
+                          {conversation.lastMessage?.timestamp.toLocaleString()}
+                        </p>
+                      </div>
                     </div>
-                    {conversation.lastMessage && (
-                      <p className="text-sm text-gray-500 truncate">
-                        {conversation.lastMessage.content}
-                      </p>
-                    )}
-                    <p className="text-xs text-gray-400 mt-1">
-                      {conversation.lastMessage?.timestamp.toLocaleString()}
-                    </p>
                   </div>
                 );
               })
@@ -158,43 +190,65 @@ export const MessagesPage: React.FC = () => {
           {activeConversation ? (
             <>
               {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-4">
-                {messages.map((message) => {
-                  const isCurrentUser = message.senderId === user?.id;
-                  const senderName = isCurrentUser
-                    ? user?.name || "You"
-                    : participantNames[message.senderId] || "Loading...";
+              <div
+                ref={messagesContainerRef}
+                className="flex-1 overflow-y-auto p-3"
+              >
+                <div className="space-y-3">
+                  {messages.map((message) => {
+                    const isCurrentUser = message.senderId === user?.id;
+                    const senderName = isCurrentUser
+                      ? user?.name || "You"
+                      : participantNames[message.senderId] || "Loading...";
+                    const senderProfile = isCurrentUser
+                      ? user
+                      : participantProfiles[message.senderId];
 
-                  return (
-                    <div
-                      key={message.id}
-                      className={`flex mb-4 ${
-                        isCurrentUser ? "justify-end" : "justify-start"
-                      }`}
-                    >
+                    return (
                       <div
-                        className={`max-w-[70%] rounded-lg px-4 py-2 ${
-                          isCurrentUser ? "bg-black text-white" : "bg-gray-100"
+                        key={message.id}
+                        className={`flex items-start gap-3 ${
+                          isCurrentUser ? "flex-row-reverse" : "flex-row"
                         }`}
                       >
-                        <p className="text-xs mb-1 opacity-75">{senderName}</p>
-                        <p>{message.content}</p>
-                        <p
-                          className={`text-xs mt-1 ${
-                            isCurrentUser ? "text-gray-300" : "text-gray-500"
+                        <div className="flex-shrink-0">
+                          <img
+                            src={
+                              senderProfile?.profileImageUrl ||
+                              "https://via.placeholder.com/40"
+                            }
+                            alt={senderName}
+                            className="w-8 h-8 rounded-full object-cover"
+                          />
+                        </div>
+                        <div
+                          className={`max-w-[70%] rounded-lg px-4 py-2 ${
+                            isCurrentUser
+                              ? "bg-black text-white"
+                              : "bg-gray-100"
                           }`}
                         >
-                          {message.timestamp.toLocaleString()}
-                        </p>
+                          <p className="text-xs mb-1 opacity-75">
+                            {senderName}
+                          </p>
+                          <p>{message.content}</p>
+                          <p
+                            className={`text-xs mt-1 ${
+                              isCurrentUser ? "text-gray-300" : "text-gray-500"
+                            }`}
+                          >
+                            {message.timestamp.toLocaleString()}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
                 <div ref={messagesEndRef} />
               </div>
 
               {/* Message Input */}
-              <div className="p-4 border-t border-gray-200">
+              <div className="p-3 border-t border-gray-200 flex-shrink-0">
                 <form onSubmit={handleSendMessage} className="flex gap-2">
                   <input
                     type="text"
