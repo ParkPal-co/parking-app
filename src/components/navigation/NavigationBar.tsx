@@ -129,13 +129,22 @@ export const NavigationBar: React.FC = () => {
                   Messages
                 </Link>
                 {isAdmin && (
-                  <Link
-                    to="/registered-events"
-                    className="block px-6 py-3 text-base text-gray-700 hover:bg-gray-100"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Registered Events
-                  </Link>
+                  <>
+                    <Link
+                      to="/registered-events"
+                      className="block px-6 py-3 text-base text-gray-700 hover:bg-gray-100"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Registered Events
+                    </Link>
+                    <Link
+                      to="/register-event"
+                      className="block px-6 py-3 text-base text-gray-700 hover:bg-gray-100"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Register an Event
+                    </Link>
+                  </>
                 )}
                 <button
                   onClick={() => {
