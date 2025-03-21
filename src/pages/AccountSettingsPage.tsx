@@ -104,12 +104,6 @@ export const AccountSettingsPage: React.FC = () => {
       <div className="max-w-2xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Account Settings</h1>
-          <button
-            onClick={() => (isEditing ? handleCancel() : setIsEditing(true))}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md"
-          >
-            {isEditing ? "Cancel" : "Edit"}
-          </button>
         </div>
 
         {error && (
@@ -131,7 +125,7 @@ export const AccountSettingsPage: React.FC = () => {
               Profile Picture
             </label>
             <div className="flex items-center space-x-4">
-              <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
+              <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
                 {imagePreview || user?.profileImageUrl ? (
                   <img
                     src={imagePreview || user?.profileImageUrl}
@@ -139,7 +133,7 @@ export const AccountSettingsPage: React.FC = () => {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <span className="text-2xl text-gray-400">
+                  <span className="text-4xl text-gray-400">
                     {user?.name?.[0]?.toUpperCase() || "?"}
                   </span>
                 )}
@@ -175,6 +169,20 @@ export const AccountSettingsPage: React.FC = () => {
                 </div>
               )}
             </div>
+          </div>
+
+          <div className="flex justify-end mb-4">
+            <button
+              type="button"
+              onClick={() => (isEditing ? handleCancel() : setIsEditing(true))}
+              className={`px-6 py-2.5 font-medium rounded-md transition-colors ${
+                isEditing
+                  ? "bg-red-100 text-red-700 hover:bg-red-200"
+                  : "bg-black text-white hover:bg-gray-800"
+              }`}
+            >
+              {isEditing ? "Cancel" : "Edit Profile"}
+            </button>
           </div>
 
           <div>

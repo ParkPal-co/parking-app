@@ -31,78 +31,80 @@ const App: React.FC = () => {
     <Router>
       <div className="min-h-screen bg-gray-100">
         <NavigationBar />
-        <Routes>
-          <Route path="/" element={<EventSearchPage />} />
-          <Route path="/events" element={<UpcomingEventsPage />} />
-          <Route path="/rent" element={<DrivewaySelectPage />} />
-          <Route
-            path="/booking-confirmation"
-            element={
-              <ProtectedRoute>
-                <BookingConfirmationPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route
-            path="/my-listings"
-            element={
-              <ProtectedRoute>
-                <MyListingsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/my-bookings"
-            element={
-              <ProtectedRoute>
-                <MyBookingsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/messages"
-            element={
-              <ProtectedRoute>
-                <MessagesPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/account-settings"
-            element={
-              <ProtectedRoute>
-                <AccountSettingsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute>
-                <AdminPanel />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/register-driveway"
-            element={
-              <ProtectedRoute>
-                <RegisterDrivewayPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/register-event"
-            element={
-              <ProtectedRoute>
-                <RegisterAnEventPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+        <div className="pt-20">
+          <Routes>
+            <Route path="/" element={<EventSearchPage />} />
+            <Route path="/events" element={<UpcomingEventsPage />} />
+            <Route path="/rent" element={<DrivewaySelectPage />} />
+            <Route
+              path="/booking-confirmation"
+              element={
+                <ProtectedRoute>
+                  <BookingConfirmationPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route
+              path="/my-listings"
+              element={
+                <ProtectedRoute>
+                  <MyListingsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-bookings"
+              element={
+                <ProtectedRoute>
+                  <MyBookingsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/messages"
+              element={
+                <ProtectedRoute>
+                  <MessagesPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/account-settings"
+              element={
+                <ProtectedRoute>
+                  <AccountSettingsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute>
+                  <AdminPanel />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/register-driveway"
+              element={
+                <ProtectedRoute>
+                  <RegisterDrivewayPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/register-event"
+              element={
+                <ProtectedRoute>
+                  <RegisterAnEventPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </div>
       </div>
     </Router>
   );
