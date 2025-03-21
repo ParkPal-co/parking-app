@@ -25,9 +25,10 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 const BookingForm: React.FC<{
   event: Event;
   spot: ParkingSpot;
+  clientSecret: string;
   onSuccess: () => void;
   onError: (error: string) => void;
-}> = ({ event, spot, onSuccess, onError }) => {
+}> = ({ event, spot, clientSecret, onSuccess, onError }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
@@ -40,7 +41,20 @@ const BookingForm: React.FC<{
     try {
       setLoading(true);
 
-      // Create the booking
+      // Confirm the payment with Stripe
+      const { error: paymentError } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: window.location.origin + "/my-bookings",
+        },
+        redirect: "if_required",
+      });
+
+      if (paymentError) {
+        throw new Error(paymentError.message);
+      }
+
+      // Create the booking after successful payment
       const booking = await createBooking(
         spot,
         user.id,
@@ -122,15 +136,23 @@ export const BookingConfirmationPage: React.FC = () => {
         setSpot(spotData);
 
         // Create a payment intent
-        const response = await fetch("/api/create-payment-intent", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            amount: spotData.price * 100, // Convert to cents
-          }),
-        });
+        const response = await fetch(
+          "http://localhost:3001/api/create-payment-intent",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              amount: spotData.price,
+              currency: "usd",
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to create payment intent");
+        }
 
         const { clientSecret } = await response.json();
         setClientSecret(clientSecret);
@@ -236,6 +258,7 @@ export const BookingConfirmationPage: React.FC = () => {
               <BookingForm
                 event={event}
                 spot={spot}
+                clientSecret={clientSecret}
                 onSuccess={handleSuccess}
                 onError={setError}
               />

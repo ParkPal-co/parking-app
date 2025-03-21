@@ -49,6 +49,23 @@ service cloud.firestore {
       allow update, delete: if isAuthenticated() && isOwner(resource.data.ownerId);
     }
 
+    // Bookings rules
+    match /bookings/{bookingId} {
+      allow read: if isAuthenticated() && (
+        request.auth.uid == resource.data.userId || 
+        request.auth.uid == resource.data.hostId
+      );
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && (
+        request.auth.uid == resource.data.userId || 
+        request.auth.uid == resource.data.hostId
+      );
+      allow delete: if isAuthenticated() && (
+        request.auth.uid == resource.data.userId || 
+        request.auth.uid == resource.data.hostId
+      );
+    }
+
     // User profiles rules
     match /users/{userId} {
       allow read: if true;  // Allow reading user profiles
