@@ -16,6 +16,20 @@ import { Event, ParkingSpot } from "../types";
 import { fetchParkingSpots } from "../services/parkingSpotService";
 import { fetchEventById } from "../services/eventService";
 
+// Add animation keyframes
+const fadeInFromTop = {
+  "@keyframes fadeInFromTop": {
+    "0%": {
+      opacity: "0",
+      transform: "translateY(-20px)",
+    },
+    "100%": {
+      opacity: "1",
+      transform: "translateY(0)",
+    },
+  },
+};
+
 const mapContainerStyle = {
   width: "100%",
   height: "100%",
@@ -132,7 +146,7 @@ export const DrivewaySelectPage: React.FC = () => {
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Left side - Driveway listings */}
         <div className="lg:w-1/2">
-          <div className="mb-6">
+          <div className="mb-6 opacity-0 animate-fade-in-from-top [animation-fill-mode:forwards]">
             <h1 className="text-2xl font-bold mb-2">{event.title}</h1>
             <p className="text-gray-600">
               {new Date(event.startDate).toLocaleDateString()}
@@ -142,27 +156,35 @@ export const DrivewaySelectPage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {spots.length === 0 ? (
-              <div className="text-center py-8 col-span-2">
+              <div className="text-center py-8 col-span-2 opacity-0 animate-fade-in-from-top [animation-delay:0.2s] [animation-fill-mode:forwards]">
                 <p className="text-gray-600">
                   No parking spots available for this event
                 </p>
               </div>
             ) : (
-              spots.map((spot) => (
-                <ParkingSpotCard
+              spots.map((spot, index) => (
+                <div
                   key={spot.id}
-                  spot={spot}
-                  isSelected={selectedSpot?.id === spot.id}
-                  onSelect={handleSpotSelect}
-                  onBook={handleBookSpot}
-                />
+                  className="opacity-0 animate-fade-in-from-top transition-all duration-300 hover:shadow-xl hover:scale-[1.02]"
+                  style={{
+                    animationDelay: `${0.2 + index * 0.1}s`,
+                    animationFillMode: "forwards",
+                  }}
+                >
+                  <ParkingSpotCard
+                    spot={spot}
+                    isSelected={selectedSpot?.id === spot.id}
+                    onSelect={handleSpotSelect}
+                    onBook={handleBookSpot}
+                  />
+                </div>
               ))
             )}
           </div>
         </div>
 
         {/* Right side - Map */}
-        <div className="lg:w-1/2">
+        <div className="lg:w-1/2 opacity-0 animate-fade-in-from-top [animation-delay:0.4s] [animation-fill-mode:forwards]">
           <div className="sticky top-24 h-[calc(100vh-8rem)] rounded-lg overflow-hidden shadow-lg border border-gray-200">
             <GoogleMap
               mapContainerStyle={mapContainerStyle}

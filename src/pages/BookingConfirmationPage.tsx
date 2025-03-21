@@ -19,6 +19,20 @@ import {
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 
+// Add animation keyframes
+const fadeInFromTop = {
+  "@keyframes fadeInFromTop": {
+    "0%": {
+      opacity: "0",
+      transform: "translateY(-20px)",
+    },
+    "100%": {
+      opacity: "1",
+      transform: "translateY(0)",
+    },
+  },
+};
+
 // Initialize Stripe
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
@@ -82,7 +96,10 @@ const BookingForm: React.FC<{
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-6 opacity-0 animate-fade-in-from-top [animation-delay:0.4s] [animation-fill-mode:forwards]"
+    >
       <div className="bg-white rounded-lg shadow-md p-6">
         <h2 className="text-xl font-semibold mb-4">Payment Details</h2>
         <PaymentElement />
@@ -199,13 +216,21 @@ export const BookingConfirmationPage: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">Confirm Your Booking</h1>
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-3xl font-bold mb-8 opacity-0 animate-fade-in-from-top [animation-fill-mode:forwards]">
+          Confirm Your Booking
+        </h1>
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6 opacity-0 animate-fade-in-from-top [animation-delay:0.2s] [animation-fill-mode:forwards]">
+            {error}
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Left side - Booking details */}
           <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="bg-white rounded-lg shadow-md p-6 opacity-0 animate-fade-in-from-top [animation-delay:0.2s] [animation-fill-mode:forwards]">
               <h2 className="text-xl font-semibold mb-4">Event Details</h2>
               <p className="text-gray-600">{event.title}</p>
               <p className="text-gray-600">
@@ -215,7 +240,7 @@ export const BookingConfirmationPage: React.FC = () => {
               <p className="text-gray-600">{event.location.address}</p>
             </div>
 
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="bg-white rounded-lg shadow-md p-6 opacity-0 animate-fade-in-from-top [animation-delay:0.3s] [animation-fill-mode:forwards]">
               <h2 className="text-xl font-semibold mb-4">
                 Parking Spot Details
               </h2>
@@ -246,23 +271,30 @@ export const BookingConfirmationPage: React.FC = () => {
 
           {/* Right side - Payment form */}
           <div>
-            <Elements
-              stripe={stripePromise}
-              options={{
-                clientSecret,
-                appearance: {
-                  theme: "stripe",
-                },
-              }}
-            >
-              <BookingForm
-                event={event}
-                spot={spot}
-                clientSecret={clientSecret}
-                onSuccess={handleSuccess}
-                onError={setError}
-              />
-            </Elements>
+            {clientSecret && (
+              <Elements
+                stripe={stripePromise}
+                options={{
+                  clientSecret,
+                  appearance: {
+                    theme: "stripe",
+                    variables: {
+                      colorPrimary: "#000000",
+                      colorBackground: "#ffffff",
+                      colorText: "#1f2937",
+                    },
+                  },
+                }}
+              >
+                <BookingForm
+                  event={event}
+                  spot={spot}
+                  clientSecret={clientSecret}
+                  onSuccess={handleSuccess}
+                  onError={setError}
+                />
+              </Elements>
+            )}
           </div>
         </div>
       </div>
