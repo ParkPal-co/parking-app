@@ -21,12 +21,12 @@ export const ParkingSpotCard: React.FC<ParkingSpotCardProps> = ({
 }) => {
   return (
     <div
-      className={`bg-white rounded-lg shadow-md overflow-hidden border-2 transition-all ${
+      className={`bg-white rounded-lg shadow-md overflow-hidden border-2 transition-all h-[420px] flex flex-col ${
         isSelected ? "border-black" : "border-transparent"
       } ${onSelect ? "cursor-pointer" : ""}`}
       onClick={() => onSelect?.(spot)}
     >
-      <div className="relative h-48">
+      <div className="relative h-48 flex-shrink-0">
         <img
           src={spot.images[0] || "https://placehold.co/600x400"}
           alt={spot.address}
@@ -36,8 +36,10 @@ export const ParkingSpotCard: React.FC<ParkingSpotCardProps> = ({
           ${spot.price}
         </div>
       </div>
-      <div className="p-4">
-        <h3 className="text-lg font-semibold mb-2">{spot.address}</h3>
+      <div className="p-4 flex flex-col flex-grow">
+        <h3 className="text-lg font-semibold mb-2 line-clamp-1">
+          {spot.address}
+        </h3>
         <p className="text-sm text-gray-500 mb-2">
           Available:{" "}
           {new Date(spot.availability.start).toLocaleTimeString([], {
@@ -50,13 +52,15 @@ export const ParkingSpotCard: React.FC<ParkingSpotCardProps> = ({
             minute: "2-digit",
           })}
         </p>
-        <p className="text-gray-600 mb-4">{spot.description}</p>
+        <p className="text-gray-600 mb-4 line-clamp-3 flex-grow">
+          {spot.description}
+        </p>
         <button
           onClick={(e) => {
             e.stopPropagation();
             onBook(spot);
           }}
-          className="w-full bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-colors"
+          className="w-full bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-colors mt-auto"
         >
           Book Now
         </button>

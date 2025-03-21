@@ -8,6 +8,20 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useEvents } from "../hooks/useEvents";
 import { Event } from "../types";
 
+// Add animation keyframes
+const fadeInFromTop = {
+  "@keyframes fadeInFromTop": {
+    "0%": {
+      opacity: "0",
+      transform: "translateY(-20px)",
+    },
+    "100%": {
+      opacity: "1",
+      transform: "translateY(0)",
+    },
+  },
+};
+
 const calculateDistance = (
   lat1: number,
   lon1: number,
@@ -129,7 +143,7 @@ export const UpcomingEventsPage: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex justify-between items-center mb-8 opacity-0 animate-fade-in-from-top [animation-fill-mode:forwards]">
           <h1 className="text-3xl font-bold">Upcoming Events</h1>
           <button
             onClick={handleShowNearbyEvents}
@@ -140,7 +154,7 @@ export const UpcomingEventsPage: React.FC = () => {
         </div>
 
         {/* Search Bar */}
-        <div className="mb-8">
+        <div className="mb-8 opacity-0 animate-fade-in-from-top [animation-delay:0.2s] [animation-fill-mode:forwards]">
           <form onSubmit={handleSearchSubmit}>
             <div className="relative">
               <input
@@ -161,15 +175,20 @@ export const UpcomingEventsPage: React.FC = () => {
         </div>
 
         {sortedEvents.length === 0 ? (
-          <div className="text-center py-8">
+          <div className="text-center py-8 opacity-0 animate-fade-in-from-top [animation-delay:0.4s] [animation-fill-mode:forwards]">
             <p className="text-gray-600">No upcoming events found</p>
           </div>
         ) : (
           <div className="space-y-6">
-            {sortedEvents.map((event) => (
+            {sortedEvents.map((event, index) => (
               <div
                 key={event.id}
-                className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 flex"
+                className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 flex opacity-0 animate-fade-in-from-top transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:border-gray-300 cursor-pointer"
+                style={{
+                  animationDelay: `${0.4 + index * 0.1}s`,
+                  animationFillMode: "forwards",
+                }}
+                onClick={() => handleFindParking(event.id)}
               >
                 {event.imageUrl && (
                   <div className="w-48 h-auto">
