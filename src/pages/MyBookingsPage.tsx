@@ -17,6 +17,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase/config";
 import { Booking, ParkingSpot, Event } from "../types";
+import { createConversation } from "../services/messageService";
 
 interface BookingWithDetails extends Booking {
   parkingSpot?: ParkingSpot;
@@ -100,8 +101,22 @@ export const MyBookingsPage: React.FC = () => {
     fetchBookings();
   }, [user]);
 
-  const handleMessageHost = (booking: BookingWithDetails) => {
-    navigate(`/messages?hostId=${booking.hostId}&bookingId=${booking.id}`);
+  const handleMessageHost = async (booking: BookingWithDetails) => {
+    try {
+      // Create a conversation with an initial message
+      await createConversation(
+        user!.id,
+        booking.hostId,
+        booking.id,
+        `Hi! I have a booking for your parking spot at ${booking.parkingSpot?.address}. Can we discuss the details?`
+      );
+
+      // Navigate to messages page
+      navigate(`/messages?hostId=${booking.hostId}&bookingId=${booking.id}`);
+    } catch (err) {
+      console.error("Error creating conversation:", err);
+      setError("Failed to start conversation with host");
+    }
   };
 
   if (!user) {
