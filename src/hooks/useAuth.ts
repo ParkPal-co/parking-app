@@ -23,6 +23,10 @@ export function useAuth() {
         const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
         if (userDoc.exists()) {
           setUser(userDoc.data() as User);
+        } else {
+          console.error('User document not found in Firestore:', firebaseUser.uid);
+          await signOut(auth);
+          setUser(null);
         }
       } else {
         setUser(null);
@@ -58,6 +62,7 @@ export function useAuth() {
       setUser(userData);
       return userData;
     } catch (error) {
+      console.error('Error during signup:', error);
       throw error;
     }
   };
@@ -66,12 +71,20 @@ export function useAuth() {
     try {
       const { user: firebaseUser } = await signInWithEmailAndPassword(auth, email, password);
       const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
-      if (userDoc.exists()) {
-        const userData = userDoc.data() as User;
-        setUser(userData);
-        return userData;
+      
+      if (!userDoc.exists()) {
+        console.error('User document not found in Firestore:', firebaseUser.uid);
+        await signOut(auth);
+        throw new Error('User account not found. Please try signing up first.');
       }
+      
+      const userData = userDoc.data() as User;
+      setUser(userData);
+      return userData;
     } catch (error) {
+      console.error('Error during login:', error);
+      // Sign out the user if they were signed in but their document wasn't found
+      await signOut(auth);
       throw error;
     }
   };
@@ -81,6 +94,7 @@ export function useAuth() {
       await updateDoc(doc(db, 'users', userId), data);
       setUser(prev => prev ? { ...prev, ...data } : null);
     } catch (error) {
+      console.error('Error updating user profile:', error);
       throw error;
     }
   };
@@ -112,6 +126,7 @@ export function useAuth() {
         return userData;
       }
     } catch (error) {
+      console.error('Error during social login:', error);
       throw error;
     }
   };
