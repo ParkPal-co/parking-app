@@ -1,26 +1,15 @@
-rules_version = '2';
-
 service firebase.storage {
   match /b/{bucket}/o {
-    match /driveways/{userId}/{allPaths=**} {
-      // Allow read access to everyone
+    match /parkingSpots/{userId}/{fileName} {
       allow read: if true;
-      
-      // Allow write access only to authenticated users for their own directory
       allow write: if request.auth != null 
-                  && request.auth.uid == userId
-                  && request.resource.size < 5 * 1024 * 1024 // 5MB max file size
-                  && request.resource.contentType.matches('image/.*'); // Only allow images
+                   && request.auth.uid == userId;
     }
-    match /parkingSpots/{userId}/{allPaths=**} {
-      // Allow read access to everyone
+    
+    match /profile-images/{userId}/{fileName} {
       allow read: if true;
-      
-      // Allow write access only to authenticated users for their own directory
       allow write: if request.auth != null 
-                  && request.auth.uid == userId
-                  && request.resource.size < 5 * 1024 * 1024 // 5MB max file size
-                  && request.resource.contentType.matches('image/.*'); // Only allow images
+                   && request.auth.uid == userId;
     }
   }
-} 
+}

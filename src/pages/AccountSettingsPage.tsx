@@ -3,17 +3,53 @@
  * Page component for user account settings
  */
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export const AccountSettingsPage: React.FC = () => {
   const { user, updateUserProfile } = useAuth();
+  const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(user?.name || "");
   const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || "");
   const [address, setAddress] = useState(user?.address || "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [newProfileImage, setNewProfileImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const storage = getStorage();
+
+  // Update form data when user data changes
+  useEffect(() => {
+    if (user) {
+      setName(user.name || "");
+      setPhoneNumber(user.phoneNumber || "");
+      setAddress(user.address || "");
+    }
+  }, [user]);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      if (file.size > 5 * 1024 * 1024) {
+        // 5MB limit
+        setError("Image size should be less than 5MB");
+        return;
+      }
+
+      const validTypes = ["image/jpeg", "image/png", "image/gif"];
+      if (!validTypes.includes(file.type)) {
+        setError("Please upload a valid image file (JPEG, PNG, or GIF)");
+        return;
+      }
+
+      setNewProfileImage(file);
+      setImagePreview(URL.createObjectURL(file));
+      setError(""); // Clear any previous errors
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,13 +60,27 @@ export const AccountSettingsPage: React.FC = () => {
       setError(null);
       setSuccess(false);
 
+      let profileImageUrl = undefined;
+      if (newProfileImage) {
+        const storageRef = ref(
+          storage,
+          `profile-images/${user.id}/${Date.now()}-${newProfileImage.name}`
+        );
+        await uploadBytes(storageRef, newProfileImage);
+        profileImageUrl = await getDownloadURL(storageRef);
+      }
+
       await updateUserProfile(user.id, {
         name,
         phoneNumber,
         address,
+        ...(profileImageUrl ? { profileImageUrl } : {}),
       });
 
       setSuccess(true);
+      setIsEditing(false);
+      setNewProfileImage(null);
+      setImagePreview(null);
     } catch (err) {
       console.error("Error updating profile:", err);
       setError("Failed to update profile");
@@ -39,10 +89,28 @@ export const AccountSettingsPage: React.FC = () => {
     }
   };
 
+  const handleCancel = () => {
+    setIsEditing(false);
+    setName(user?.name || "");
+    setPhoneNumber(user?.phoneNumber || "");
+    setAddress(user?.address || "");
+    setNewProfileImage(null);
+    setImagePreview(null);
+    setError(null);
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">Account Settings</h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold">Account Settings</h1>
+          <button
+            onClick={() => (isEditing ? handleCancel() : setIsEditing(true))}
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md"
+          >
+            {isEditing ? "Cancel" : "Edit"}
+          </button>
+        </div>
 
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
@@ -57,6 +125,58 @@ export const AccountSettingsPage: React.FC = () => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Profile Image */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Profile Picture
+            </label>
+            <div className="flex items-center space-x-4">
+              <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
+                {imagePreview || user?.profileImageUrl ? (
+                  <img
+                    src={imagePreview || user?.profileImageUrl}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-2xl text-gray-400">
+                    {user?.name?.[0]?.toUpperCase() || "?"}
+                  </span>
+                )}
+              </div>
+              {isEditing && (
+                <div className="flex flex-col space-y-2">
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleImageChange}
+                    accept="image/jpeg,image/png,image/gif"
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md"
+                  >
+                    {user?.profileImageUrl ? "Change Photo" : "Upload Photo"}
+                  </button>
+                  {(imagePreview || user?.profileImageUrl) && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setNewProfileImage(null);
+                        setImagePreview(null);
+                      }}
+                      className="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700"
+                    >
+                      Remove Photo
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
           <div>
             <label
               htmlFor="email"
@@ -86,7 +206,8 @@ export const AccountSettingsPage: React.FC = () => {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black sm:text-sm"
+              disabled={!isEditing}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black sm:text-sm disabled:bg-gray-50 disabled:text-gray-500"
             />
           </div>
 
@@ -101,7 +222,8 @@ export const AccountSettingsPage: React.FC = () => {
               type="tel"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black sm:text-sm"
+              disabled={!isEditing}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black sm:text-sm disabled:bg-gray-50 disabled:text-gray-500"
             />
           </div>
 
@@ -116,19 +238,22 @@ export const AccountSettingsPage: React.FC = () => {
               type="text"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black sm:text-sm"
+              disabled={!isEditing}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black sm:text-sm disabled:bg-gray-50 disabled:text-gray-500"
             />
           </div>
 
-          <div className="flex justify-end">
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-black text-white py-2 px-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
-            >
-              {loading ? "Saving..." : "Save Changes"}
-            </button>
-          </div>
+          {isEditing && (
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                disabled={loading}
+                className="bg-black text-white py-2 px-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-50"
+              >
+                {loading ? "Saving..." : "Save Changes"}
+              </button>
+            </div>
+          )}
         </form>
 
         <div className="mt-12 pt-8 border-t border-gray-200">
