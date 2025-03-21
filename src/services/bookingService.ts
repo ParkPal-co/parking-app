@@ -1,15 +1,11 @@
 /**
  * src/services/bookingService.ts
- * Service for handling booking operations and Stripe integration
+ * Service for handling booking operations
  */
 
 import { collection, addDoc, doc, updateDoc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/config";
 import { Booking, ParkingSpot } from "../types";
-import { loadStripe } from "@stripe/stripe-js";
-
-// Initialize Stripe
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 export async function createBooking(
   spot: ParkingSpot,
@@ -28,56 +24,11 @@ export async function createBooking(
       startTime,
       endTime,
       totalPrice,
-      status: "pending" as const,
+      status: "confirmed" as const, // Set as confirmed since payment is already processed
       createdAt: new Date(),
     };
 
     const bookingRef = await addDoc(collection(db, "bookings"), bookingData);
-
-    // Create a Stripe payment intent
-    const response = await fetch("/api/create-payment-intent", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        amount: totalPrice * 100, // Convert to cents
-        bookingId: bookingRef.id,
-      }),
-    });
-
-    const { clientSecret } = await response.json();
-
-    // Load Stripe
-    const stripe = await stripePromise;
-    if (!stripe) throw new Error("Stripe failed to load");
-
-    // Confirm the payment
-    const { error: paymentError } = await stripe.confirmCardPayment(clientSecret, {
-      payment_method: {
-        card: {
-          // This would come from your Stripe Elements form
-          // For now, we'll use a test card
-          number: "4242424242424242",
-          exp_month: 12,
-          exp_year: 2025,
-          cvc: "123",
-        },
-      },
-    });
-
-    if (paymentError) {
-      // Update booking status to failed
-      await updateDoc(doc(db, "bookings", bookingRef.id), {
-        status: "cancelled",
-      });
-      throw new Error(paymentError.message);
-    }
-
-    // Update booking status to confirmed
-    await updateDoc(doc(db, "bookings", bookingRef.id), {
-      status: "confirmed",
-    });
 
     // Update parking spot availability
     await updateDoc(doc(db, "parkingSpots", spot.id!), {

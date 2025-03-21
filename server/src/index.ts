@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
-import Stripe from 'stripe';
 import dotenv from 'dotenv';
+import Stripe from 'stripe';
 
 dotenv.config();
 
@@ -22,6 +22,11 @@ app.use(express.json());
 app.post('/api/create-payment-intent', async (req, res) => {
   try {
     const { amount, currency = 'usd' } = req.body;
+
+    // Validate amount
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ error: 'Invalid amount' });
+    }
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amount * 100), // Convert to cents
