@@ -9,6 +9,7 @@ import { Event, ParkingSpot } from "../types";
 import { fetchEventById } from "../services/eventService";
 import { fetchParkingSpotById } from "../services/parkingSpotService";
 import { createBooking } from "../services/bookingService";
+import { createConversation } from "../services/messageService";
 import { useAuth } from "../hooks/useAuth";
 import {
   PaymentElement,
@@ -30,10 +31,11 @@ const BookingForm: React.FC<{
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!stripe || !elements) return;
+    if (!stripe || !elements || !user) return;
 
     try {
       setLoading(true);
@@ -41,11 +43,19 @@ const BookingForm: React.FC<{
       // Create the booking
       const booking = await createBooking(
         spot,
+        user.id,
         spot.ownerId,
-        spot.ownerId, // hostId is the same as ownerId
         new Date(event.startDate),
         new Date(event.endDate),
         spot.price
+      );
+
+      // Create a conversation between the renter and host
+      await createConversation(
+        user.id,
+        spot.ownerId,
+        booking.id,
+        `Hi! I've just booked your parking spot for ${event.title}. Looking forward to parking there!`
       );
 
       onSuccess();
@@ -112,18 +122,15 @@ export const BookingConfirmationPage: React.FC = () => {
         setSpot(spotData);
 
         // Create a payment intent
-        const response = await fetch(
-          "http://localhost:3001/api/create-payment-intent",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              amount: spotData.price * 100, // Convert to cents
-            }),
-          }
-        );
+        const response = await fetch("/api/create-payment-intent", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            amount: spotData.price * 100, // Convert to cents
+          }),
+        });
 
         const { clientSecret } = await response.json();
         setClientSecret(clientSecret);
@@ -139,7 +146,7 @@ export const BookingConfirmationPage: React.FC = () => {
   }, [eventId, spotId]);
 
   const handleSuccess = () => {
-    navigate("/booking-success");
+    navigate("/messages");
   };
 
   if (loading) {
@@ -180,8 +187,8 @@ export const BookingConfirmationPage: React.FC = () => {
               <h2 className="text-xl font-semibold mb-4">Event Details</h2>
               <p className="text-gray-600">{event.title}</p>
               <p className="text-gray-600">
-                {event.startDate.toLocaleDateString()} -{" "}
-                {event.endDate.toLocaleDateString()}
+                {new Date(event.startDate).toLocaleDateString()} -{" "}
+                {new Date(event.endDate).toLocaleDateString()}
               </p>
               <p className="text-gray-600">{event.location.address}</p>
             </div>

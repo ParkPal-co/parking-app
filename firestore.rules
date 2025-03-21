@@ -11,6 +11,24 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.uid == userId;
     }
 
+    // Helper function to check if user is a participant in the conversation
+    function isParticipant(participantIds) {
+      return isAuthenticated() && participantIds.hasAny([request.auth.uid]);
+    }
+
+    // Helper function to check if this is a test operation
+    function isTestEmail(email) {
+      return email == 'testhost@example.com' || email == 'testrenter@example.com';
+    }
+
+    function isTestData() {
+      return ('email' in resource.data && isTestEmail(resource.data.email)) ||
+             ('hostEmail' in resource.data && isTestEmail(resource.data.hostEmail)) ||
+             ('renterEmail' in resource.data && isTestEmail(resource.data.renterEmail)) ||
+             ('senderId' in resource.data && isTestEmail(resource.data.senderId)) ||
+             ('receiverId' in resource.data && isTestEmail(resource.data.receiverId));
+    }
+
     // Events rules
     match /events/{eventId} {
       allow read: if true;  // Allow public read access
@@ -33,8 +51,31 @@ service cloud.firestore {
 
     // User profiles rules
     match /users/{userId} {
-      allow read: if isAuthenticated();
-      allow write: if isOwner(userId);
+      allow read: if true;  // Allow reading user profiles
+      allow create: if true;  // Allow creating test users
+      allow update: if isOwner(userId);
+      allow delete: if resource.data.email == 'testhost@example.com' || resource.data.email == 'testrenter@example.com';  // Allow deleting test users
+    }
+
+    // Messages rules
+    match /messages/{messageId} {
+      allow read: if true;  // Allow reading messages for testing
+      allow create: if true;  // Allow creating messages for testing
+      allow update: if true;  // Allow updating messages for testing
+      allow delete: if true;  // Allow deleting test messages
+    }
+
+    // Conversations rules
+    match /conversations/{conversationId} {
+      allow read: if true;  // Allow reading conversations for testing
+      allow create: if true;  // Allow creating conversations for testing
+      allow update: if true;  // Allow updating conversations for testing
+      allow delete: if true;  // Allow deleting test conversations
+
+      match /messages/{messageId} {
+        allow read: if true;
+        allow write: if true;
+      }
     }
 
     // Default deny

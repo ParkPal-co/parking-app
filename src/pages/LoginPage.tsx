@@ -24,7 +24,12 @@ export const LoginPage: React.FC = () => {
       const returnPath = sessionStorage.getItem("returnPath") || "/";
       navigate(returnPath);
     } catch (err) {
-      setError("Failed to sign in. Please check your credentials.");
+      console.error("Login error:", err);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Failed to sign in. Please check your credentials.");
+      }
     } finally {
       setLoading(false);
     }
@@ -38,6 +43,7 @@ export const LoginPage: React.FC = () => {
       const returnPath = sessionStorage.getItem("returnPath") || "/";
       navigate(returnPath);
     } catch (err) {
+      console.error("Google sign-in error:", err);
       setError("Failed to sign in with Google.");
     } finally {
       setLoading(false);
@@ -67,6 +73,7 @@ export const LoginPage: React.FC = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-black focus:border-black focus:z-10 sm:text-sm"
                 placeholder="Email address"
+                disabled={loading}
               />
             </div>
             <div>
@@ -77,6 +84,7 @@ export const LoginPage: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-black focus:border-black focus:z-10 sm:text-sm"
                 placeholder="Password"
+                disabled={loading}
               />
             </div>
           </div>
@@ -85,9 +93,9 @@ export const LoginPage: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-50"
             >
-              Sign in
+              {loading ? "Signing in..." : "Sign in"}
             </button>
           </div>
         </form>
@@ -107,7 +115,8 @@ export const LoginPage: React.FC = () => {
           <div className="mt-6">
             <button
               onClick={handleGoogleSignIn}
-              className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+              disabled={loading}
+              className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
             >
               <span className="sr-only">Sign in with Google</span>
               Sign in with Google
@@ -121,6 +130,7 @@ export const LoginPage: React.FC = () => {
             <button
               onClick={() => navigate("/register")}
               className="font-medium text-black hover:text-gray-800"
+              disabled={loading}
             >
               Sign up
             </button>
@@ -129,4 +139,4 @@ export const LoginPage: React.FC = () => {
       </div>
     </div>
   );
-}; 
+};

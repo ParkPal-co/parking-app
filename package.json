@@ -10,7 +10,11 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "add-dummy-data": "tsx src/scripts/addDummyData.ts",
-    "add-dummy-data-admin": "tsx src/scripts/addDummyDataAdmin.ts"
+    "add-dummy-data-admin": "tsx src/scripts/addDummyDataAdmin.ts",
+    "add-test-messages": "tsx src/scripts/addTestMessages.ts",
+    "add-test-users": "tsx src/scripts/addTestUsers.ts",
+    "cleanup-test-data": "tsx src/scripts/cleanupTestData.ts",
+    "setup-test-messaging": "npm run cleanup-test-data && npm run add-test-users && npm run add-test-messages"
   },
   "dependencies": {
     "@googlemaps/google-maps-services-js": "^3.4.0",
