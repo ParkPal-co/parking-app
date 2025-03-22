@@ -38,7 +38,7 @@ const App: React.FC = () => {
             <Route
               path="/"
               element={
-                <PageLayout showBackButton={false}>
+                <PageLayout showBackButton={false} fullWidth={true}>
                   <EventSearchPage />
                 </PageLayout>
               }
