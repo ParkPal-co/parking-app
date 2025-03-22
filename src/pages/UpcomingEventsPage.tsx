@@ -7,6 +7,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEvents } from "../hooks/useEvents";
 import { Event } from "../types";
+import { sortEvents, filterEvents } from "../services/eventService";
 
 // Add animation keyframes
 const fadeInFromTop = {
@@ -22,25 +23,6 @@ const fadeInFromTop = {
   },
 };
 
-const calculateDistance = (
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number
-): number => {
-  const R = 6371; // Earth's radius in km
-  const dLat = ((lat2 - lat1) * Math.PI) / 180;
-  const dLon = ((lon2 - lon1) * Math.PI) / 180;
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-};
-
 export const UpcomingEventsPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -52,12 +34,17 @@ export const UpcomingEventsPage: React.FC = () => {
     lng: number;
   } | null>(null);
 
-  // Update sorted events whenever events change
+  // Update sorted events whenever events or search input changes
   useEffect(() => {
     if (events) {
-      setSortedEvents(events);
+      const filtered = filterEvents(events, searchInput);
+      const sorted = sortEvents(filtered, {
+        sortBy: userLocation ? "distance" : "date",
+        userLocation: userLocation || undefined,
+      });
+      setSortedEvents(sorted);
     }
-  }, [events]);
+  }, [events, searchInput, userLocation]);
 
   // Set initial search input from URL params if present
   useEffect(() => {
@@ -87,21 +74,6 @@ export const UpcomingEventsPage: React.FC = () => {
             lng: position.coords.longitude,
           };
           setUserLocation(userLoc);
-
-          const eventsWithDistance = events.map((event) => ({
-            ...event,
-            distance: calculateDistance(
-              userLoc.lat,
-              userLoc.lng,
-              event.location.coordinates.lat,
-              event.location.coordinates.lng
-            ),
-          }));
-
-          const sorted = [...eventsWithDistance].sort(
-            (a, b) => (a.distance || 0) - (b.distance || 0)
-          );
-          setSortedEvents(sorted);
         },
         (error) => {
           console.error("Error getting location:", error);
