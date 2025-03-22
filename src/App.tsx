@@ -24,6 +24,7 @@ import { AccountSettingsPage } from "./pages/AccountSettingsPage";
 import { AdminPanel } from "./pages/AdminPanel";
 import { RegisterDrivewayPage } from "./pages/RegisterDrivewayPage";
 import { RegisterAnEventPage } from "./pages/RegisterAnEventPage";
+import { RegisteredEventsPage } from "./pages/RegisteredEventsPage";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 
 const App: React.FC = () => {
@@ -99,6 +100,14 @@ const App: React.FC = () => {
               element={
                 <ProtectedRoute>
                   <RegisterAnEventPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/registered-events"
+              element={
+                <ProtectedRoute>
+                  <RegisteredEventsPage />
                 </ProtectedRoute>
               }
             />
