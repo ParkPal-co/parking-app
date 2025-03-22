@@ -11,6 +11,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import { NavigationBar } from "./components/navigation/NavigationBar";
+import { PageLayout } from "./components/layout/PageLayout";
 import { EventSearchPage } from "./pages/EventSearchPage";
 import { UpcomingEventsPage } from "./pages/UpcomingEventsPage";
 import { DrivewaySelectPage } from "./pages/DrivewaySelectPage";
@@ -34,24 +35,63 @@ const App: React.FC = () => {
         <NavigationBar />
         <div className="pt-20">
           <Routes>
-            <Route path="/" element={<EventSearchPage />} />
-            <Route path="/events" element={<UpcomingEventsPage />} />
-            <Route path="/rent" element={<DrivewaySelectPage />} />
+            <Route
+              path="/"
+              element={
+                <PageLayout showBackButton={false}>
+                  <EventSearchPage />
+                </PageLayout>
+              }
+            />
+            <Route
+              path="/events"
+              element={
+                <PageLayout>
+                  <UpcomingEventsPage />
+                </PageLayout>
+              }
+            />
+            <Route
+              path="/rent"
+              element={
+                <PageLayout>
+                  <DrivewaySelectPage />
+                </PageLayout>
+              }
+            />
             <Route
               path="/booking-confirmation"
               element={
                 <ProtectedRoute>
-                  <BookingConfirmationPage />
+                  <PageLayout>
+                    <BookingConfirmationPage />
+                  </PageLayout>
                 </ProtectedRoute>
               }
             />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
+            <Route
+              path="/login"
+              element={
+                <PageLayout>
+                  <LoginPage />
+                </PageLayout>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <PageLayout>
+                  <RegisterPage />
+                </PageLayout>
+              }
+            />
             <Route
               path="/my-listings"
               element={
                 <ProtectedRoute>
-                  <MyListingsPage />
+                  <PageLayout>
+                    <MyListingsPage />
+                  </PageLayout>
                 </ProtectedRoute>
               }
             />
@@ -59,7 +99,9 @@ const App: React.FC = () => {
               path="/my-bookings"
               element={
                 <ProtectedRoute>
-                  <MyBookingsPage />
+                  <PageLayout>
+                    <MyBookingsPage />
+                  </PageLayout>
                 </ProtectedRoute>
               }
             />
@@ -67,7 +109,9 @@ const App: React.FC = () => {
               path="/messages"
               element={
                 <ProtectedRoute>
-                  <MessagesPage />
+                  <PageLayout>
+                    <MessagesPage />
+                  </PageLayout>
                 </ProtectedRoute>
               }
             />
@@ -75,7 +119,9 @@ const App: React.FC = () => {
               path="/account-settings"
               element={
                 <ProtectedRoute>
-                  <AccountSettingsPage />
+                  <PageLayout>
+                    <AccountSettingsPage />
+                  </PageLayout>
                 </ProtectedRoute>
               }
             />
@@ -83,7 +129,9 @@ const App: React.FC = () => {
               path="/admin"
               element={
                 <ProtectedRoute>
-                  <AdminPanel />
+                  <PageLayout>
+                    <AdminPanel />
+                  </PageLayout>
                 </ProtectedRoute>
               }
             />
@@ -91,7 +139,9 @@ const App: React.FC = () => {
               path="/register-driveway"
               element={
                 <ProtectedRoute>
-                  <RegisterDrivewayPage />
+                  <PageLayout>
+                    <RegisterDrivewayPage />
+                  </PageLayout>
                 </ProtectedRoute>
               }
             />
@@ -99,7 +149,9 @@ const App: React.FC = () => {
               path="/register-event"
               element={
                 <ProtectedRoute>
-                  <RegisterAnEventPage />
+                  <PageLayout>
+                    <RegisterAnEventPage />
+                  </PageLayout>
                 </ProtectedRoute>
               }
             />
@@ -107,7 +159,9 @@ const App: React.FC = () => {
               path="/registered-events"
               element={
                 <ProtectedRoute>
-                  <RegisteredEventsPage />
+                  <PageLayout>
+                    <RegisteredEventsPage />
+                  </PageLayout>
                 </ProtectedRoute>
               }
             />
