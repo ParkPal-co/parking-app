@@ -212,6 +212,7 @@ export const DrivewaySelectPage: React.FC = () => {
                   strokeColor: "#FFFFFF",
                   scale: 1.5,
                   labelOrigin: new window.google.maps.Point(15, 12),
+                  anchor: new window.google.maps.Point(15, 12),
                 }}
                 label={{
                   text: "EVENT",
@@ -236,6 +237,7 @@ export const DrivewaySelectPage: React.FC = () => {
                     strokeColor: "#FFFFFF",
                     scale: 1,
                     labelOrigin: new window.google.maps.Point(20, 12),
+                    anchor: new window.google.maps.Point(20, 12),
                   }}
                   label={{
                     text: `$${spot.price}`,
