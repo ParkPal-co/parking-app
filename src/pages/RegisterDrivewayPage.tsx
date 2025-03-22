@@ -415,11 +415,7 @@ export const RegisterDrivewayPage: React.FC = () => {
                 type="button"
                 onClick={handleVerifyAddress}
                 disabled={
-                  addressVerificationLoading ||
-                  !formData.address.street ||
-                  !formData.address.city ||
-                  !formData.address.state ||
-                  !formData.address.zipCode
+                  addressVerificationLoading || !formData.address.street
                 }
                 className="px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
