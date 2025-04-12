@@ -9,7 +9,7 @@ import {
   FacebookAuthProvider,
   signInWithPopup,
 } from 'firebase/auth';
-import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc, runTransaction } from 'firebase/firestore';
 import { auth, db } from '../firebase/config';
 import { User } from '../types';
 
@@ -104,27 +104,30 @@ export function useAuth() {
       const result = await signInWithPopup(auth, provider);
       const { user: firebaseUser } = result;
       
-      // Check if user exists
-      const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
-      
-      if (!userDoc.exists()) {
-        // Create new user document for social login
-        const userData: User = {
-          id: firebaseUser.uid,
-          email: firebaseUser.email!,
-          name: firebaseUser.displayName || '',
-          profileImageUrl: firebaseUser.photoURL || undefined,
-          isHost: false,
-          createdAt: new Date(),
-        };
-        await setDoc(doc(db, 'users', firebaseUser.uid), userData);
-        setUser(userData);
-        return userData;
-      } else {
-        const userData = userDoc.data() as User;
-        setUser(userData);
-        return userData;
-      }
+      // Use a transaction to ensure atomicity
+      const userData = await runTransaction(db, async (transaction) => {
+        const userRef = doc(db, 'users', firebaseUser.uid);
+        const userDoc = await transaction.get(userRef);
+        
+        if (!userDoc.exists()) {
+          // Create new user document for social login
+          const newUserData: User = {
+            id: firebaseUser.uid,
+            email: firebaseUser.email!,
+            name: firebaseUser.displayName || '',
+            profileImageUrl: firebaseUser.photoURL || undefined,
+            isHost: false,
+            createdAt: new Date(),
+          };
+          transaction.set(userRef, newUserData);
+          return newUserData;
+        } else {
+          return userDoc.data() as User;
+        }
+      });
+
+      setUser(userData);
+      return userData;
     } catch (error) {
       console.error('Error during social login:', error);
       throw error;
