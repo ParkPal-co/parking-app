@@ -18,6 +18,7 @@ import {
   Elements,
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
+import { getFunctions, httpsCallable } from "firebase/functions";
 
 // Add animation keyframes
 const fadeInFromTop = {
@@ -152,27 +153,18 @@ export const BookingConfirmationPage: React.FC = () => {
         setEvent(eventData);
         setSpot(spotData);
 
-        // Create a payment intent
-        const response = await fetch(
-          "http://localhost:3001/api/create-payment-intent",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              amount: spotData.price,
-              currency: "usd",
-            }),
-          }
+        // Create a payment intent using Firebase Function
+        const functions = getFunctions();
+        const createPaymentIntent = httpsCallable(
+          functions,
+          "createPaymentIntent"
         );
+        const { data } = await createPaymentIntent({
+          amount: spotData.price,
+          currency: "usd",
+        });
 
-        if (!response.ok) {
-          throw new Error("Failed to create payment intent");
-        }
-
-        const { clientSecret } = await response.json();
-        setClientSecret(clientSecret);
+        setClientSecret((data as { clientSecret: string }).clientSecret);
       } catch (err) {
         console.error("Error loading booking details:", err);
         setError("Failed to load booking details");
