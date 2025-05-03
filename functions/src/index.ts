@@ -18,11 +18,6 @@ initializeApp();
 // Initialize Firestore
 const db = getFirestore();
 
-// Initialize Stripe
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2023-10-16',
-});
-
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
 
@@ -32,48 +27,53 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 // });
 
 // Create a payment intent
-export const createPaymentIntent = onCall<{
-  amount: number;
-  currency: string;
-}>(async (request) => {
-  try {
-    // Check if user is authenticated
-    if (!request.auth) {
-      throw new Error('Authentication required');
+export const createPaymentIntent = onCall(
+  { secrets: ['STRIPE_SECRET_KEY'] },
+  async (request) => {
+    try {
+      // Check if user is authenticated
+      if (!request.auth) {
+        throw new Error('Authentication required');
+      }
+
+      const { amount, currency } = request.data;
+
+      // Validate amount
+      if (!amount || amount <= 0) {
+        throw new Error('Invalid amount');
+      }
+
+      // Initialize Stripe using secret from env
+      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+        apiVersion: '2023-10-16',
+      });
+
+      // Create a payment intent
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount,
+        currency,
+        automatic_payment_methods: {
+          enabled: true,
+        },
+      });
+
+      // Log payment intent in Firestore
+      await db.collection('paymentIntents').doc(paymentIntent.id).set({
+        userId: request.auth.uid,
+        amount,
+        currency,
+        status: paymentIntent.status,
+        created: paymentIntent.created,
+      });
+
+      console.log(`Payment intent ${paymentIntent.id} created for user ${request.auth.uid}`);
+
+      return {
+        clientSecret: paymentIntent.client_secret,
+      };
+    } catch (error) {
+      console.error('Error creating payment intent:', error);
+      throw new Error('Failed to create payment intent');
     }
-
-    const { amount, currency } = request.data;
-
-    // Validate amount
-    if (!amount || amount <= 0) {
-      throw new Error('Invalid amount');
-    }
-
-    // Create a payment intent
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount,
-      currency,
-      automatic_payment_methods: {
-        enabled: true,
-      },
-    });
-
-    // Log payment intent in Firestore
-    await db.collection('paymentIntents').doc(paymentIntent.id).set({
-      userId: request.auth.uid,
-      amount,
-      currency,
-      status: paymentIntent.status,
-      created: paymentIntent.created,
-    });
-
-    console.log(`Payment intent ${paymentIntent.id} created for user ${request.auth.uid}`);
-
-    return {
-      clientSecret: paymentIntent.client_secret,
-    };
-  } catch (error) {
-    console.error('Error creating payment intent:', error);
-    throw new Error('Failed to create payment intent');
   }
-});
+);
