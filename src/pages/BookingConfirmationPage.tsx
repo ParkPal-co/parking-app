@@ -152,19 +152,6 @@ export const BookingConfirmationPage: React.FC = () => {
 
         setEvent(eventData);
         setSpot(spotData);
-
-        // Create a payment intent using Firebase Function
-        const functions = getFunctions();
-        const createPaymentIntent = httpsCallable(
-          functions,
-          "createPaymentIntent"
-        );
-        const { data } = await createPaymentIntent({
-          amount: spotData.price,
-          currency: "usd",
-        });
-
-        setClientSecret((data as { clientSecret: string }).clientSecret);
       } catch (err) {
         console.error("Error loading booking details:", err);
         setError("Failed to load booking details");
@@ -175,6 +162,30 @@ export const BookingConfirmationPage: React.FC = () => {
 
     loadBookingDetails();
   }, [eventId, spotId]);
+
+  // Handler to create payment intent when user clicks Confirm Booking
+  const handleCreatePaymentIntent = async () => {
+    if (!spot) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const functions = getFunctions();
+      const createPaymentIntent = httpsCallable(
+        functions,
+        "createPaymentIntent"
+      );
+      const { data } = await createPaymentIntent({
+        amount: Math.round(spot.price * 100), // Ensure cents
+        currency: "usd",
+      });
+      setClientSecret((data as { clientSecret: string }).clientSecret);
+    } catch (err) {
+      setError("Failed to initiate payment");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSuccess = () => {
     navigate("/messages");
@@ -196,11 +207,11 @@ export const BookingConfirmationPage: React.FC = () => {
     );
   }
 
-  if (!event || !spot || !clientSecret) {
+  if (!event || !spot) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center text-red-600">
-          Booking details not found
+          Booking details not found.
         </div>
       </div>
     );
@@ -208,87 +219,35 @@ export const BookingConfirmationPage: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8 opacity-0 animate-fade-in-from-top [animation-fill-mode:forwards]">
-          Confirm Your Booking
-        </h1>
-
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6 opacity-0 animate-fade-in-from-top [animation-delay:0.2s] [animation-fill-mode:forwards]">
-            {error}
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Left side - Booking details */}
-          <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow-md p-6 opacity-0 animate-fade-in-from-top [animation-delay:0.2s] [animation-fill-mode:forwards]">
-              <h2 className="text-xl font-semibold mb-4">Event Details</h2>
-              <p className="text-gray-600">{event.title}</p>
-              <p className="text-gray-600">
-                {new Date(event.startDate).toLocaleDateString()} -{" "}
-                {new Date(event.endDate).toLocaleDateString()}
-              </p>
-              <p className="text-gray-600">{event.location.address}</p>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-md p-6 opacity-0 animate-fade-in-from-top [animation-delay:0.3s] [animation-fill-mode:forwards]">
-              <h2 className="text-xl font-semibold mb-4">
-                Parking Spot Details
-              </h2>
-              <div className="relative h-48 mb-4">
-                <img
-                  src={spot.images[0] || "https://placehold.co/600x400"}
-                  alt={spot.address}
-                  className="w-full h-full object-cover rounded-md"
-                />
-              </div>
-              <p className="text-gray-600">{spot.address}</p>
-              <p className="text-gray-500 text-sm mt-2">
-                Available:{" "}
-                {new Date(spot.availability.start).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}{" "}
-                -{" "}
-                {new Date(spot.availability.end).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </p>
-              <p className="text-gray-600 mt-2">{spot.description}</p>
-              <p className="text-2xl font-bold mt-2">${spot.price}</p>
-            </div>
-          </div>
-
-          {/* Right side - Payment form */}
-          <div>
-            {clientSecret && (
-              <Elements
-                stripe={stripePromise}
-                options={{
-                  clientSecret,
-                  appearance: {
-                    theme: "stripe",
-                    variables: {
-                      colorPrimary: "#000000",
-                      colorBackground: "#ffffff",
-                      colorText: "#1f2937",
-                    },
-                  },
-                }}
-              >
-                <BookingForm
-                  event={event}
-                  spot={spot}
-                  clientSecret={clientSecret}
-                  onSuccess={handleSuccess}
-                  onError={setError}
-                />
-              </Elements>
-            )}
-          </div>
+      <div className="max-w-xl mx-auto bg-white rounded-lg shadow-md p-8">
+        <h1 className="text-2xl font-bold mb-4">Confirm Your Booking</h1>
+        <div className="mb-6">
+          <div className="font-semibold">Event:</div>
+          <div>{event.title}</div>
+          <div className="font-semibold mt-2">Parking Spot:</div>
+          <div>{spot.address}</div>
+          <div className="font-semibold mt-2">Price:</div>
+          <div>${spot.price.toFixed(2)}</div>
         </div>
+        {!clientSecret ? (
+          <button
+            onClick={handleCreatePaymentIntent}
+            className="w-full bg-black text-white py-3 rounded-md hover:bg-gray-800 disabled:bg-gray-400"
+            disabled={loading}
+          >
+            {loading ? "Processing..." : "Confirm Booking"}
+          </button>
+        ) : (
+          <Elements stripe={stripePromise} options={{ clientSecret }}>
+            <BookingForm
+              event={event}
+              spot={spot}
+              clientSecret={clientSecret}
+              onSuccess={handleSuccess}
+              onError={setError}
+            />
+          </Elements>
+        )}
       </div>
     </div>
   );
