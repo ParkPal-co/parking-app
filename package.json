@@ -13,7 +13,11 @@
     "add-test-messages": "tsx src/scripts/addTestMessages.ts",
     "add-test-users": "tsx src/scripts/addTestUsers.ts",
     "cleanup-test-data": "tsx src/scripts/cleanupTestData.ts",
-    "setup-test-messaging": "npm run cleanup-test-data && npm run add-test-users && npm run add-test-messages"
+    "setup-test-messaging": "npm run cleanup-test-data && npm run add-test-users && npm run add-test-messages",
+    "deploy": "firebase deploy",
+    "deploy:functions": "firebase deploy --only functions",
+    "deploy:hosting": "firebase deploy --only hosting",
+    "emulators": "firebase emulators:start"
   },
   "dependencies": {
     "@googlemaps/google-maps-services-js": "^3.4.0",
