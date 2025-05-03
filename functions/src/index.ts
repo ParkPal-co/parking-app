@@ -1,68 +1,79 @@
 /**
- * functions/src/index.ts
- * Firebase Functions for the Event Parking App
+ * Import function triggers from their respective submodules:
+ *
+ * import {onCall} from "firebase-functions/v2/https";
+ * import {onDocumentWritten} from "firebase-functions/v2/firestore";
+ *
+ * See a full list of supported triggers at https://firebase.google.com/docs/functions
  */
 
-import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
+import { initializeApp } from 'firebase-admin/app';
+import { getFirestore } from 'firebase-admin/firestore';
+import { onCall } from 'firebase-functions/v2/https';
 import Stripe from 'stripe';
 
 // Initialize Firebase Admin
-admin.initializeApp();
+initializeApp();
 
-// Initialize Stripe with secret key from environment variables
+// Initialize Firestore
+const db = getFirestore();
+
+// Initialize Stripe
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2023-10-16',
 });
 
+// Start writing functions
+// https://firebase.google.com/docs/functions/typescript
+
+// export const helloWorld = onRequest((request, response) => {
+//   logger.info("Hello logs!", {structuredData: true});
+//   response.send("Hello from Firebase!");
+// });
+
 // Create a payment intent
-export const createPaymentIntent = functions.https.onCall(async (data, context) => {
-  // Ensure user is authenticated
-  if (!context.auth) {
-    throw new functions.https.HttpsError(
-      'unauthenticated',
-      'The function must be called while authenticated.'
-    );
-  }
-
-  const { amount, currency = 'usd' } = data;
-
-  // Validate amount
-  if (!amount || amount <= 0) {
-    throw new functions.https.HttpsError(
-      'invalid-argument',
-      'Invalid amount provided.'
-    );
-  }
-
+export const createPaymentIntent = onCall<{
+  amount: number;
+  currency: string;
+}>(async (request) => {
   try {
-    // Create payment intent
+    // Check if user is authenticated
+    if (!request.auth) {
+      throw new Error('Authentication required');
+    }
+
+    const { amount, currency } = request.data;
+
+    // Validate amount
+    if (!amount || amount <= 0) {
+      throw new Error('Invalid amount');
+    }
+
+    // Create a payment intent
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(amount * 100), // Convert to cents
+      amount,
       currency,
       automatic_payment_methods: {
         enabled: true,
       },
-      metadata: {
-        userId: context.auth.uid,
-      },
     });
 
-    // Log the payment intent creation in Firestore
-    await admin.firestore().collection('paymentIntents').doc(paymentIntent.id).set({
-      userId: context.auth.uid,
+    // Log payment intent in Firestore
+    await db.collection('paymentIntents').doc(paymentIntent.id).set({
+      userId: request.auth.uid,
       amount,
       currency,
       status: paymentIntent.status,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      created: paymentIntent.created,
     });
 
-    return { clientSecret: paymentIntent.client_secret };
+    console.log(`Payment intent ${paymentIntent.id} created for user ${request.auth.uid}`);
+
+    return {
+      clientSecret: paymentIntent.client_secret,
+    };
   } catch (error) {
     console.error('Error creating payment intent:', error);
-    throw new functions.https.HttpsError(
-      'internal',
-      'An error occurred while creating the payment intent.'
-    );
+    throw new Error('Failed to create payment intent');
   }
-}); 
+});
