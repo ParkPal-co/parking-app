@@ -56,9 +56,7 @@ service cloud.firestore {
         isAuthenticated()
         && resource.data.status == "available"
         && request.resource.data.status == "booked"
-        && request.resource.data.keys().hasOnly(resource.data.keys())
-        && request.resource.data.diff(resource.data).changedKeys().hasOnly(["status"])
-      );
+        );
       allow delete: if isOwner(resource.data.ownerId);
     }
 
