@@ -50,27 +50,6 @@ export async function createConversation(
   initialMessage: string
 ): Promise<string> {
   try {
-    // Check if a conversation already exists for these participants and bookingId
-    const conversationsQuery = query(
-      collection(db, "conversations"),
-      where("participants", "array-contains", renterId),
-      where("bookingId", "==", bookingId)
-    );
-    const snapshot = await getDocs(conversationsQuery);
-    // Check if any conversation includes both participants
-    const existingConversation = snapshot.docs.find(docSnap => {
-      const data = docSnap.data();
-      return (
-        Array.isArray(data.participants) &&
-        data.participants.includes(renterId) &&
-        data.participants.includes(hostId) &&
-        data.bookingId === bookingId
-      );
-    });
-    if (existingConversation) {
-      return existingConversation.id;
-    }
-
     // Create the conversation
     const conversationRef = await addDoc(collection(db, "conversations"), {
       participants: [renterId, hostId],

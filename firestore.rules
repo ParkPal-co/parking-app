@@ -37,7 +37,7 @@ service cloud.firestore {
     // Events rules
     match /events/{eventId} {
       allow read: if true;  // Allow public read access
-      allow write: if isAuthenticated();
+      allow write, delete: if isAdmin();
     }
 
     // Driveways rules
@@ -51,22 +51,24 @@ service cloud.firestore {
     match /parkingSpots/{spotId} {
       allow read: if true;  // Allow public read access
       allow create: if isAuthenticated();
-      allow update: if isOwner(resource.data.ownerId)
-      || (
-        isAuthenticated()
-        && resource.data.status == "available"
-        && request.resource.data.status == "booked"
-        );
-      allow delete: if isOwner(resource.data.ownerId);
+      allow update, delete: if isAuthenticated() && (isOwner(resource.data.ownerId) || isAdmin());
     }
 
     // Bookings rules
     match /bookings/{bookingId} {
-      allow read: if isAuthenticated() && 
-        (isOwner(resource.data.userId) || isOwner(resource.data.hostId));
+      allow read: if isAuthenticated() && (
+        request.auth.uid == resource.data.userId || 
+        request.auth.uid == resource.data.hostId
+      );
       allow create: if isAuthenticated();
-      allow update: if isAuthenticated() && 
-        (isOwner(resource.data.userId) || isOwner(resource.data.hostId));
+      allow update: if isAuthenticated() && (
+        request.auth.uid == resource.data.userId || 
+        request.auth.uid == resource.data.hostId
+      );
+      allow delete: if isAuthenticated() && (
+        request.auth.uid == resource.data.userId || 
+        request.auth.uid == resource.data.hostId
+      );
     }
 
     // User profiles rules
@@ -79,24 +81,23 @@ service cloud.firestore {
 
     // Messages rules
     match /messages/{messageId} {
-      allow read, write: if isAuthenticated();
+      allow read: if true;  // Allow reading messages for testing
+      allow create: if true;  // Allow creating messages for testing
+      allow update: if true;  // Allow updating messages for testing
+      allow delete: if true;  // Allow deleting test messages
     }
 
     // Conversations rules
     match /conversations/{conversationId} {
-      allow read, write: if isAuthenticated();
+      allow read: if true;  // Allow reading conversations for testing
+      allow create: if true;  // Allow creating conversations for testing
+      allow update: if true;  // Allow updating conversations for testing
+      allow delete: if true;  // Allow deleting test conversations
 
       match /messages/{messageId} {
-        allow read, write: if isAuthenticated();
+        allow read: if true;
+        allow write: if true;
       }
-    }
-
-    // Payment intents collection
-    match /paymentIntents/{paymentIntentId} {
-      allow read: if isAuthenticated() && isOwner(resource.data.userId);
-      allow create: if isAuthenticated();
-      allow update: if false; // Payment intents should not be updated
-      allow delete: if false; // Payment intents should not be deleted
     }
 
     // Default deny

@@ -3,20 +3,9 @@
  * Service for handling booking operations
  */
 
-import { collection, addDoc, doc, updateDoc, getDoc, runTransaction } from "firebase/firestore";
+import { collection, addDoc, doc, updateDoc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/config";
 import { Booking, ParkingSpot } from "../types";
-
-// Helper to fetch user name by userId
-async function fetchUserNameById(userId: string): Promise<string | null> {
-  const userRef = doc(db, "users", userId);
-  const userSnap = await getDoc(userRef);
-  if (userSnap.exists()) {
-    const userData = userSnap.data();
-    return userData.name || userData.email || null;
-  }
-  return null;
-}
 
 export async function createBooking(
   spot: ParkingSpot,
@@ -26,29 +15,8 @@ export async function createBooking(
   endTime: Date,
   totalPrice: number
 ): Promise<Booking> {
-  // Fetch renter's name before transaction
-  const renterName = await fetchUserNameById(userId);
-  return await runTransaction(db, async (transaction) => {
-    const spotRef = doc(db, "parkingSpots", spot.id!);
-    const spotDoc = await transaction.get(spotRef);
-
-    if (!spotDoc.exists()) {
-      throw new Error("Parking spot does not exist");
-    }
-
-    const spotData = spotDoc.data();
-    if (spotData.status !== "available") {
-      throw new Error("Parking spot is not available");
-    }
-
-    // Update the status and bookedBy info
-    transaction.update(spotRef, {
-      status: "booked",
-      bookedBy: userId,
-      bookedByName: renterName || "Unknown"
-    });
-
-    // Create the booking
+  try {
+    // Create a booking record in Firestore
     const bookingData = {
       parkingSpotId: spot.id,
       userId,
@@ -56,18 +24,25 @@ export async function createBooking(
       startTime,
       endTime,
       totalPrice,
-      status: "confirmed" as const,
+      status: "confirmed" as const, // Set as confirmed since payment is already processed
       createdAt: new Date(),
     };
 
-    const bookingRef = doc(collection(db, "bookings"));
-    transaction.set(bookingRef, bookingData);
+    const bookingRef = await addDoc(collection(db, "bookings"), bookingData);
+
+    // Update parking spot availability
+    await updateDoc(doc(db, "parkingSpots", spot.id!), {
+      status: "booked",
+    });
 
     return {
       id: bookingRef.id,
       ...bookingData,
     } as Booking;
-  });
+  } catch (error) {
+    console.error("Error creating booking:", error);
+    throw error;
+  }
 }
 
 export async function getBookingById(bookingId: string): Promise<Booking | null> {

@@ -18,7 +18,6 @@ import {
   Elements,
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import { getFunctions, httpsCallable } from "firebase/functions";
 
 // Add animation keyframes
 const fadeInFromTop = {
@@ -41,14 +40,13 @@ const BookingForm: React.FC<{
   event: Event;
   spot: ParkingSpot;
   clientSecret: string;
-  onSuccess: (bookingId: string) => void;
+  onSuccess: () => void;
   onError: (error: string) => void;
 }> = ({ event, spot, clientSecret, onSuccess, onError }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
-  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,23 +54,19 @@ const BookingForm: React.FC<{
 
     try {
       setLoading(true);
-      console.log("Starting payment confirmation...");
 
       // Confirm the payment with Stripe
       const { error: paymentError } = await stripe.confirmPayment({
         elements,
         confirmParams: {
-          return_url: window.location.origin + "/booking-success",
+          return_url: window.location.origin + "/my-bookings",
         },
         redirect: "if_required",
       });
 
       if (paymentError) {
-        console.error("Payment error:", paymentError);
         throw new Error(paymentError.message);
       }
-
-      console.log("Payment confirmed successfully, creating booking...");
 
       // Create the booking after successful payment
       const booking = await createBooking(
@@ -84,8 +78,6 @@ const BookingForm: React.FC<{
         spot.price
       );
 
-      console.log("Booking created successfully:", booking.id);
-
       // Create a conversation between the renter and host
       await createConversation(
         user.id,
@@ -94,12 +86,9 @@ const BookingForm: React.FC<{
         `Hi! I've just booked your parking spot for ${event.title}. Looking forward to parking there!`
       );
 
-      console.log("Conversation created successfully");
-
-      // Navigate to success page with booking ID
-      navigate(`/booking-success?bookingId=${booking.id}`);
+      onSuccess();
     } catch (err) {
-      console.error("Error in booking process:", err);
+      console.error("Error processing payment:", err);
       onError(err instanceof Error ? err.message : "Failed to process payment");
     } finally {
       setLoading(false);
@@ -162,6 +151,28 @@ export const BookingConfirmationPage: React.FC = () => {
 
         setEvent(eventData);
         setSpot(spotData);
+
+        // Create a payment intent
+        const response = await fetch(
+          "http://localhost:3001/api/create-payment-intent",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              amount: spotData.price,
+              currency: "usd",
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to create payment intent");
+        }
+
+        const { clientSecret } = await response.json();
+        setClientSecret(clientSecret);
       } catch (err) {
         console.error("Error loading booking details:", err);
         setError("Failed to load booking details");
@@ -173,32 +184,8 @@ export const BookingConfirmationPage: React.FC = () => {
     loadBookingDetails();
   }, [eventId, spotId]);
 
-  // Handler to create payment intent when user clicks Confirm Booking
-  const handleCreatePaymentIntent = async () => {
-    if (!spot) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const functions = getFunctions();
-      const createPaymentIntent = httpsCallable(
-        functions,
-        "createPaymentIntent"
-      );
-      const { data } = await createPaymentIntent({
-        amount: Math.round(spot.price * 100), // Ensure cents
-        currency: "usd",
-      });
-      setClientSecret((data as { clientSecret: string }).clientSecret);
-    } catch (err) {
-      setError("Failed to initiate payment");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSuccess = (bookingId: string) => {
-    navigate(`/booking-success?bookingId=${bookingId}`);
+  const handleSuccess = () => {
+    navigate("/messages");
   };
 
   if (loading) {
@@ -217,11 +204,11 @@ export const BookingConfirmationPage: React.FC = () => {
     );
   }
 
-  if (!event || !spot) {
+  if (!event || !spot || !clientSecret) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center text-red-600">
-          Booking details not found.
+          Booking details not found
         </div>
       </div>
     );
@@ -229,35 +216,87 @@ export const BookingConfirmationPage: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="max-w-xl mx-auto bg-white rounded-lg shadow-md p-8">
-        <h1 className="text-2xl font-bold mb-4">Confirm Your Booking</h1>
-        <div className="mb-6">
-          <div className="font-semibold">Event:</div>
-          <div>{event.title}</div>
-          <div className="font-semibold mt-2">Parking Spot:</div>
-          <div>{spot.address}</div>
-          <div className="font-semibold mt-2">Price:</div>
-          <div>${spot.price.toFixed(2)}</div>
-        </div>
-        {!clientSecret ? (
-          <button
-            onClick={handleCreatePaymentIntent}
-            className="w-full bg-black text-white py-3 rounded-md hover:bg-gray-800 disabled:bg-gray-400"
-            disabled={loading}
-          >
-            {loading ? "Processing..." : "Confirm Booking"}
-          </button>
-        ) : (
-          <Elements stripe={stripePromise} options={{ clientSecret }}>
-            <BookingForm
-              event={event}
-              spot={spot}
-              clientSecret={clientSecret}
-              onSuccess={handleSuccess}
-              onError={setError}
-            />
-          </Elements>
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-3xl font-bold mb-8 opacity-0 animate-fade-in-from-top [animation-fill-mode:forwards]">
+          Confirm Your Booking
+        </h1>
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6 opacity-0 animate-fade-in-from-top [animation-delay:0.2s] [animation-fill-mode:forwards]">
+            {error}
+          </div>
         )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Left side - Booking details */}
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-md p-6 opacity-0 animate-fade-in-from-top [animation-delay:0.2s] [animation-fill-mode:forwards]">
+              <h2 className="text-xl font-semibold mb-4">Event Details</h2>
+              <p className="text-gray-600">{event.title}</p>
+              <p className="text-gray-600">
+                {new Date(event.startDate).toLocaleDateString()} -{" "}
+                {new Date(event.endDate).toLocaleDateString()}
+              </p>
+              <p className="text-gray-600">{event.location.address}</p>
+            </div>
+
+            <div className="bg-white rounded-lg shadow-md p-6 opacity-0 animate-fade-in-from-top [animation-delay:0.3s] [animation-fill-mode:forwards]">
+              <h2 className="text-xl font-semibold mb-4">
+                Parking Spot Details
+              </h2>
+              <div className="relative h-48 mb-4">
+                <img
+                  src={spot.images[0] || "https://placehold.co/600x400"}
+                  alt={spot.address}
+                  className="w-full h-full object-cover rounded-md"
+                />
+              </div>
+              <p className="text-gray-600">{spot.address}</p>
+              <p className="text-gray-500 text-sm mt-2">
+                Available:{" "}
+                {new Date(spot.availability.start).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}{" "}
+                -{" "}
+                {new Date(spot.availability.end).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </p>
+              <p className="text-gray-600 mt-2">{spot.description}</p>
+              <p className="text-2xl font-bold mt-2">${spot.price}</p>
+            </div>
+          </div>
+
+          {/* Right side - Payment form */}
+          <div>
+            {clientSecret && (
+              <Elements
+                stripe={stripePromise}
+                options={{
+                  clientSecret,
+                  appearance: {
+                    theme: "stripe",
+                    variables: {
+                      colorPrimary: "#000000",
+                      colorBackground: "#ffffff",
+                      colorText: "#1f2937",
+                    },
+                  },
+                }}
+              >
+                <BookingForm
+                  event={event}
+                  spot={spot}
+                  clientSecret={clientSecret}
+                  onSuccess={handleSuccess}
+                  onError={setError}
+                />
+              </Elements>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

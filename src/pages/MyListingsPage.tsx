@@ -50,7 +50,6 @@ interface Driveway {
   bookedBy?: string;
   eventId: string;
   event?: Event;
-  bookedByName?: string;
 }
 
 interface EditDrivewayModalProps {
@@ -429,7 +428,7 @@ export const MyListingsPage: React.FC = () => {
                     }`}
                   >
                     {driveway.status === "booked"
-                      ? "Booked"
+                      ? `Booked by ${driveway.bookedBy || "Unknown"}`
                       : driveway.status.charAt(0).toUpperCase() +
                         driveway.status.slice(1)}
                   </span>
@@ -478,17 +477,6 @@ export const MyListingsPage: React.FC = () => {
                     </span>
                   </div>
                 </div>
-
-                {driveway.status === "booked" && driveway.bookedBy && (
-                  <div className="mt-4">
-                    <Link
-                      to={`/messages?user=${driveway.bookedBy}`}
-                      className="w-full inline-block bg-black text-white py-2 px-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black text-center"
-                    >
-                      Message Renter
-                    </Link>
-                  </div>
-                )}
 
                 <div className="mt-6">
                   <button

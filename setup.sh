@@ -14,16 +14,21 @@ fi
 echo -e "\033[1;33m📦 Installing dependencies...\033[0m"
 npm install
 
+# Install server dependencies
+echo -e "\033[1;33m📦 Installing server dependencies...\033[0m"
+cd server && npm install && cd ..
+
 # Copy environment files
 echo -e "\033[1;33m🔧 Setting up environment variables...\033[0m"
 cp .env.example .env
+cp server/.env.example server/.env
 
 # Add test data
 echo -e "\033[1;33m📝 Adding test data...\033[0m"
 npm run setup-test-messaging
 
 echo -e "\033[1;32m✅ Setup complete! You can now run the application with:\033[0m"
-echo -e "\033[1;35m   npm run dev\033[0m\n"
+echo -e "\033[1;35m   npm run dev:all\033[0m\n"
 
 echo -e "\033[1;36mTest Accounts:\033[0m"
 echo -e "Regular User: test@example.com / test123"

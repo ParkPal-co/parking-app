@@ -27,7 +27,6 @@ import { RegisterDrivewayPage } from "./pages/RegisterDrivewayPage";
 import { RegisterAnEventPage } from "./pages/RegisterAnEventPage";
 import { RegisteredEventsPage } from "./pages/RegisteredEventsPage";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
-import { BookingSuccessPage } from "./pages/BookingSuccessPage";
 
 const App: React.FC = () => {
   return (
@@ -162,16 +161,6 @@ const App: React.FC = () => {
                 <ProtectedRoute>
                   <PageLayout>
                     <RegisteredEventsPage />
-                  </PageLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/booking-success"
-              element={
-                <ProtectedRoute>
-                  <PageLayout>
-                    <BookingSuccessPage />
                   </PageLayout>
                 </ProtectedRoute>
               }
