@@ -17,23 +17,9 @@ service cloud.firestore {
         (request.auth.token.email == "aleczaitz@gmail.com" || request.auth.token.email == "donminic30@gmail.com");
     }
 
-
     // Helper function to check if user is a participant in the conversation
     function isParticipant(participantIds) {
       return isAuthenticated() && participantIds.hasAny([request.auth.uid]);
-    }
-
-    // Helper function to check if this is a test operation
-    function isTestEmail(email) {
-      return email == 'testhost@example.com' || email == 'testrenter@example.com';
-    }
-
-    function isTestData() {
-      return ('email' in resource.data && isTestEmail(resource.data.email)) ||
-             ('hostEmail' in resource.data && isTestEmail(resource.data.hostEmail)) ||
-             ('renterEmail' in resource.data && isTestEmail(resource.data.renterEmail)) ||
-             ('senderId' in resource.data && isTestEmail(resource.data.senderId)) ||
-             ('receiverId' in resource.data && isTestEmail(resource.data.receiverId));
     }
 
     // Events rules
@@ -74,9 +60,9 @@ service cloud.firestore {
     // User profiles rules
     match /users/{userId} {
       allow read: if true;  // Allow reading user profiles
-      allow create: if true;  // Allow creating test users
+      allow create: if isAuthenticated();  // Only authenticated users can create profiles
       allow update: if isOwner(userId);
-      allow delete: if resource.data.email == 'testhost@example.com' || resource.data.email == 'testrenter@example.com';  // Allow deleting test users
+      allow delete: if isOwner(userId);
     }
 
     // Messages rules
