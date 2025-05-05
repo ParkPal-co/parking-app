@@ -7,6 +7,17 @@ import { collection, addDoc, doc, updateDoc, getDoc, runTransaction } from "fire
 import { db } from "../firebase/config";
 import { Booking, ParkingSpot } from "../types";
 
+// Helper to fetch user name by userId
+async function fetchUserNameById(userId: string): Promise<string | null> {
+  const userRef = doc(db, "users", userId);
+  const userSnap = await getDoc(userRef);
+  if (userSnap.exists()) {
+    const userData = userSnap.data();
+    return userData.name || userData.email || null;
+  }
+  return null;
+}
+
 export async function createBooking(
   spot: ParkingSpot,
   userId: string,
@@ -15,6 +26,8 @@ export async function createBooking(
   endTime: Date,
   totalPrice: number
 ): Promise<Booking> {
+  // Fetch renter's name before transaction
+  const renterName = await fetchUserNameById(userId);
   return await runTransaction(db, async (transaction) => {
     const spotRef = doc(db, "parkingSpots", spot.id!);
     const spotDoc = await transaction.get(spotRef);
@@ -28,8 +41,12 @@ export async function createBooking(
       throw new Error("Parking spot is not available");
     }
 
-    // Update the status
-    transaction.update(spotRef, { status: "booked" });
+    // Update the status and bookedBy info
+    transaction.update(spotRef, {
+      status: "booked",
+      bookedBy: userId,
+      bookedByName: renterName || "Unknown"
+    });
 
     // Create the booking
     const bookingData = {
