@@ -41,13 +41,14 @@ const BookingForm: React.FC<{
   event: Event;
   spot: ParkingSpot;
   clientSecret: string;
-  onSuccess: () => void;
+  onSuccess: (bookingId: string) => void;
   onError: (error: string) => void;
 }> = ({ event, spot, clientSecret, onSuccess, onError }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,19 +56,23 @@ const BookingForm: React.FC<{
 
     try {
       setLoading(true);
+      console.log("Starting payment confirmation...");
 
       // Confirm the payment with Stripe
       const { error: paymentError } = await stripe.confirmPayment({
         elements,
         confirmParams: {
-          return_url: window.location.origin + "/my-bookings",
+          return_url: window.location.origin + "/booking-success",
         },
         redirect: "if_required",
       });
 
       if (paymentError) {
+        console.error("Payment error:", paymentError);
         throw new Error(paymentError.message);
       }
+
+      console.log("Payment confirmed successfully, creating booking...");
 
       // Create the booking after successful payment
       const booking = await createBooking(
@@ -79,6 +84,8 @@ const BookingForm: React.FC<{
         spot.price
       );
 
+      console.log("Booking created successfully:", booking.id);
+
       // Create a conversation between the renter and host
       await createConversation(
         user.id,
@@ -87,9 +94,12 @@ const BookingForm: React.FC<{
         `Hi! I've just booked your parking spot for ${event.title}. Looking forward to parking there!`
       );
 
-      onSuccess();
+      console.log("Conversation created successfully");
+
+      // Navigate to success page with booking ID
+      navigate(`/booking-success?bookingId=${booking.id}`);
     } catch (err) {
-      console.error("Error processing payment:", err);
+      console.error("Error in booking process:", err);
       onError(err instanceof Error ? err.message : "Failed to process payment");
     } finally {
       setLoading(false);
@@ -187,8 +197,8 @@ export const BookingConfirmationPage: React.FC = () => {
     }
   };
 
-  const handleSuccess = () => {
-    navigate("/messages");
+  const handleSuccess = (bookingId: string) => {
+    navigate(`/booking-success?bookingId=${bookingId}`);
   };
 
   if (loading) {
