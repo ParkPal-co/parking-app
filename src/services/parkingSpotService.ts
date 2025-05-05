@@ -30,7 +30,11 @@ export async function fetchParkingSpotById(spotId: string): Promise<ParkingSpot 
 export async function fetchParkingSpots(eventId: string): Promise<ParkingSpot[]> {
   try {
     const spotsRef = collection(db, "parkingSpots");
-    const q = query(spotsRef, where("eventId", "==", eventId));
+    const q = query(
+      spotsRef,
+      where("eventId", "==", eventId),
+      where("status", "==", "available")
+    );
 
     const querySnapshot = await getDocs(q);
     const spotResults: ParkingSpot[] = [];
