@@ -51,7 +51,15 @@ service cloud.firestore {
     match /parkingSpots/{spotId} {
       allow read: if true;  // Allow public read access
       allow create: if isAuthenticated();
-      allow update, delete: if isOwner(resource.data.ownerId);
+      allow update: if isOwner(resource.data.ownerId)
+      || (
+        isAuthenticated()
+        && resource.data.status == "available"
+        && request.resource.data.status == "booked"
+        && request.resource.data.keys().hasOnly(resource.data.keys())
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly(["status"])
+      );
+      allow delete: if isOwner(resource.data.ownerId);
     }
 
     // Bookings rules
