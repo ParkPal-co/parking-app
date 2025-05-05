@@ -52,12 +52,12 @@ export function useAuth() {
         id: firebaseUser.uid,
         email,
         name,
-        phoneNumber,
-        profileImageUrl,
         isHost,
-        address,
         createdAt: new Date(),
       };
+      if (phoneNumber) userData.phoneNumber = phoneNumber;
+      if (profileImageUrl) userData.profileImageUrl = profileImageUrl;
+      if (address) userData.address = address;
       await setDoc(doc(db, 'users', firebaseUser.uid), userData);
       setUser(userData);
       return userData;
