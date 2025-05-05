@@ -13,8 +13,10 @@ service cloud.firestore {
 
     // Helper function to check if user is admin
     function isAdmin() {
-      return request.auth != null && request.auth.token.email == "aleczaitz@gmail.com";
+      return request.auth != null && 
+        (request.auth.token.email == "aleczaitz@gmail.com" || request.auth.token.email == "donminic30@gmail.com");
     }
+
 
     // Helper function to check if user is a participant in the conversation
     function isParticipant(participantIds) {
