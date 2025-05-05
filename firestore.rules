@@ -79,21 +79,15 @@ service cloud.firestore {
 
     // Messages rules
     match /messages/{messageId} {
-      allow read: if isAuthenticated() && 
-        (isOwner(resource.data.senderId) || isOwner(resource.data.receiverId));
-      allow create: if isAuthenticated();
+      allow read, write: if isAuthenticated();
     }
 
     // Conversations rules
     match /conversations/{conversationId} {
-      allow read: if true;  // Allow reading conversations for testing
-      allow create: if true;  // Allow creating conversations for testing
-      allow update: if true;  // Allow updating conversations for testing
-      allow delete: if true;  // Allow deleting test conversations
+      allow read, write: if isAuthenticated();
 
       match /messages/{messageId} {
-        allow read: if true;
-        allow write: if true;
+        allow read, write: if isAuthenticated();
       }
     }
 
