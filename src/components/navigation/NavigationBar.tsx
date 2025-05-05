@@ -35,7 +35,9 @@ export const NavigationBar: React.FC = () => {
     }
   };
 
-  const isAdmin = user?.email === "aleczaitz@gmail.com";
+  const isAdmin =
+    user?.email === "aleczaitz@gmail.com" ||
+    user?.email === "donminic30@gmail.com";
 
   return (
     <nav className="bg-white shadow-md fixed top-0 left-0 right-0 z-50">
