@@ -4,10 +4,18 @@ A modern web application that connects event attendees with local driveway owner
 
 ## 🚀 Quick Start
 
+### Prerequisites
+
+- Node.js (Latest LTS version recommended)
+- npm (comes with Node.js)
+- Git
+
+### Setup Steps
+
 1. Clone the repository:
 
 ```bash
-git clone [repository-url]
+git clone https://github.com/aleczaitz/parking-app.git
 cd parking-app
 ```
 
@@ -18,13 +26,27 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
-3. Start the application:
+3. Configure environment variables:
+
+   - Copy `.env.example` to `.env` (this is done automatically by setup.sh)
+   - Fill in your Firebase and Google Maps API credentials in the `.env` file
+
+4. Start the application:
 
 ```bash
 npm run dev
 ```
 
-4. Open your browser and navigate to `http://localhost:5173`
+5. Open your browser and navigate to `http://localhost:5173`
+
+### Test Payment Information
+
+For testing the payment system:
+
+- Card Number: 4242 4242 4242 4242
+- Any future expiry date
+- Any 3-digit CVC
+- Any postal code
 
 ## 🛠️ Tech Stack
 
