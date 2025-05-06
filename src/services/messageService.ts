@@ -14,7 +14,6 @@ import {
   doc,
   updateDoc,
   Timestamp,
-  or,
   increment,
 } from "firebase/firestore";
 import { db } from "../firebase/config";

@@ -3,7 +3,7 @@
  * Service for handling booking operations
  */
 
-import { collection, addDoc, doc, updateDoc, getDoc, runTransaction } from "firebase/firestore";
+import { collection, doc, updateDoc, getDoc, runTransaction } from "firebase/firestore";
 import { db } from "../firebase/config";
 import { Booking, ParkingSpot } from "../types";
 
