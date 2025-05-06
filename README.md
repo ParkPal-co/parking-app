@@ -21,64 +21,10 @@ chmod +x setup.sh
 3. Start the application:
 
 ```bash
-npm run dev:all
+npm run dev
 ```
 
 4. Open your browser and navigate to `http://localhost:5173`
-
-## 🧪 Testing the Application
-
-### Test Accounts
-
-The setup script has created these test accounts for you:
-
-1. **Regular User**
-
-   - Email: test@example.com
-   - Password: test123
-
-2. **Driveway Owner**
-
-   - Email: owner@example.com
-   - Password: test123
-
-3. **Admin User**
-   - Email: admin@example.com
-   - Password: test123
-
-### Test Payment Card
-
-- Card Number: 4242 4242 4242 4242
-- Any future expiry date
-- Any 3-digit CVC
-- Any postal code
-
-### Key Features to Test
-
-1. **User Authentication**
-
-   - Try logging in with different test accounts
-   - Test the sign-up flow
-
-2. **Event Discovery**
-
-   - Browse available events
-   - Use the search and filter functionality
-
-3. **Driveway Management**
-
-   - List a new driveway
-   - View and manage existing listings
-
-4. **Booking Process**
-
-   - Select a driveway
-   - Complete the payment flow
-   - View booking confirmation
-
-5. **Messaging System**
-   - Send messages between different test accounts
-   - Test real-time updates
 
 ## 🛠️ Tech Stack
 
@@ -114,10 +60,14 @@ src/
 
 ## 🔧 Development Scripts
 
-- `npm run dev:all` - Start both frontend and backend servers
+- `npm run dev` - Start the development server
 - `npm run build` - Build the frontend for production
 - `npm run lint` - Run ESLint
 - `npm run preview` - Preview the production build locally
+- `npm run deploy` - Deploy to Firebase
+- `npm run deploy:functions` - Deploy Firebase Functions
+- `npm run deploy:hosting` - Deploy to Firebase Hosting
+- `npm run emulators` - Start Firebase emulators
 
 ## 🤝 Contributing
 
