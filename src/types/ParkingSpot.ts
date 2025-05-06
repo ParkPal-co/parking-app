@@ -17,4 +17,6 @@ export interface ParkingSpot {
     lng: number;
   };
   createdAt: string;
+  ownerId: string;
+  ownerName: string;
 } 
