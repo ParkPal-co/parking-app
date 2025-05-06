@@ -9,19 +9,6 @@ import { useEvents } from "../hooks/useEvents";
 import { Event } from "../types";
 import { FloatingQuotesBackground } from "../components/background/FloatingQuotesBackground";
 
-// Add animation keyframes
-const fadeInFromTop = {
-  "@keyframes fadeInFromTop": {
-    "0%": {
-      opacity: "0",
-      transform: "translateY(-20px)",
-    },
-    "100%": {
-      opacity: "1",
-      transform: "translateY(0)",
-    },
-  },
-};
 
 export const EventSearchPage: React.FC = () => {
   const navigate = useNavigate();

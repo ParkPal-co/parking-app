@@ -20,20 +20,6 @@ import {
 import { loadStripe } from "@stripe/stripe-js";
 import { getFunctions, httpsCallable } from "firebase/functions";
 
-// Add animation keyframes
-const fadeInFromTop = {
-  "@keyframes fadeInFromTop": {
-    "0%": {
-      opacity: "0",
-      transform: "translateY(-20px)",
-    },
-    "100%": {
-      opacity: "1",
-      transform: "translateY(0)",
-    },
-  },
-};
-
 // Initialize Stripe
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 

@@ -16,20 +16,6 @@ import { Event, ParkingSpot } from "../types";
 import { fetchParkingSpots } from "../services/parkingSpotService";
 import { fetchEventById } from "../services/eventService";
 
-// Add animation keyframes
-const fadeInFromTop = {
-  "@keyframes fadeInFromTop": {
-    "0%": {
-      opacity: "0",
-      transform: "translateY(-20px)",
-    },
-    "100%": {
-      opacity: "1",
-      transform: "translateY(0)",
-    },
-  },
-};
-
 const mapContainerStyle = {
   width: "100%",
   height: "100%",

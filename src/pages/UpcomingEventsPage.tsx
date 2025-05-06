@@ -9,20 +9,6 @@ import { useEvents } from "../hooks/useEvents";
 import { Event } from "../types";
 import { sortEvents, filterEvents } from "../services/eventService";
 
-// Add animation keyframes
-const fadeInFromTop = {
-  "@keyframes fadeInFromTop": {
-    "0%": {
-      opacity: "0",
-      transform: "translateY(-20px)",
-    },
-    "100%": {
-      opacity: "1",
-      transform: "translateY(0)",
-    },
-  },
-};
-
 export const UpcomingEventsPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
