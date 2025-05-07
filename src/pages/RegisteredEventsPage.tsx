@@ -54,7 +54,7 @@ interface ParkingSpot {
   // other fields not needed for this operation
 }
 
-export const RegisteredEventsPage: React.FC = () => {
+const RegisteredEventsPage: React.FC = () => {
   const { user } = useAuth();
   const [events, setEvents] = useState<Event[]>([]);
   const [parkingSpotCounts, setParkingSpotCounts] = useState<
@@ -571,3 +571,5 @@ export const RegisteredEventsPage: React.FC = () => {
     </div>
   );
 };
+
+export default RegisteredEventsPage;

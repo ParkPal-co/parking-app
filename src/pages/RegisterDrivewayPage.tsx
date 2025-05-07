@@ -28,7 +28,7 @@ interface DrivewayFormData {
   address: AddressComponents;
 }
 
-export const RegisterDrivewayPage: React.FC = () => {
+const RegisterDrivewayPage: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { events, searchInput, setSearchInput } = useEvents();
@@ -527,3 +527,5 @@ export const RegisterDrivewayPage: React.FC = () => {
     </div>
   );
 };
+
+export default RegisterDrivewayPage;
