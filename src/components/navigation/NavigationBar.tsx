@@ -6,6 +6,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import Icon1 from "../../assets/images/Icon1.png";
 
 export const NavigationBar: React.FC = () => {
   const navigate = useNavigate();
@@ -44,8 +45,9 @@ export const NavigationBar: React.FC = () => {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-20">
           {/* Logo/Title */}
-          <Link to="/" className="text-2xl font-bold w-1/4">
-            ParkPal
+          <Link to="/" className="flex items-center w-1/4">
+            <img src={Icon1} alt="ParkPal Logo" className="h-14 w-auto" />
+            <span className="text-2xl font-bold -ml-2">ParkPal</span>
           </Link>
 
           {/* Rent/List Toggle */}
