@@ -9,7 +9,7 @@ import { useEvents } from "../hooks/useEvents";
 import { Event } from "../types";
 import { sortEvents, filterEvents } from "../services/eventService";
 
-export const UpcomingEventsPage: React.FC = () => {
+const UpcomingEventsPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { events, loading, error, searchInput, setSearchInput, handleSearch } =
@@ -191,3 +191,5 @@ export const UpcomingEventsPage: React.FC = () => {
     </div>
   );
 };
+
+export default UpcomingEventsPage;

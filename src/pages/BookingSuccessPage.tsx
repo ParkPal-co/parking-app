@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import { getBookingById } from "../services/bookingService";
 
-export const BookingSuccessPage: React.FC = () => {
+const BookingSuccessPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const bookingId = searchParams.get("bookingId");
   const [loading, setLoading] = useState(true);
@@ -75,4 +75,4 @@ export const BookingSuccessPage: React.FC = () => {
   );
 };
 
-// export default BookingSuccessPage;
+export default BookingSuccessPage;

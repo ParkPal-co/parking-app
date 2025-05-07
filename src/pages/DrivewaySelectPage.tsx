@@ -26,7 +26,7 @@ const options = {
   zoomControl: true,
 };
 
-export const DrivewaySelectPage: React.FC = () => {
+const DrivewaySelectPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const eventId = searchParams.get("event");
@@ -263,3 +263,5 @@ export const DrivewaySelectPage: React.FC = () => {
     </div>
   );
 };
+
+export default DrivewaySelectPage;

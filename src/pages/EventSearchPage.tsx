@@ -9,7 +9,7 @@ import { useEvents } from "../hooks/useEvents";
 import { Event } from "../types";
 import { FloatingQuotesBackground } from "../components/background/FloatingQuotesBackground";
 
-export const EventSearchPage: React.FC = () => {
+const EventSearchPage: React.FC = () => {
   const navigate = useNavigate();
   const { searchInput, setSearchInput, handleSearch, events } = useEvents();
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
@@ -129,3 +129,5 @@ export const EventSearchPage: React.FC = () => {
     </div>
   );
 };
+
+export default EventSearchPage;

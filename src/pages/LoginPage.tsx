@@ -6,14 +6,15 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { GoogleAuthProvider } from "firebase/auth";
 
-export const LoginPage: React.FC = () => {
+const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { login, loginWithGoogle } = useAuth();
+  const { login, handleSocialLogin } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,7 +40,7 @@ export const LoginPage: React.FC = () => {
     try {
       setError("");
       setLoading(true);
-      await loginWithGoogle();
+      await handleSocialLogin(new GoogleAuthProvider());
       const returnPath = sessionStorage.getItem("returnPath") || "/";
       navigate(returnPath);
     } catch (err) {
@@ -140,3 +141,5 @@ export const LoginPage: React.FC = () => {
     </div>
   );
 };
+
+export default LoginPage;

@@ -262,7 +262,7 @@ const EditDrivewayModal: React.FC<EditDrivewayModalProps> = ({
   );
 };
 
-export const MyListingsPage: React.FC = () => {
+const MyListingsPage: React.FC = () => {
   const { user } = useAuth();
   const [driveways, setDriveways] = useState<Driveway[]>([]);
   const [loading, setLoading] = useState(true);
@@ -515,3 +515,5 @@ export const MyListingsPage: React.FC = () => {
     </div>
   );
 };
+
+export default MyListingsPage;

@@ -32,7 +32,7 @@ interface EventFormData {
   description: string;
 }
 
-export const RegisterAnEventPage: React.FC = () => {
+const RegisterAnEventPage: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -516,3 +516,5 @@ export const RegisterAnEventPage: React.FC = () => {
     </div>
   );
 };
+
+export default RegisterAnEventPage;

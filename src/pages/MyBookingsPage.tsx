@@ -24,7 +24,7 @@ interface BookingWithDetails extends Booking {
   event?: Event;
 }
 
-export const MyBookingsPage: React.FC = () => {
+const MyBookingsPage: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [bookings, setBookings] = useState<BookingWithDetails[]>([]);
@@ -242,3 +242,5 @@ export const MyBookingsPage: React.FC = () => {
     </div>
   );
 };
+
+export default MyBookingsPage;

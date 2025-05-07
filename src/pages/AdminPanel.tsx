@@ -34,7 +34,7 @@ interface Driveway {
   status: "available" | "booked" | "unavailable";
 }
 
-export const AdminPanel: React.FC = () => {
+const AdminPanel: React.FC = () => {
   const { user } = useAuth();
   const [events, setEvents] = useState<Event[]>([]);
   const [driveways, setDriveways] = useState<Driveway[]>([]);
@@ -339,3 +339,5 @@ export const AdminPanel: React.FC = () => {
     </div>
   );
 };
+
+export default AdminPanel;

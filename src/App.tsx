@@ -16,15 +16,23 @@ const App: React.FC = () => {
         <div className="min-h-screen bg-gray-100">
           <NavigationBar />
           <div className="pt-20">
-            <Routes>
-              {routes.map((route) => (
-                <Route
-                  key={route.path}
-                  path={route.path}
-                  element={route.element}
-                />
-              ))}
-            </Routes>
+            <React.Suspense
+              fallback={
+                <div className="flex items-center justify-center min-h-screen text-xl">
+                  Loading...
+                </div>
+              }
+            >
+              <Routes>
+                {routes.map((route) => (
+                  <Route
+                    key={route.path}
+                    path={route.path}
+                    element={route.element}
+                  />
+                ))}
+              </Routes>
+            </React.Suspense>
           </div>
         </div>
       </ErrorBoundary>

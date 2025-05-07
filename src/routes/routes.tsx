@@ -1,21 +1,39 @@
 import { RouteObject, Navigate } from "react-router-dom";
+import React from "react";
 import { PageLayout } from "../components/layout/PageLayout";
-import { EventSearchPage } from "../pages/EventSearchPage";
-import { UpcomingEventsPage } from "../pages/UpcomingEventsPage";
-import { DrivewaySelectPage } from "../pages/DrivewaySelectPage";
-import { BookingConfirmationPage } from "../pages/BookingConfirmationPage";
-import { LoginPage } from "../pages/LoginPage";
-import { RegisterPage } from "../pages/RegisterPage";
-import { MyListingsPage } from "../pages/MyListingsPage";
-import { MyBookingsPage } from "../pages/MyBookingsPage";
-import { MessagesPage } from "../pages/MessagesPage";
-import { AccountSettingsPage } from "../pages/AccountSettingsPage";
-import { AdminPanel } from "../pages/AdminPanel";
-import { RegisterDrivewayPage } from "../pages/RegisterDrivewayPage";
-import { RegisterAnEventPage } from "../pages/RegisterAnEventPage";
-import { RegisteredEventsPage } from "../pages/RegisteredEventsPage";
-import { BookingSuccessPage } from "../pages/BookingSuccessPage";
 import { ProtectedRoute } from "../components/auth/ProtectedRoute";
+
+const EventSearchPage = React.lazy(() => import("../pages/EventSearchPage"));
+const UpcomingEventsPage = React.lazy(
+  () => import("../pages/UpcomingEventsPage")
+);
+const DrivewaySelectPage = React.lazy(
+  () => import("../pages/DrivewaySelectPage")
+);
+const BookingConfirmationPage = React.lazy(
+  () => import("../pages/BookingConfirmationPage")
+);
+const LoginPage = React.lazy(() => import("../pages/LoginPage"));
+const RegisterPage = React.lazy(() => import("../pages/RegisterPage"));
+const MyListingsPage = React.lazy(() => import("../pages/MyListingsPage"));
+const MyBookingsPage = React.lazy(() => import("../pages/MyBookingsPage"));
+const MessagesPage = React.lazy(() => import("../pages/MessagesPage"));
+const AccountSettingsPage = React.lazy(
+  () => import("../pages/AccountSettingsPage")
+);
+const AdminPanel = React.lazy(() => import("../pages/AdminPanel"));
+const RegisterDrivewayPage = React.lazy(
+  () => import("../pages/RegisterDrivewayPage")
+);
+const RegisterAnEventPage = React.lazy(
+  () => import("../pages/RegisterAnEventPage")
+);
+const RegisteredEventsPage = React.lazy(
+  () => import("../pages/RegisteredEventsPage")
+);
+const BookingSuccessPage = React.lazy(
+  () => import("../pages/BookingSuccessPage")
+);
 
 export const routes: RouteObject[] = [
   {

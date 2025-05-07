@@ -7,7 +7,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-export const AccountSettingsPage: React.FC = () => {
+const AccountSettingsPage: React.FC = () => {
   const { user, updateUserProfile } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(user?.name || "");
@@ -278,3 +278,5 @@ export const AccountSettingsPage: React.FC = () => {
     </div>
   );
 };
+
+export default AccountSettingsPage;

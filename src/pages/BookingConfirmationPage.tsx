@@ -113,7 +113,7 @@ const BookingForm: React.FC<{
   );
 };
 
-export const BookingConfirmationPage: React.FC = () => {
+const BookingConfirmationPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const eventId = searchParams.get("event");
@@ -248,3 +248,5 @@ export const BookingConfirmationPage: React.FC = () => {
     </div>
   );
 };
+
+export default BookingConfirmationPage;
