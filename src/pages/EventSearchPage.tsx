@@ -9,7 +9,6 @@ import { useEvents } from "../hooks/useEvents";
 import { Event } from "../types";
 import { FloatingQuotesBackground } from "../components/background/FloatingQuotesBackground";
 
-
 export const EventSearchPage: React.FC = () => {
   const navigate = useNavigate();
   const { searchInput, setSearchInput, handleSearch, events } = useEvents();
@@ -95,18 +94,9 @@ export const EventSearchPage: React.FC = () => {
               Search
             </button>
           </div>
-          <div className="text-center mt-4 opacity-0 animate-fade-in-from-top [animation-delay:0.4s] [animation-fill-mode:forwards]">
-            <button
-              type="button"
-              onClick={() => navigate("/events?nearby=true")}
-              className="bg-gray-200 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-300 transition-colors text-sm font-medium"
-            >
-              events near me
-            </button>
-          </div>
 
           {showResults && filteredEvents.length > 0 && (
-            <div className="absolute w-full mt-1 bg-white rounded-lg shadow-xl border border-gray-200 max-h-96 overflow-y-auto z-10">
+            <div className="absolute w-full bg-white rounded-lg shadow-xl border border-gray-200 max-h-96 overflow-y-auto z-10">
               {filteredEvents.map((event) => (
                 <div
                   key={event.id}
@@ -124,6 +114,16 @@ export const EventSearchPage: React.FC = () => {
               ))}
             </div>
           )}
+
+          <div className="text-center mt-4 opacity-0 animate-fade-in-from-top [animation-delay:0.4s] [animation-fill-mode:forwards]">
+            <button
+              type="button"
+              onClick={() => navigate("/events?nearby=true")}
+              className="bg-gray-200 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-300 transition-colors text-sm font-medium"
+            >
+              events near me
+            </button>
+          </div>
         </form>
       </div>
     </div>

@@ -45,7 +45,7 @@ export const NavigationBar: React.FC = () => {
         <div className="flex justify-between items-center h-20">
           {/* Logo/Title */}
           <Link to="/" className="text-2xl font-bold w-1/4">
-            Event Parking
+            ParkPal
           </Link>
 
           {/* Rent/List Toggle */}
