@@ -3,7 +3,7 @@
  * Page component for registering new driveways
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { collection, addDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -16,7 +16,6 @@ import {
   type AddressComponents,
   type VerifiedAddress,
 } from "../utils/geocoding";
-import type { User as FirebaseUser } from "firebase/auth";
 
 interface DrivewayFormData {
   eventId: string;

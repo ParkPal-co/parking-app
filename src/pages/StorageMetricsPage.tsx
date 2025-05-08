@@ -92,7 +92,7 @@ const StorageMetricsPage: React.FC = () => {
         </div>
       ) : (
         <div className="grid gap-6">
-          {metrics.map((metric, index) => (
+          {metrics.map((metric) => (
             <div
               key={metric.timestamp}
               className="bg-white shadow rounded-lg p-6"

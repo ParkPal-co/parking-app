@@ -4,7 +4,6 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
-  User as FirebaseUser,
   GoogleAuthProvider,
   FacebookAuthProvider,
   signInWithPopup,

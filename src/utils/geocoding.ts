@@ -20,6 +20,12 @@ export interface VerifiedAddress extends AddressComponents {
   coordinates: Coordinates;
 }
 
+interface GoogleAddressComponent {
+  long_name: string;
+  short_name: string;
+  types: string[];
+}
+
 export const verifyAndGeocodeAddress = async (address: AddressComponents): Promise<VerifiedAddress> => {
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   
@@ -58,11 +64,11 @@ export const verifyAndGeocodeAddress = async (address: AddressComponents): Promi
     const { lat, lng } = result.geometry.location;
 
     // Extract verified address components
-    const streetNumber = result.address_components.find(c => c.types.includes('street_number'))?.long_name || '';
-    const route = result.address_components.find(c => c.types.includes('route'))?.long_name || '';
-    const city = result.address_components.find(c => c.types.includes('locality'))?.long_name || '';
-    const state = result.address_components.find(c => c.types.includes('administrative_area_level_1'))?.short_name || '';
-    const zipCode = result.address_components.find(c => c.types.includes('postal_code'))?.long_name || '';
+    const streetNumber = result.address_components.find((c: GoogleAddressComponent) => c.types.includes('street_number'))?.long_name || '';
+    const route = result.address_components.find((c: GoogleAddressComponent) => c.types.includes('route'))?.long_name || '';
+    const city = result.address_components.find((c: GoogleAddressComponent) => c.types.includes('locality'))?.long_name || '';
+    const state = result.address_components.find((c: GoogleAddressComponent) => c.types.includes('administrative_area_level_1'))?.short_name || '';
+    const zipCode = result.address_components.find((c: GoogleAddressComponent) => c.types.includes('postal_code'))?.long_name || '';
 
     const verifiedAddress = {
       street: streetNumber ? `${streetNumber} ${route}` : route,

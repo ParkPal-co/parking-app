@@ -21,10 +21,6 @@ import {
   getDownloadURL,
   deleteObject,
 } from "firebase/storage";
-import {
-  verifyAndGeocodeAddress,
-  type AddressComponents,
-} from "../utils/geocoding";
 
 interface Event {
   id: string;
@@ -113,6 +109,38 @@ const RegisteredEventsPage: React.FC = () => {
     }
   };
 
+  const handleFormChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    if (!editingEvent) return;
+
+    const value =
+      e.target.type === "number" ? Number(e.target.value) : e.target.value;
+
+    if (e.target.name === "expectedAttendance") {
+      setEditingEvent({
+        ...editingEvent,
+        expectedAttendance: Number(value),
+      });
+    } else if (e.target.name === "lat" || e.target.name === "lng") {
+      setEditingEvent({
+        ...editingEvent,
+        location: {
+          ...editingEvent.location,
+          coordinates: {
+            ...editingEvent.location.coordinates,
+            [e.target.name]: Number(value),
+          },
+        },
+      });
+    } else {
+      setEditingEvent({
+        ...editingEvent,
+        [e.target.name]: value,
+      });
+    }
+  };
+
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingEvent) return;
@@ -142,16 +170,27 @@ const RegisteredEventsPage: React.FC = () => {
         }
       }
 
-      const eventRef = doc(db, "events", editingEvent.id);
-      await updateDoc(eventRef, {
+      // Convert expectedAttendance to number and ensure coordinates are numbers
+      const updatedEvent = {
         ...editingEvent,
         imageUrl,
-      });
+        expectedAttendance: Number(editingEvent.expectedAttendance),
+        location: {
+          ...editingEvent.location,
+          coordinates: {
+            lat: Number(editingEvent.location.coordinates.lat),
+            lng: Number(editingEvent.location.coordinates.lng),
+          },
+        },
+      };
+
+      const eventRef = doc(db, "events", editingEvent.id);
+      await updateDoc(eventRef, updatedEvent);
 
       // Update local state
       setEvents((prev) =>
         prev.map((event) =>
-          event.id === editingEvent.id ? { ...editingEvent, imageUrl } : event
+          event.id === editingEvent.id ? updatedEvent : event
         )
       );
 
@@ -256,12 +295,8 @@ const RegisteredEventsPage: React.FC = () => {
                     <input
                       type="text"
                       value={editingEvent.title}
-                      onChange={(e) =>
-                        setEditingEvent({
-                          ...editingEvent,
-                          title: e.target.value,
-                        })
-                      }
+                      onChange={handleFormChange}
+                      name="title"
                       className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
                       required
                     />
@@ -273,12 +308,8 @@ const RegisteredEventsPage: React.FC = () => {
                     </label>
                     <textarea
                       value={editingEvent.description}
-                      onChange={(e) =>
-                        setEditingEvent({
-                          ...editingEvent,
-                          description: e.target.value,
-                        })
-                      }
+                      onChange={handleFormChange}
+                      name="description"
                       className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
                       rows={4}
                       required
@@ -292,12 +323,8 @@ const RegisteredEventsPage: React.FC = () => {
                     <input
                       type="text"
                       value={editingEvent.venue}
-                      onChange={(e) =>
-                        setEditingEvent({
-                          ...editingEvent,
-                          venue: e.target.value,
-                        })
-                      }
+                      onChange={handleFormChange}
+                      name="venue"
                       className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
                       required
                     />
@@ -310,12 +337,8 @@ const RegisteredEventsPage: React.FC = () => {
                     <input
                       type="url"
                       value={editingEvent.website}
-                      onChange={(e) =>
-                        setEditingEvent({
-                          ...editingEvent,
-                          website: e.target.value,
-                        })
-                      }
+                      onChange={handleFormChange}
+                      name="website"
                       className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
                       required
                     />
@@ -329,12 +352,8 @@ const RegisteredEventsPage: React.FC = () => {
                       <input
                         type="datetime-local"
                         value={editingEvent.startDate}
-                        onChange={(e) =>
-                          setEditingEvent({
-                            ...editingEvent,
-                            startDate: e.target.value,
-                          })
-                        }
+                        onChange={handleFormChange}
+                        name="startDate"
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
                         required
                       />
@@ -346,12 +365,8 @@ const RegisteredEventsPage: React.FC = () => {
                       <input
                         type="datetime-local"
                         value={editingEvent.endDate}
-                        onChange={(e) =>
-                          setEditingEvent({
-                            ...editingEvent,
-                            endDate: e.target.value,
-                          })
-                        }
+                        onChange={handleFormChange}
+                        name="endDate"
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
                         required
                       />
@@ -365,13 +380,8 @@ const RegisteredEventsPage: React.FC = () => {
                     <input
                       type="text"
                       value={editingEvent.expectedAttendance || ""}
-                      onChange={(e) =>
-                        setEditingEvent({
-                          ...editingEvent,
-                          expectedAttendance:
-                            e.target.value === "" ? "" : Number(e.target.value),
-                        })
-                      }
+                      onChange={handleFormChange}
+                      name="expectedAttendance"
                       className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
                       required
                     />
@@ -389,21 +399,8 @@ const RegisteredEventsPage: React.FC = () => {
                         <input
                           type="text"
                           value={editingEvent.location.coordinates.lat || ""}
-                          onChange={(e) =>
-                            setEditingEvent({
-                              ...editingEvent,
-                              location: {
-                                ...editingEvent.location,
-                                coordinates: {
-                                  ...editingEvent.location.coordinates,
-                                  lat:
-                                    e.target.value === ""
-                                      ? ""
-                                      : Number(e.target.value),
-                                },
-                              },
-                            })
-                          }
+                          onChange={handleFormChange}
+                          name="lat"
                           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
                           required
                         />
@@ -415,21 +412,8 @@ const RegisteredEventsPage: React.FC = () => {
                         <input
                           type="text"
                           value={editingEvent.location.coordinates.lng || ""}
-                          onChange={(e) =>
-                            setEditingEvent({
-                              ...editingEvent,
-                              location: {
-                                ...editingEvent.location,
-                                coordinates: {
-                                  ...editingEvent.location.coordinates,
-                                  lng:
-                                    e.target.value === ""
-                                      ? ""
-                                      : Number(e.target.value),
-                                },
-                              },
-                            })
-                          }
+                          onChange={handleFormChange}
+                          name="lng"
                           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
                           required
                         />

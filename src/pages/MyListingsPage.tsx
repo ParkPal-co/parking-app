@@ -51,6 +51,8 @@ interface Driveway {
   eventId: string;
   event?: Event;
   bookedByName?: string;
+  availableFrom?: string;
+  availableTo?: string;
 }
 
 interface EditDrivewayModalProps {
@@ -83,8 +85,8 @@ const EditDrivewayModal: React.FC<EditDrivewayModalProps> = ({
       const updatedDriveway = {
         ...formData,
         availability: {
-          start: formData.availableFrom,
-          end: formData.availableTo,
+          start: formData.availableFrom || "",
+          end: formData.availableTo || "",
         },
       };
       delete updatedDriveway.availableFrom;

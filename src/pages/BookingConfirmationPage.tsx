@@ -26,10 +26,8 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 const BookingForm: React.FC<{
   event: Event;
   spot: ParkingSpot;
-  clientSecret: string;
-  onSuccess: (bookingId: string) => void;
   onError: (error: string) => void;
-}> = ({ event, spot, clientSecret, onSuccess, onError }) => {
+}> = ({ event, spot, onError }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
@@ -114,11 +112,9 @@ const BookingForm: React.FC<{
 };
 
 const BookingConfirmationPage: React.FC = () => {
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const eventId = searchParams.get("event");
   const spotId = searchParams.get("spot");
-  const { user } = useAuth();
 
   const [event, setEvent] = useState<Event | null>(null);
   const [spot, setSpot] = useState<ParkingSpot | null>(null);
@@ -183,10 +179,6 @@ const BookingConfirmationPage: React.FC = () => {
     }
   };
 
-  const handleSuccess = (bookingId: string) => {
-    navigate(`/booking-success?bookingId=${bookingId}`);
-  };
-
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -235,13 +227,7 @@ const BookingConfirmationPage: React.FC = () => {
           </button>
         ) : (
           <Elements stripe={stripePromise} options={{ clientSecret }}>
-            <BookingForm
-              event={event}
-              spot={spot}
-              clientSecret={clientSecret}
-              onSuccess={handleSuccess}
-              onError={setError}
-            />
+            <BookingForm event={event} spot={spot} onError={setError} />
           </Elements>
         )}
       </div>
