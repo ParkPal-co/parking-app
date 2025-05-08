@@ -36,6 +36,9 @@ const BookingSuccessPage = React.lazy(
   () => import("../pages/BookingSuccessPage")
 );
 const ListPage = React.lazy(() => import("../pages/ListPage"));
+const StorageMetricsPage = React.lazy(
+  () => import("../pages/StorageMetricsPage")
+);
 
 export const routes: RouteObject[] = [
   {
@@ -203,6 +206,16 @@ export const routes: RouteObject[] = [
             <BookingSuccessPage />
           </PageLayout>
         </VerifiedEmailRoute>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/storage-metrics",
+    element: (
+      <ProtectedRoute>
+        <PageLayout>
+          <StorageMetricsPage />
+        </PageLayout>
       </ProtectedRoute>
     ),
   },

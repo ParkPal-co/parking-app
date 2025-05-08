@@ -87,6 +87,13 @@ service cloud.firestore {
       allow delete: if false; // Payment intents should not be deleted
     }
 
+    // Storage metrics rules
+    match /storageMetrics/{metricId} {
+      allow read: if isAuthenticated() && 
+        (request.auth.token.email == "aleczaitz@gmail.com" || request.auth.token.email == "donminic30@gmail.com");
+      allow write: if false; // Only allow writes from Cloud Functions
+    }
+
     // Default deny
     match /{document=**} {
       allow read, write: if false;

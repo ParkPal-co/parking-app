@@ -14,6 +14,7 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { db } from "../firebase/config";
+import { Link } from "react-router-dom";
 
 interface Event {
   id: string;
@@ -186,6 +187,12 @@ const AdminPanel: React.FC = () => {
             >
               Driveways
             </button>
+            <Link
+              to="/storage-metrics"
+              className="py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+            >
+              Storage Metrics
+            </Link>
           </nav>
         </div>
       </div>
