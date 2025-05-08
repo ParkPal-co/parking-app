@@ -57,7 +57,12 @@ const LoginPage: React.FC = () => {
       <FloatingQuotesBackground />
       <div className="max-w-md w-full space-y-8 bg-white rounded-lg shadow p-8 mx-auto relative z-10">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          <img
+            src="/assets/images/Icon1WhiteBkgd.png"
+            alt="Parking App Logo"
+            className="mx-auto h-24 w-auto mb-2"
+          />
+          <h2 className="text-center text-3xl font-extrabold text-gray-900">
             Sign in to your account
           </h2>
         </div>
