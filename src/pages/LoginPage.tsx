@@ -7,6 +7,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { GoogleAuthProvider } from "firebase/auth";
+import { FloatingQuotesBackground } from "../components/background/FloatingQuotesBackground";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -52,8 +53,9 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-md w-full space-y-8 bg-white rounded-lg shadow p-8 mx-auto">
+    <div className="flex flex-col items-center justify-center relative overflow-hidden">
+      <FloatingQuotesBackground />
+      <div className="max-w-md w-full space-y-8 bg-white rounded-lg shadow p-8 mx-auto relative z-10">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Sign in to your account
