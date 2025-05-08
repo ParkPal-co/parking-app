@@ -6,6 +6,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { GoogleAuthProvider } from "firebase/auth";
 
 const RegisterPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -14,7 +15,7 @@ const RegisterPage: React.FC = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { signup, loginWithGoogle } = useAuth();
+  const { signup, handleSocialLogin } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +35,7 @@ const RegisterPage: React.FC = () => {
     try {
       setError("");
       setLoading(true);
-      await loginWithGoogle();
+      await handleSocialLogin(new GoogleAuthProvider());
       navigate("/");
     } catch (err) {
       setError("Failed to sign in with Google.");
@@ -44,8 +45,8 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="container mx-auto px-4 py-8">
+      <div className="max-w-md w-full space-y-8 bg-white rounded-lg shadow p-8 mx-auto">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Create your account
