@@ -34,6 +34,7 @@ const RegisteredEventsPage = React.lazy(
 const BookingSuccessPage = React.lazy(
   () => import("../pages/BookingSuccessPage")
 );
+const ListPage = React.lazy(() => import("../pages/ListPage"));
 
 export const routes: RouteObject[] = [
   {
@@ -42,6 +43,16 @@ export const routes: RouteObject[] = [
       <PageLayout showBackButton={false} fullWidth={true}>
         <EventSearchPage />
       </PageLayout>
+    ),
+  },
+  {
+    path: "/list",
+    element: (
+      <ProtectedRoute>
+        <PageLayout>
+          <ListPage />
+        </PageLayout>
+      </ProtectedRoute>
     ),
   },
   {

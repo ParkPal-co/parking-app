@@ -11,7 +11,6 @@ const RegisterPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [isHost, setIsHost] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -22,7 +21,7 @@ const RegisterPage: React.FC = () => {
     try {
       setError("");
       setLoading(true);
-      await signup(email, password, name, isHost);
+      await signup(email, password, name, false);
       navigate("/");
     } catch (err) {
       setError("Failed to create an account.");
@@ -89,21 +88,6 @@ const RegisterPage: React.FC = () => {
                 placeholder="Password"
               />
             </div>
-          </div>
-
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              checked={isHost}
-              onChange={(e) => setIsHost(e.target.checked)}
-              className="h-4 w-4 text-black focus:ring-black border-gray-300 rounded"
-            />
-            <label
-              htmlFor="is-host"
-              className="ml-2 block text-sm text-gray-900"
-            >
-              I want to rent out my driveway
-            </label>
           </div>
 
           <div>

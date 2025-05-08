@@ -8,7 +8,7 @@ import { useAuth } from "../hooks/useAuth";
 import { collection, addDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage, auth } from "../firebase/config";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useEvents } from "../hooks/useEvents";
 import { Event } from "../types";
 import {
@@ -251,6 +251,24 @@ const RegisterDrivewayPage: React.FC = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
           Please log in to register a driveway.
+        </div>
+      </div>
+    );
+  }
+
+  if (!user.isHost) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-2xl mx-auto">
+          <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-3 rounded mb-6">
+            You need to become a host before you can register a driveway.
+          </div>
+          <Link
+            to="/account-settings"
+            className="inline-block bg-black text-white py-2 px-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
+          >
+            Become a Host
+          </Link>
         </div>
       </div>
     );

@@ -12,7 +12,7 @@ const AccountSettingsPage: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(user?.name || "");
   const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || "");
-  const [address, setAddress] = useState(user?.address || "");
+  const [isHost, setIsHost] = useState(user?.isHost || false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -21,12 +21,34 @@ const AccountSettingsPage: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const storage = getStorage();
 
+  // Format phone number as (XXX) XXX-XXXX
+  const formatPhoneNumber = (value: string) => {
+    // Remove all non-numeric characters
+    const numbers = value.replace(/\D/g, "");
+
+    // Format the number
+    if (numbers.length === 0) return "";
+    if (numbers.length <= 3) return `(${numbers}`;
+    if (numbers.length <= 6)
+      return `(${numbers.slice(0, 3)}) ${numbers.slice(3)}`;
+    return `(${numbers.slice(0, 3)}) ${numbers.slice(3, 6)}-${numbers.slice(
+      6,
+      10
+    )}`;
+  };
+
+  // Handle phone number input changes
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formattedNumber = formatPhoneNumber(e.target.value);
+    setPhoneNumber(formattedNumber);
+  };
+
   // Update form data when user data changes
   useEffect(() => {
     if (user) {
       setName(user.name || "");
-      setPhoneNumber(user.phoneNumber || "");
-      setAddress(user.address || "");
+      setPhoneNumber(formatPhoneNumber(user.phoneNumber || ""));
+      setIsHost(user.isHost || false);
     }
   }, [user]);
 
@@ -70,10 +92,13 @@ const AccountSettingsPage: React.FC = () => {
         profileImageUrl = await getDownloadURL(storageRef);
       }
 
+      // Remove formatting before saving
+      const cleanPhoneNumber = phoneNumber.replace(/\D/g, "");
+
       await updateUserProfile(user.id, {
         name,
-        phoneNumber,
-        address,
+        phoneNumber: cleanPhoneNumber,
+        isHost,
         ...(profileImageUrl ? { profileImageUrl } : {}),
       });
 
@@ -92,8 +117,8 @@ const AccountSettingsPage: React.FC = () => {
   const handleCancel = () => {
     setIsEditing(false);
     setName(user?.name || "");
-    setPhoneNumber(user?.phoneNumber || "");
-    setAddress(user?.address || "");
+    setPhoneNumber(formatPhoneNumber(user?.phoneNumber || ""));
+    setIsHost(user?.isHost || false);
     setNewProfileImage(null);
     setImagePreview(null);
     setError(null);
@@ -229,26 +254,46 @@ const AccountSettingsPage: React.FC = () => {
             <input
               type="tel"
               value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
+              onChange={handlePhoneChange}
               disabled={!isEditing}
+              placeholder="(XXX) XXX-XXXX"
+              maxLength={14}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black sm:text-sm disabled:bg-gray-50 disabled:text-gray-500"
             />
           </div>
 
+          {/* Host Status Section */}
           <div>
-            <label
-              htmlFor="address"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Address
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Host Status
             </label>
-            <input
-              type="text"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              disabled={!isEditing}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black sm:text-sm disabled:bg-gray-50 disabled:text-gray-500"
-            />
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-700">
+                  {isHost
+                    ? "You are currently a host and can list your driveway for rent."
+                    : "Become a host to list your driveway for rent."}
+                </p>
+                {!isHost && (
+                  <p className="text-sm text-gray-500 mt-1">
+                    As a host, you can list your driveway for events and earn
+                    money.
+                  </p>
+                )}
+              </div>
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={isHost}
+                  onChange={(e) => setIsHost(e.target.checked)}
+                  disabled={!isEditing}
+                  className="h-4 w-4 text-black focus:ring-black border-gray-300 rounded disabled:bg-gray-50 disabled:text-gray-500"
+                />
+                <span className="ml-2 text-sm text-gray-700">
+                  {isHost ? "Host" : "Not a Host"}
+                </span>
+              </div>
+            </div>
           </div>
 
           {isEditing && (

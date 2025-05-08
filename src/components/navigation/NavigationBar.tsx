@@ -61,8 +61,9 @@ export const NavigationBar: React.FC = () => {
               Rent
             </Link>
             <Link
-              to={user ? "/my-listings" : "/register-driveway"}
+              to="/list"
               className={`text-lg ${
+                location.pathname.includes("list") ||
                 location.pathname.includes("my-listings") ||
                 location.pathname.includes("register-driveway")
                   ? "font-bold"
