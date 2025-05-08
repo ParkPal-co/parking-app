@@ -66,7 +66,7 @@ const EventSearchPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 relative">
+    <div className="h-[calc(100vh-5rem)] flex flex-col items-center justify-center relative overflow-hidden">
       <FloatingQuotesBackground />
       <div className="max-w-2xl w-full px-4 relative z-10">
         <h1 className="text-4xl font-bold text-center mb-8 text-gray-900 animate-fade-in-from-top [animation-fill-mode:forwards]">

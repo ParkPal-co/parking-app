@@ -11,21 +11,21 @@ interface Quote {
   y: number;
   speed: number;
   fontSize: number;
-  fontFamily: string;
+  fontFamily: number;
   direction: "left" | "right";
 }
 
 const quotes = [
-  "Amazing event, but...",
-  "Missed the whole first half",
-  "I can't believe someone would take up two spots like that",
+  "Amazing Concert, but...",
+  "Missed the whole first half of the game",
+  "I can't believe someone would take up two stalls like that",
   "Came back to find out someone dinged my car",
   "Drove around aimlessly for 30 minutes",
   "Parking was a joke",
   "Imagine how nice it would be to live that close",
   "Where did we leave the car?",
-  "Wish I had a driveway nearby",
-  "Next time I'm taking an Uber",
+  "Wish we had a driveway nearby",
+  "Next time we're taking an Uber",
   "The walk was longer than the event",
   "Found a spot, but at what cost?",
   "Parking should be included in the ticket",
@@ -57,7 +57,7 @@ const yPositions = [10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 85, 75, 65, 55, 45];
 export const FloatingQuotesBackground: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [quotesState, setQuotesState] = useState<Quote[]>([]);
-  const animationFrameRef = useRef<number>();
+  const animationFrameRef = useRef<number | undefined>(undefined);
 
   // Initialize quotes with random positions and properties
   useEffect(() => {
@@ -102,10 +102,10 @@ export const FloatingQuotesBackground: React.FC = () => {
             (quote.direction === "right" ? quote.speed : -quote.speed);
 
           // Handle wrapping based on direction
-          if (quote.direction === "right" && newX > containerWidth + 200) {
-            newX = -200; // Start further off-screen left
-          } else if (quote.direction === "left" && newX < -200) {
-            newX = containerWidth + 200; // Start further off-screen right
+          if (quote.direction === "right" && newX > containerWidth + 100) {
+            newX = -300; // Start further off-screen left
+          } else if (quote.direction === "left" && newX < -300) {
+            newX = containerWidth + 100; // Start further off-screen right
           }
 
           return {
