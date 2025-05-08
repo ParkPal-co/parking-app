@@ -13,7 +13,14 @@ const VerifiedEmailRoute: React.FC<VerifiedEmailRouteProps> = ({
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-[calc(100vh-5rem)]">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="w-12 h-12 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-gray-600">Checking email verification status...</p>
+        </div>
+      </div>
+    );
   }
 
   if (!user) {

@@ -263,7 +263,7 @@ const EditDrivewayModal: React.FC<EditDrivewayModalProps> = ({
 };
 
 const MyListingsPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [driveways, setDriveways] = useState<Driveway[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -350,6 +350,19 @@ const MyListingsPage: React.FC = () => {
     setDriveways((prev) => prev.filter((d) => d.id !== editingDriveway.id));
   };
 
+  // Show loading state while auth is loading or while fetching driveways
+  if (authLoading || loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[calc(100vh-5rem)]">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="w-12 h-12 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-gray-600">Loading your listings...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Only show error if we're not loading and there's no user
   if (!user) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -378,9 +391,7 @@ const MyListingsPage: React.FC = () => {
         </div>
       )}
 
-      {loading ? (
-        <div className="text-center py-12">Loading...</div>
-      ) : driveways.length === 0 ? (
+      {driveways.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-gray-500 mb-4">
             You haven't registered any driveways yet.
