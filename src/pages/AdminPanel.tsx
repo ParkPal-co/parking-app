@@ -20,7 +20,10 @@ interface Event {
   id: string;
   title: string;
   description: string;
-  location: string;
+  location: {
+    address: string;
+    coordinates: { lat: number; lng: number };
+  };
   startDate: string;
   endDate: string;
   status: "active" | "cancelled" | "completed";
@@ -158,6 +161,43 @@ const AdminPanel: React.FC = () => {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Admin Panel</h1>
 
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Events Management Card */}
+        <Link
+          to="/registered-events"
+          className="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
+        >
+          <h2 className="text-xl font-semibold mb-2">Events Management</h2>
+          <p className="text-gray-600">
+            View and manage all registered events, including their status and
+            details.
+          </p>
+        </Link>
+
+        {/* Register Event Card */}
+        <Link
+          to="/register-event"
+          className="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
+        >
+          <h2 className="text-xl font-semibold mb-2">Register New Event</h2>
+          <p className="text-gray-600">
+            Create and register new events with detailed information and images.
+          </p>
+        </Link>
+
+        {/* Storage Metrics Card */}
+        <Link
+          to="/storage-metrics"
+          className="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
+        >
+          <h2 className="text-xl font-semibold mb-2">Storage Metrics</h2>
+          <p className="text-gray-600">
+            Monitor storage usage, track costs, and view metrics for different
+            file types.
+          </p>
+        </Link>
+      </div>
+
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
           {error}
@@ -187,12 +227,6 @@ const AdminPanel: React.FC = () => {
             >
               Driveways
             </button>
-            <Link
-              to="/storage-metrics"
-              className="py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-            >
-              Storage Metrics
-            </Link>
           </nav>
         </div>
       </div>
@@ -235,7 +269,7 @@ const AdminPanel: React.FC = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {event.location}
+                        {event.location?.address || ""}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {new Date(event.startDate).toLocaleDateString()} -{" "}

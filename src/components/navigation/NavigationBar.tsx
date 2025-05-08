@@ -36,10 +36,6 @@ export const NavigationBar: React.FC = () => {
     }
   };
 
-  const isAdmin =
-    user?.email === "aleczaitz@gmail.com" ||
-    user?.email === "donminic30@gmail.com";
-
   return (
     <nav className="bg-white shadow-md fixed top-0 left-0 right-0 z-50">
       <div className="container mx-auto px-4">
@@ -133,23 +129,14 @@ export const NavigationBar: React.FC = () => {
                 >
                   Messages
                 </Link>
-                {isAdmin && (
-                  <>
-                    <Link
-                      to="/registered-events"
-                      className="block px-6 py-3 text-base text-gray-700 hover:bg-gray-100"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Registered Events
-                    </Link>
-                    <Link
-                      to="/register-event"
-                      className="block px-6 py-3 text-base text-gray-700 hover:bg-gray-100"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Register an Event
-                    </Link>
-                  </>
+                {user?.isAdmin && (
+                  <Link
+                    to="/admin"
+                    className="block px-6 py-3 text-base text-gray-700 hover:bg-gray-100"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Admin Panel
+                  </Link>
                 )}
                 <button
                   onClick={() => {

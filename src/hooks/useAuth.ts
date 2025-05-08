@@ -39,7 +39,13 @@ export function useAuth() {
             });
             userData.emailVerified = firebaseUser.emailVerified;
           }
-          setUser(userData);
+          // Check Firestore for admin status
+          let isAdmin = false;
+          if (firebaseUser.email) {
+            const adminDoc = await getDoc(doc(db, 'admins', firebaseUser.email));
+            isAdmin = adminDoc.exists();
+          }
+          setUser({ ...userData, isAdmin });
         } else {
           if (!signupInProgress) {
             console.warn('User document not found in Firestore:', firebaseUser.uid);

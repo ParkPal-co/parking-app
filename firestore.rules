@@ -6,6 +6,12 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    // Admins collection rules
+    match /admins/{email} {
+      allow read: if isAuthenticated();
+      allow write: if false;
+    }
+
     // Helper function to check if user owns the document
     function isOwner(userId) {
       return isAuthenticated() && request.auth.uid == userId;
@@ -86,7 +92,7 @@ service cloud.firestore {
       allow update: if false; // Payment intents should not be updated
       allow delete: if false; // Payment intents should not be deleted
     }
-
+    
     // Storage metrics rules
     match /storageMetrics/{metricId} {
       allow read: if isAuthenticated() && 
