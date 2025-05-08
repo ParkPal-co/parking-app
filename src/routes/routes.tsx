@@ -2,6 +2,7 @@ import { RouteObject, Navigate } from "react-router-dom";
 import React from "react";
 import { PageLayout } from "../components/layout/PageLayout";
 import { ProtectedRoute } from "../components/auth/ProtectedRoute";
+import VerifiedEmailRoute from "../components/auth/VerifiedEmailRoute";
 
 const EventSearchPage = React.lazy(() => import("../pages/EventSearchPage"));
 const UpcomingEventsPage = React.lazy(
@@ -49,9 +50,11 @@ export const routes: RouteObject[] = [
     path: "/list",
     element: (
       <ProtectedRoute>
-        <PageLayout>
-          <ListPage />
-        </PageLayout>
+        <VerifiedEmailRoute>
+          <PageLayout>
+            <ListPage />
+          </PageLayout>
+        </VerifiedEmailRoute>
       </ProtectedRoute>
     ),
   },
@@ -75,9 +78,11 @@ export const routes: RouteObject[] = [
     path: "/booking-confirmation",
     element: (
       <ProtectedRoute>
-        <PageLayout>
-          <BookingConfirmationPage />
-        </PageLayout>
+        <VerifiedEmailRoute>
+          <PageLayout>
+            <BookingConfirmationPage />
+          </PageLayout>
+        </VerifiedEmailRoute>
       </ProtectedRoute>
     ),
   },
@@ -101,9 +106,11 @@ export const routes: RouteObject[] = [
     path: "/my-listings",
     element: (
       <ProtectedRoute>
-        <PageLayout>
-          <MyListingsPage />
-        </PageLayout>
+        <VerifiedEmailRoute>
+          <PageLayout>
+            <MyListingsPage />
+          </PageLayout>
+        </VerifiedEmailRoute>
       </ProtectedRoute>
     ),
   },
@@ -111,9 +118,11 @@ export const routes: RouteObject[] = [
     path: "/my-bookings",
     element: (
       <ProtectedRoute>
-        <PageLayout>
-          <MyBookingsPage />
-        </PageLayout>
+        <VerifiedEmailRoute>
+          <PageLayout>
+            <MyBookingsPage />
+          </PageLayout>
+        </VerifiedEmailRoute>
       </ProtectedRoute>
     ),
   },
@@ -121,9 +130,11 @@ export const routes: RouteObject[] = [
     path: "/messages",
     element: (
       <ProtectedRoute>
-        <PageLayout>
-          <MessagesPage />
-        </PageLayout>
+        <VerifiedEmailRoute>
+          <PageLayout>
+            <MessagesPage />
+          </PageLayout>
+        </VerifiedEmailRoute>
       </ProtectedRoute>
     ),
   },
@@ -151,9 +162,11 @@ export const routes: RouteObject[] = [
     path: "/register-driveway",
     element: (
       <ProtectedRoute>
-        <PageLayout>
-          <RegisterDrivewayPage />
-        </PageLayout>
+        <VerifiedEmailRoute>
+          <PageLayout>
+            <RegisterDrivewayPage />
+          </PageLayout>
+        </VerifiedEmailRoute>
       </ProtectedRoute>
     ),
   },
@@ -161,9 +174,11 @@ export const routes: RouteObject[] = [
     path: "/register-event",
     element: (
       <ProtectedRoute>
-        <PageLayout>
-          <RegisterAnEventPage />
-        </PageLayout>
+        <VerifiedEmailRoute>
+          <PageLayout>
+            <RegisterAnEventPage />
+          </PageLayout>
+        </VerifiedEmailRoute>
       </ProtectedRoute>
     ),
   },
@@ -171,9 +186,11 @@ export const routes: RouteObject[] = [
     path: "/registered-events",
     element: (
       <ProtectedRoute>
-        <PageLayout>
-          <RegisteredEventsPage />
-        </PageLayout>
+        <VerifiedEmailRoute>
+          <PageLayout>
+            <RegisteredEventsPage />
+          </PageLayout>
+        </VerifiedEmailRoute>
       </ProtectedRoute>
     ),
   },
@@ -181,9 +198,11 @@ export const routes: RouteObject[] = [
     path: "/booking-success",
     element: (
       <ProtectedRoute>
-        <PageLayout>
-          <BookingSuccessPage />
-        </PageLayout>
+        <VerifiedEmailRoute>
+          <PageLayout>
+            <BookingSuccessPage />
+          </PageLayout>
+        </VerifiedEmailRoute>
       </ProtectedRoute>
     ),
   },

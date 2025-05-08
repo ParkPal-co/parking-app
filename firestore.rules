@@ -60,7 +60,7 @@ service cloud.firestore {
     // User profiles rules
     match /users/{userId} {
       allow read: if true;  // Allow reading user profiles
-      allow create: if isAuthenticated();  // Only authenticated users can create profiles
+      allow create: if isAuthenticated() && request.auth.uid == userId;  // Only allow creating own profile
       allow update: if isOwner(userId);
       allow delete: if isOwner(userId);
     }

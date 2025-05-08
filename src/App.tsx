@@ -8,6 +8,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { NavigationBar } from "./components/navigation/NavigationBar";
 import { routes } from "./routes/routes";
 import { ErrorBoundary } from "./components/error/ErrorBoundary";
+import EmailVerificationBanner from "./components/auth/EmailVerificationBanner";
 
 const App: React.FC = () => {
   return (
@@ -15,6 +16,7 @@ const App: React.FC = () => {
       <ErrorBoundary>
         <div className="min-h-screen bg-gray-100">
           <NavigationBar />
+          <EmailVerificationBanner className="sticky top-20 z-40" />
           <div className="pt-20">
             <React.Suspense
               fallback={
