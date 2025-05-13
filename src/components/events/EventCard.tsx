@@ -33,7 +33,7 @@ export const EventCard: React.FC<EventCardProps> = ({
         <div className="w-full h-40 md:w-48 md:h-auto flex-shrink-0">
           <img
             src={event.imageUrl}
-            alt={event.title}
+            alt={`Poster for ${event.title}`}
             className="w-full h-full object-cover"
           />
         </div>
@@ -62,6 +62,7 @@ export const EventCard: React.FC<EventCardProps> = ({
             variant="primary"
             fullWidth={true}
             className="md:w-auto whitespace-nowrap"
+            aria-label={`Find parking for ${event.title}`}
           >
             Find Parking
           </Button>

@@ -117,7 +117,11 @@ const UpcomingEventsPage: React.FC = () => {
 
         {/* Search Bar */}
         <div className="mb-8 opacity-0 animate-fade-in-from-top [animation-delay:0.2s] [animation-fill-mode:forwards]">
-          <form onSubmit={handleSearchSubmit}>
+          <form
+            onSubmit={handleSearchSubmit}
+            role="search"
+            aria-label="Search events"
+          >
             <div className="relative">
               <Input
                 type="text"
@@ -145,16 +149,17 @@ const UpcomingEventsPage: React.FC = () => {
             <NoEventsFound />
           </div>
         ) : (
-          <div className="space-y-6">
+          <ul className="space-y-6" aria-label="Upcoming events list">
             {sortedEvents.map((event, index) => (
-              <EventCard
-                key={event.id}
-                event={event}
-                index={index}
-                onFindParking={handleFindParking}
-              />
+              <li key={event.id} className="list-none">
+                <EventCard
+                  event={event}
+                  index={index}
+                  onFindParking={handleFindParking}
+                />
+              </li>
             ))}
-          </div>
+          </ul>
         )}
       </div>
     </div>
