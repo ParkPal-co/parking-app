@@ -1,0 +1,124 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import Inter font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* Base styles */
+@layer base {
+  html {
+    @apply antialiased;
+  }
+
+  body {
+    @apply bg-primary-50 text-primary-900 font-sans;
+  }
+
+  h1 {
+    @apply text-4xl font-extrabold tracking-tight;
+  }
+
+  h2 {
+    @apply text-3xl font-bold tracking-tight;
+  }
+
+  h3 {
+    @apply text-2xl font-bold;
+  }
+
+  h4 {
+    @apply text-xl font-semibold;
+  }
+
+  h5 {
+    @apply text-lg font-semibold;
+  }
+
+  h6 {
+    @apply text-base font-semibold;
+  }
+}
+
+/* Component styles */
+@layer components {
+  /* Text styles */
+  .text-body {
+    @apply text-base text-primary-700;
+  }
+
+  .text-body-sm {
+    @apply text-sm text-primary-700;
+  }
+
+  .text-body-lg {
+    @apply text-lg text-primary-700;
+  }
+
+  /* Link styles */
+  .link {
+    @apply text-accent hover:text-accent-light transition-colors duration-200;
+  }
+
+  /* Container styles */
+  .container-sm {
+    @apply max-w-3xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .container-md {
+    @apply max-w-5xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .container-lg {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Form group */
+  .form-group {
+    @apply space-y-1;
+  }
+
+  /* Section styles */
+  .section {
+    @apply py-12 sm:py-16;
+  }
+
+  .section-sm {
+    @apply py-8 sm:py-12;
+  }
+
+  .section-lg {
+    @apply py-16 sm:py-20;
+  }
+}
+
+/* Utility classes */
+@layer utilities {
+  /* Transitions */
+  .transition-fast {
+    @apply transition-all duration-150 ease-in-out;
+  }
+
+  .transition-normal {
+    @apply transition-all duration-200 ease-in-out;
+  }
+
+  .transition-slow {
+    @apply transition-all duration-300 ease-in-out;
+  }
+
+  /* Focus styles */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent;
+  }
+
+  /* Hover effects */
+  .hover-lift {
+    @apply hover:-translate-y-0.5 transition-transform duration-150;
+  }
+
+  /* Shadows with hover */
+  .shadow-hover {
+    @apply shadow-md hover:shadow-lg transition-shadow duration-150;
+  }
+} 
