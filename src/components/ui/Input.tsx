@@ -31,7 +31,7 @@ export const Input: React.FC<InputProps> = ({
   const baseStyles = twMerge(
     "block w-full border rounded-md font-normal",
     "focus-ring transition-normal",
-    "placeholder:text-primary-400",
+    "placeholder:text-primary-500",
     error
       ? "border-error-300 text-error-900 focus:ring-error-500 focus:border-error-500"
       : "border-primary-300 text-primary-900 focus:ring-accent focus:border-accent",

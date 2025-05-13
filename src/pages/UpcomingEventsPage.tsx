@@ -10,7 +10,8 @@ import { Event } from "../types";
 import { sortEvents, filterEvents } from "../services/eventService";
 import { Input } from "../components/ui/Input";
 import { Button } from "../components/ui/Button";
-import { Card } from "../components/ui/Card";
+import { EventCard } from "../components/events/EventCard";
+import { NoEventsFound } from "../components/events/NoEventsFound";
 
 const UpcomingEventsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -141,69 +142,17 @@ const UpcomingEventsPage: React.FC = () => {
 
         {sortedEvents.length === 0 ? (
           <div className="text-center py-8 opacity-0 animate-fade-in-from-top [animation-delay:0.4s] [animation-fill-mode:forwards]">
-            <p className="text-gray-600">No upcoming events found</p>
+            <NoEventsFound />
           </div>
         ) : (
           <div className="space-y-6">
             {sortedEvents.map((event, index) => (
-              <Card
+              <EventCard
                 key={event.id}
-                padding="none"
-                shadow="normal"
-                border={true}
-                variant="interactive"
-                className={
-                  "lg:max-h-40 flex flex-col md:flex-row overflow-hidden opacity-0 animate-fade-in-from-top transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:border-gray-300 cursor-pointer"
-                }
-                style={{
-                  animationDelay: `${0.4 + index * 0.1}s`,
-                  animationFillMode: "forwards",
-                }}
-                onClick={() => handleFindParking(event.id)}
-              >
-                {event.imageUrl && (
-                  <div className="w-full h-40 md:w-48 md:h-auto flex-shrink-0">
-                    <img
-                      src={event.imageUrl}
-                      alt={event.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                )}
-                <div className="flex-1 p-4 md:p-6 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2">
-                      {event.title}
-                    </h3>
-                    <p className="text-primary-600 mb-2">
-                      {event.location.address}
-                    </p>
-                    <p className="text-primary-500">
-                      {new Date(event.startDate).toLocaleDateString()}
-                    </p>
-                    {event.distance && (
-                      <p className="text-sm text-primary-500 mt-2">
-                        {event.distance.toFixed(1)} km away
-                      </p>
-                    )}
-                  </div>
-                  <div className="md:ml-6 w-full md:w-auto" flex-shrink-0>
-                    <Button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleFindParking(event.id);
-                      }}
-                      size="medium"
-                      variant="primary"
-                      fullWidth={true}
-                      className="whitespace-nowrap w-full md:w-auto"
-                    >
-                      Find Parking
-                    </Button>
-                  </div>
-                </div>
-              </Card>
+                event={event}
+                index={index}
+                onFindParking={handleFindParking}
+              />
             ))}
           </div>
         )}
