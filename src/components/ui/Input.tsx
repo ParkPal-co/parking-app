@@ -5,7 +5,7 @@ export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: string;
   label?: string;
-  size?: "small" | "medium" | "large";
+  dsSize?: "small" | "medium" | "large" | "xlarge";
   helperText?: string;
 }
 
@@ -15,7 +15,7 @@ export const Input: React.FC<InputProps> = ({
   label,
   helperText,
   disabled,
-  size = "medium",
+  dsSize = "medium",
   id,
   ...props
 }) => {
@@ -25,6 +25,7 @@ export const Input: React.FC<InputProps> = ({
     small: "px-2 py-1.5 text-sm",
     medium: "px-3 py-2 text-base",
     large: "px-4 py-2.5 text-lg",
+    xlarge: "px-5 py-4 text-xl",
   };
 
   const baseStyles = twMerge(
@@ -35,7 +36,7 @@ export const Input: React.FC<InputProps> = ({
       ? "border-error-300 text-error-900 focus:ring-error-500 focus:border-error-500"
       : "border-primary-300 text-primary-900 focus:ring-accent focus:border-accent",
     disabled && "bg-primary-50 text-primary-500 cursor-not-allowed",
-    sizeClasses[size],
+    sizeClasses[dsSize],
     className
   );
 

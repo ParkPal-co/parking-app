@@ -8,6 +8,9 @@ import { useNavigate } from "react-router-dom";
 import { useEvents } from "../hooks/useEvents";
 import { Event } from "../types";
 import { FloatingQuotesBackground } from "../components/background/FloatingQuotesBackground";
+import { Input } from "../components/ui/Input";
+import { Button } from "../components/ui/Button";
+import { Card } from "../components/ui/Card";
 
 const EventSearchPage: React.FC = () => {
   const navigate = useNavigate();
@@ -79,50 +82,62 @@ const EventSearchPage: React.FC = () => {
           onClick={(e) => e.stopPropagation()}
         >
           <div className="relative">
-            <input
+            <Input
               type="text"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               onFocus={() => setShowResults(true)}
               placeholder="Search for events..."
-              className="w-full px-6 py-4 text-lg border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black shadow-lg bg-white"
+              dsSize="xlarge"
+              className="shadow-lg bg-white"
             />
-            <button
+            <Button
               type="submit"
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-black text-white px-6 py-2 rounded-md hover:bg-gray-800 transition-colors"
+              size="medium"
+              variant="primary"
+              className="absolute right-3 top-1/2 -translate-y-1/2"
+              style={{ minWidth: 100 }}
             >
               Search
-            </button>
+            </Button>
           </div>
 
           {showResults && filteredEvents.length > 0 && (
-            <div className="absolute w-full bg-white rounded-lg shadow-xl border border-gray-200 max-h-96 overflow-y-auto z-10">
+            <div className="absolute w-full max-h-96 overflow-y-auto z-10 mt-2">
               {filteredEvents.map((event) => (
-                <div
+                <Card
                   key={event.id}
+                  padding="small"
+                  shadow="small"
+                  border={true}
+                  variant="interactive"
+                  className="mb-2 last:mb-0 cursor-pointer"
                   onClick={() => handleEventSelect(event)}
-                  className="px-6 py-4 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
                 >
-                  <h3 className="font-semibold text-gray-900">{event.title}</h3>
-                  <p className="text-sm text-gray-600">
+                  <h3 className="font-semibold text-primary-900">
+                    {event.title}
+                  </h3>
+                  <p className="text-sm text-primary-600">
                     {event.location.address}
                   </p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-primary-500">
                     {new Date(event.startDate).toLocaleDateString()}
                   </p>
-                </div>
+                </Card>
               ))}
             </div>
           )}
 
           <div className="text-center mt-4 opacity-0 animate-fade-in-from-top [animation-delay:0.4s] [animation-fill-mode:forwards]">
-            <button
+            <Button
               type="button"
               onClick={() => navigate("/events?nearby=true")}
-              className="bg-gray-200 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-300 transition-colors text-sm font-medium"
+              variant="secondary"
+              size="small"
+              className="font-medium"
             >
               events near me
-            </button>
+            </Button>
           </div>
         </form>
       </div>
