@@ -8,6 +8,9 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useEvents } from "../hooks/useEvents";
 import { Event } from "../types";
 import { sortEvents, filterEvents } from "../services/eventService";
+import { Input } from "../components/ui/Input";
+import { Button } from "../components/ui/Button";
+import { Card } from "../components/ui/Card";
 
 const UpcomingEventsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -115,19 +118,23 @@ const UpcomingEventsPage: React.FC = () => {
         <div className="mb-8 opacity-0 animate-fade-in-from-top [animation-delay:0.2s] [animation-fill-mode:forwards]">
           <form onSubmit={handleSearchSubmit}>
             <div className="relative">
-              <input
+              <Input
                 type="text"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="Search for events..."
-                className="w-full px-6 py-3 text-lg border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black shadow-lg"
+                dsSize="xlarge"
+                className="shadow-lg bg-white"
               />
-              <button
+              <Button
                 type="submit"
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-black text-white px-6 py-2 rounded-md hover:bg-gray-800 transition-colors"
+                size="medium"
+                variant="primary"
+                className="absolute right-3 top-1/2 -translate-y-1/2"
+                style={{ minWidth: 100 }}
               >
                 Search
-              </button>
+              </Button>
             </div>
           </form>
         </div>
@@ -139,9 +146,15 @@ const UpcomingEventsPage: React.FC = () => {
         ) : (
           <div className="space-y-6">
             {sortedEvents.map((event, index) => (
-              <div
+              <Card
                 key={event.id}
-                className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 flex opacity-0 animate-fade-in-from-top transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:border-gray-300 cursor-pointer"
+                padding="none"
+                shadow="normal"
+                border={true}
+                variant="interactive"
+                className={
+                  "lg:max-h-40 flex flex-col md:flex-row overflow-hidden opacity-0 animate-fade-in-from-top transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:border-gray-300 cursor-pointer"
+                }
                 style={{
                   animationDelay: `${0.4 + index * 0.1}s`,
                   animationFillMode: "forwards",
@@ -149,7 +162,7 @@ const UpcomingEventsPage: React.FC = () => {
                 onClick={() => handleFindParking(event.id)}
               >
                 {event.imageUrl && (
-                  <div className="w-48 h-auto">
+                  <div className="w-full h-40 md:w-48 md:h-auto flex-shrink-0">
                     <img
                       src={event.imageUrl}
                       alt={event.title}
@@ -157,33 +170,40 @@ const UpcomingEventsPage: React.FC = () => {
                     />
                   </div>
                 )}
-                <div className="flex-1 p-6 flex justify-between items-center">
+                <div className="flex-1 p-4 md:p-6 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
                   <div>
                     <h3 className="text-xl font-semibold mb-2">
                       {event.title}
                     </h3>
-                    <p className="text-gray-600 mb-2">
+                    <p className="text-primary-600 mb-2">
                       {event.location.address}
                     </p>
-                    <p className="text-gray-500">
+                    <p className="text-primary-500">
                       {new Date(event.startDate).toLocaleDateString()}
                     </p>
                     {event.distance && (
-                      <p className="text-sm text-gray-500 mt-2">
+                      <p className="text-sm text-primary-500 mt-2">
                         {event.distance.toFixed(1)} km away
                       </p>
                     )}
                   </div>
-                  <div className="ml-6">
-                    <button
-                      onClick={() => handleFindParking(event.id)}
-                      className="bg-black text-white px-6 py-2 rounded-md hover:bg-gray-800 transition-colors whitespace-nowrap"
+                  <div className="md:ml-6 w-full md:w-auto" flex-shrink-0>
+                    <Button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleFindParking(event.id);
+                      }}
+                      size="medium"
+                      variant="primary"
+                      fullWidth={true}
+                      className="whitespace-nowrap w-full md:w-auto"
                     >
                       Find Parking
-                    </button>
+                    </Button>
                   </div>
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
         )}
