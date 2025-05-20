@@ -71,11 +71,7 @@ export const routes: RouteObject[] = [
   },
   {
     path: "/rent",
-    element: (
-      <PageLayout>
-        <DrivewaySelectPage />
-      </PageLayout>
-    ),
+    element: <DrivewaySelectPage />,
   },
   {
     path: "/booking-confirmation",
