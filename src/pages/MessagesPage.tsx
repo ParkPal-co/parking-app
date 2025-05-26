@@ -3,16 +3,16 @@
  * Page component for user messaging
  */
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useMessages } from "../hooks/useMessages";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firebase/config";
-import { User } from "../types";
 import ConversationsList from "../components/messages/ConversationsList";
 import MessagesArea from "../components/messages/MessagesArea";
 import MessageInput from "../components/messages/MessageInput";
 import ConversationsDrawer from "../components/messages/ConversationsDrawer";
+import MessagesHeader from "../components/messages/MessagesHeader";
+import EmptyState from "../components/messages/EmptyState";
+import useParticipants from "../hooks/useParticipants";
 
 const MessagesPage: React.FC = () => {
   const { user } = useAuth();
@@ -27,12 +27,6 @@ const MessagesPage: React.FC = () => {
     markConversationAsRead,
   } = useMessages();
   const [newMessage, setNewMessage] = useState("");
-  const [participantNames, setParticipantNames] = useState<{
-    [key: string]: string;
-  }>({});
-  const [participantProfiles, setParticipantProfiles] = useState<{
-    [key: string]: User;
-  }>({});
   const [showDrawer, setShowDrawer] = useState(false);
 
   // Mark conversation as read when selected
@@ -42,37 +36,11 @@ const MessagesPage: React.FC = () => {
     }
   }, [activeConversation, markConversationAsRead]);
 
-  // Fetch participant names and profiles
-  useEffect(() => {
-    const fetchParticipantInfo = async () => {
-      const names: { [key: string]: string } = {};
-      const profiles: { [key: string]: User } = {};
-
-      for (const conversation of conversations) {
-        for (const participantId of conversation.participants) {
-          if (!names[participantId] && participantId !== user?.id) {
-            try {
-              const userDoc = await getDoc(doc(db, "users", participantId));
-              if (userDoc.exists()) {
-                const userData = userDoc.data() as User;
-                names[participantId] = userData.name || "Unknown User";
-                profiles[participantId] = userData;
-              }
-            } catch (err) {
-              console.error("Error fetching user info:", err);
-              names[participantId] = "Unknown User";
-            }
-          }
-        }
-      }
-      setParticipantNames(names);
-      setParticipantProfiles(profiles);
-    };
-
-    if (conversations.length > 0) {
-      fetchParticipantInfo();
-    }
-  }, [conversations, user?.id]);
+  // Use participants hook
+  const { participantNames, participantProfiles } = useParticipants(
+    conversations,
+    user?.id
+  );
 
   // Open drawer
   const openDrawer = () => setShowDrawer(true);
@@ -114,51 +82,31 @@ const MessagesPage: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-2 max-w-6xl">
-      <div className="flex h-[90vh] bg-white rounded-lg shadow-lg overflow-hidden relative">
+    <div className="container mx-auto px-4 max-w-6xl">
+      <div className="flex h-[calc(100vh-200px)] bg-white rounded-lg shadow-lg overflow-hidden relative">
         {/* Conversations List - Desktop/Tablet */}
         <div className="hidden md:flex w-1/3 border-r border-gray-200 flex-col">
           <div className="p-3 border-b border-gray-200 flex-shrink-0">
             <h1 className="text-xl font-semibold">Messages</h1>
           </div>
-          <ConversationsList
-            conversations={conversations}
-            activeConversation={activeConversation}
-            setActiveConversation={setActiveConversation}
-            participantNames={participantNames}
-            participantProfiles={participantProfiles}
-            user={user}
-          />
+          {conversations.length === 0 ? (
+            <EmptyState message="No conversations yet" />
+          ) : (
+            <ConversationsList
+              conversations={conversations}
+              activeConversation={activeConversation}
+              setActiveConversation={setActiveConversation}
+              participantNames={participantNames}
+              participantProfiles={participantProfiles}
+              user={user}
+            />
+          )}
         </div>
 
         {/* Messages Area */}
-        <div className="flex-1 flex flex-col relative">
-          {/* Mobile: Drawer Button */}
-          <div className="md:hidden flex items-center justify-between p-3 border-b border-gray-200 bg-white z-10">
-            <button
-              onClick={openDrawer}
-              className="inline-flex items-center px-3 py-2 rounded-lg text-black hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-black"
-              aria-label="Open conversations"
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
-              <span className="ml-2 font-medium">Conversations</span>
-            </button>
-            <h1 className="text-lg font-semibold">Messages</h1>
-            <div className="w-10" /> {/* Spacer for alignment */}
-          </div>
+        <div className="flex-1 flex flex-col relative h-full">
+          {/* Mobile: Drawer Button/Header */}
+          <MessagesHeader onOpenDrawer={openDrawer} />
 
           {/* Mobile: Drawer Modal (now inside the messages window) */}
           <ConversationsDrawer
@@ -190,9 +138,10 @@ const MessagesPage: React.FC = () => {
               </div>
             </>
           ) : (
-            <div className="flex-1 flex items-center justify-center text-gray-500">
-              Select a conversation to start messaging
-            </div>
+            <EmptyState
+              message="Select a conversation to start messaging"
+              className="flex-1"
+            />
           )}
         </div>
       </div>
