@@ -19,6 +19,10 @@ import {
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { getFunctions, httpsCallable } from "firebase/functions";
+import { Card } from "../components/ui/Card";
+import { Button } from "../components/ui/Button";
+import { Alert } from "../components/ui/Alert";
+import { Modal } from "../components/ui/Modal";
 
 // Initialize Stripe
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
@@ -95,18 +99,28 @@ const BookingForm: React.FC<{
       onSubmit={handleSubmit}
       className="space-y-6 opacity-0 animate-fade-in-from-top [animation-delay:0.4s] [animation-fill-mode:forwards]"
     >
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-semibold mb-4">Payment Details</h2>
-        <PaymentElement />
-      </div>
+      <Card className="bg-white">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold">Payment Details</h2>
+            <div className="text-primary-600">Total: ${spot.price}</div>
+          </div>
+          <div className="border-t border-primary-200 pt-4">
+            <PaymentElement />
+          </div>
+        </div>
+      </Card>
 
-      <button
+      <Button
         type="submit"
         disabled={!stripe || loading}
-        className="w-full bg-black text-white py-3 rounded-md hover:bg-gray-800 disabled:bg-gray-400"
+        variant="primary"
+        size="large"
+        fullWidth={true}
+        isLoading={loading}
       >
         {loading ? "Processing..." : "Confirm Booking"}
-      </button>
+      </Button>
     </form>
   );
 };
@@ -121,6 +135,7 @@ const BookingConfirmationPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   useEffect(() => {
     const loadBookingDetails = async () => {
@@ -171,6 +186,7 @@ const BookingConfirmationPage: React.FC = () => {
         currency: "usd",
       });
       setClientSecret((data as { clientSecret: string }).clientSecret);
+      setShowPaymentModal(false);
     } catch (err) {
       setError("Failed to initiate payment");
       console.error(err);
@@ -182,7 +198,10 @@ const BookingConfirmationPage: React.FC = () => {
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="text-center">Loading booking details...</div>
+        <div className="max-w-2xl mx-auto space-y-6">
+          <Card isLoading className="h-64" />
+          <Card isLoading className="h-32" />
+        </div>
       </div>
     );
   }
@@ -190,7 +209,7 @@ const BookingConfirmationPage: React.FC = () => {
   if (error) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="text-center text-red-600">{error}</div>
+        <Alert variant="error" title="Error" message={error} />
       </div>
     );
   }
@@ -198,38 +217,165 @@ const BookingConfirmationPage: React.FC = () => {
   if (!event || !spot) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="text-center text-red-600">
-          Booking details not found.
-        </div>
+        <Alert
+          variant="error"
+          title="Error"
+          message="Booking details not found."
+        />
       </div>
     );
   }
 
+  const startDate = new Date(event.startDate);
+  const endDate = new Date(event.endDate);
+  const duration = Math.round(
+    (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60)
+  );
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="max-w-xl mx-auto bg-white rounded-lg shadow-md p-8">
-        <h1 className="text-2xl font-bold mb-4">Confirm Your Booking</h1>
-        <div className="mb-6">
-          <div className="font-semibold">Event:</div>
-          <div>{event.title}</div>
-          <div className="font-semibold mt-2">Parking Spot:</div>
-          <div>{spot.address}</div>
-          <div className="font-semibold mt-2">Price:</div>
-          <div>${spot.price.toFixed(2)}</div>
-        </div>
+      <div className="max-w-2xl mx-auto space-y-6">
+        <Card className="overflow-hidden">
+          <div className="relative h-48 md:h-64">
+            <img
+              src={spot.images[0] || "https://placehold.co/600x400"}
+              alt={spot.address}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute top-4 right-4 bg-black bg-opacity-75 text-white px-4 py-2 rounded-lg text-xl font-semibold">
+              ${spot.price}
+            </div>
+          </div>
+          <div className="p-6">
+            <h1 className="text-2xl font-bold mb-6">Confirm Your Booking</h1>
+
+            <div className="space-y-4">
+              <div>
+                <h2 className="text-lg font-semibold text-primary-900 mb-2">
+                  Event Details
+                </h2>
+                <div className="bg-primary-50 p-4 rounded-lg">
+                  <h3 className="font-medium text-primary-900">
+                    {event.title}
+                  </h3>
+                  <p className="text-primary-600 mt-1">
+                    {event.location.address}
+                  </p>
+                  <p className="text-primary-500 mt-1">
+                    {startDate.toLocaleDateString()} at{" "}
+                    {startDate.toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <h2 className="text-lg font-semibold text-primary-900 mb-2">
+                  Parking Spot
+                </h2>
+                <div className="bg-primary-50 p-4 rounded-lg">
+                  <h3 className="font-medium text-primary-900">
+                    {spot.address}
+                  </h3>
+                  <p className="text-primary-600 mt-1">{spot.description}</p>
+                </div>
+              </div>
+
+              <div>
+                <h2 className="text-lg font-semibold text-primary-900 mb-2">
+                  Booking Summary
+                </h2>
+                <div className="bg-primary-50 p-4 rounded-lg">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-primary-600">Duration</span>
+                    <span className="font-medium text-primary-900">
+                      {duration} hours
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-primary-600">Price per hour</span>
+                    <span className="font-medium text-primary-900">
+                      ${(spot.price / duration).toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center pt-2 border-t border-primary-200">
+                    <span className="text-lg font-semibold text-primary-900">
+                      Total
+                    </span>
+                    <span className="text-lg font-semibold text-primary-900">
+                      ${spot.price}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Card>
+
         {!clientSecret ? (
-          <button
-            onClick={handleCreatePaymentIntent}
-            className="w-full bg-black text-white py-3 rounded-md hover:bg-gray-800 disabled:bg-gray-400"
-            disabled={loading}
+          <Button
+            onClick={() => setShowPaymentModal(true)}
+            variant="primary"
+            size="large"
+            fullWidth={true}
+            isLoading={loading}
           >
-            {loading ? "Processing..." : "Confirm Booking"}
-          </button>
+            {loading ? "Processing..." : "Proceed to Payment"}
+          </Button>
         ) : (
           <Elements stripe={stripePromise} options={{ clientSecret }}>
             <BookingForm event={event} spot={spot} onError={setError} />
           </Elements>
         )}
+
+        <Modal
+          isOpen={showPaymentModal}
+          onClose={() => setShowPaymentModal(false)}
+          title="Confirm Payment"
+          description="You are about to proceed to payment. Please confirm the following details:"
+        >
+          <div className="space-y-4">
+            <div className="bg-primary-50 p-4 rounded-lg">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-primary-600">Event</span>
+                <span className="font-medium text-primary-900">
+                  {event.title}
+                </span>
+              </div>
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-primary-600">Duration</span>
+                <span className="font-medium text-primary-900">
+                  {duration} hours
+                </span>
+              </div>
+              <div className="flex justify-between items-center pt-2 border-t border-primary-200">
+                <span className="text-lg font-semibold text-primary-900">
+                  Total
+                </span>
+                <span className="text-lg font-semibold text-primary-900">
+                  ${spot.price}
+                </span>
+              </div>
+            </div>
+            <div className="flex justify-end space-x-4">
+              <Button
+                variant="secondary"
+                onClick={() => setShowPaymentModal(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                onClick={handleCreatePaymentIntent}
+                isLoading={loading}
+              >
+                Confirm & Pay
+              </Button>
+            </div>
+          </div>
+        </Modal>
       </div>
     </div>
   );

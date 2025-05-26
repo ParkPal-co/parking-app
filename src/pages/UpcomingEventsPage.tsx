@@ -55,6 +55,8 @@ const UpcomingEventsPage: React.FC = () => {
     navigate(`/rent?event=${eventId}`);
   };
 
+
+  // Currently taken out
   const handleShowNearbyEvents = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -107,12 +109,12 @@ const UpcomingEventsPage: React.FC = () => {
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8 opacity-0 animate-fade-in-from-top [animation-fill-mode:forwards]">
           <h1 className="text-3xl font-bold">Upcoming Events</h1>
-          <button
+          {/* <button
             onClick={handleShowNearbyEvents}
             className="bg-black text-white px-6 py-2 rounded-md hover:bg-gray-800 transition-colors"
           >
             Show Events Near Me
-          </button>
+          </button> */}
         </div>
 
         {/* Search Bar */}

@@ -147,8 +147,8 @@ export const MapMarkers: React.FC<MapMarkersProps> = ({
   onBookSpot,
 }) => {
   useEffect(() => {
-    if (!map || !event || !spots.length) {
-      console.log("Map, event, or spots not available:", { map, event, spots });
+    if (!map || !event) {
+      console.log("Map or event not available:", { map, event });
       return;
     }
 

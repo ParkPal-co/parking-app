@@ -149,6 +149,11 @@ const DrivewaySelectPage: React.FC = () => {
         </div>
       </div>
 
+      {/* Desktop BackButton */}
+      <div className="hidden lg:flex items-center px-8 py-6">
+        <BackButton />
+      </div>
+
       {/* Map - Fullscreen on small screens, half-width on larger screens */}
       <div className="w-full h-full pt-14 lg:pt-0 lg:w-1/2 lg:fixed lg:right-0 lg:top-0">
         <MapContainer
