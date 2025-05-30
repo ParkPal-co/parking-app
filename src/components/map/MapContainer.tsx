@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { GoogleMap } from "@react-google-maps/api";
 import { MapErrorBoundary } from "./MapErrorBoundary";
 import { MapMarkers } from "./MapMarkers";
@@ -39,6 +39,18 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     setMapInstance(map);
     onMapLoad(map);
   };
+
+  useEffect(() => {
+    if (mapInstance && selectedSpot) {
+      const LAT_OFFSET = 0.0003; // ~90 meters, adjust as needed
+      const adjustedCenter = {
+        lat: selectedSpot.coordinates.lat + LAT_OFFSET,
+        lng: selectedSpot.coordinates.lng,
+      };
+      mapInstance.panTo(adjustedCenter);
+      mapInstance.setZoom(18);
+    }
+  }, [mapInstance, selectedSpot]);
 
   return (
     <MapErrorBoundary>
