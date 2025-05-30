@@ -34,11 +34,11 @@ export function Table<T extends { id?: string | number }>({
   hoverable = true,
   selectedRowId,
 }: TableProps<T>) {
-  const renderCell = (item: T, column: Column<T>) => {
+  const renderCell = (item: T, column: Column<T>): React.ReactNode => {
     if (typeof column.accessor === "function") {
       return column.accessor(item);
     }
-    return item[column.accessor];
+    return item[column.accessor] as React.ReactNode;
   };
 
   const sizeClasses = {

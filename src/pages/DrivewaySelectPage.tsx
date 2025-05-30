@@ -6,7 +6,7 @@
 import React, { useState, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useLoadScript, Libraries } from "@react-google-maps/api";
-import { Event, ParkingSpot } from "../types";
+import { ParkingSpot } from "../types";
 import { DrivewayListingsPanel } from "../components/parking/DrivewayListingsPanel";
 import { BackButton } from "../components/navigation/BackButton";
 import { Alert } from "../components/ui/Alert";
@@ -15,44 +15,7 @@ import { MapContainer } from "../components/map/MapContainer";
 import { DrivewayListings } from "../components/parking/DrivewayListings";
 import { useEventAndSpots } from "../hooks/useEventAndSpots";
 
-// Simple error boundary component
-class ErrorBoundary extends React.Component<
-  { children: React.ReactNode; fallback: React.ReactNode },
-  { hasError: boolean }
-> {
-  constructor(props: { children: React.ReactNode; fallback: React.ReactNode }) {
-    super(props);
-    this.state = { hasError: false };
-  }
-
-  static getDerivedStateFromError() {
-    return { hasError: true };
-  }
-
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error("Error in component:", error, errorInfo);
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return this.props.fallback;
-    }
-
-    return this.props.children;
-  }
-}
-
 // Constants
-const MAP_CONTAINER_STYLE = {
-  width: "100%",
-  height: "100%",
-} as const;
-
-const MAP_OPTIONS = {
-  disableDefaultUI: true,
-  zoomControl: true,
-} as const;
-
 const GOOGLE_MAP_LIBRARIES: Libraries = ["marker"];
 
 const DrivewaySelectPage: React.FC = () => {
@@ -63,7 +26,6 @@ const DrivewaySelectPage: React.FC = () => {
   const { event, spots, loading, error } = useEventAndSpots(eventId);
   const [selectedSpot, setSelectedSpot] = useState<ParkingSpot | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
-  const [map, setMap] = useState<google.maps.Map | null>(null);
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
@@ -163,7 +125,7 @@ const DrivewaySelectPage: React.FC = () => {
           selectedSpot={selectedSpot}
           onSpotSelect={handleSpotSelect}
           onBookSpot={handleBookSpot}
-          onMapLoad={setMap}
+          onMapLoad={() => {}}
         />
       </div>
 
@@ -178,7 +140,6 @@ const DrivewaySelectPage: React.FC = () => {
 
       {/* Mobile panel */}
       <DrivewayListingsPanel
-        eventTitle={event.title}
         spots={spots}
         selectedSpot={selectedSpot}
         onSpotSelect={handleSpotSelect}

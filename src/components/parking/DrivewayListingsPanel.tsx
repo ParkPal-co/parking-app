@@ -3,7 +3,6 @@ import { ParkingSpot } from "../../types";
 import { ParkingSpotCard } from "./ParkingSpotCard";
 
 interface DrivewayListingsPanelProps {
-  eventTitle: string;
   spots: ParkingSpot[];
   selectedSpot: ParkingSpot | null;
   onSpotSelect: (spot: ParkingSpot) => void;
@@ -13,7 +12,6 @@ interface DrivewayListingsPanelProps {
 }
 
 export const DrivewayListingsPanel: React.FC<DrivewayListingsPanelProps> = ({
-  eventTitle,
   spots,
   selectedSpot,
   onSpotSelect,
@@ -74,7 +72,7 @@ export const DrivewayListingsPanel: React.FC<DrivewayListingsPanelProps> = ({
   };
 
   // Click/tap on handle toggles
-  const handleHandleClick = (e: React.MouseEvent) => {
+  const handleHandleClick = () => {
     if (!dragging) onToggle();
   };
 
@@ -100,7 +98,9 @@ export const DrivewayListingsPanel: React.FC<DrivewayListingsPanelProps> = ({
           >
             <div className="w-10 h-1.5 rounded-full bg-primary-200 mb-1" />
           </div>
-          <h2 className="text-xl font-bold mb-4 text-center">Available Spots</h2>
+          <h2 className="text-xl font-bold mb-4 text-center">
+            Available Spots
+          </h2>
         </div>
         <div className="p-4 pt-0">
           <div className="grid grid-cols-1 gap-4">
