@@ -21,7 +21,6 @@ export const BackButton: React.FC = () => {
       aria-label="Go back"
     >
       <ArrowLeftIcon className="h-5 w-5 mr-1" />
-      <span>Back</span>
     </button>
   );
 };

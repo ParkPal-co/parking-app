@@ -105,7 +105,7 @@ const UpcomingEventsPage: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 pb-8 pt-4">
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8 opacity-0 animate-fade-in-from-top [animation-fill-mode:forwards]">
           <h1 className="text-3xl font-bold">Upcoming Events</h1>

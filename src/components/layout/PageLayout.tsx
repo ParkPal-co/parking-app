@@ -20,9 +20,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({
   return (
     <div className={fullWidth ? "" : "container mx-auto px-4 py-8"}>
       {showBackButton && (
-        <div className="mb-6">
           <BackButton />
-        </div>
       )}
       {children}
     </div>

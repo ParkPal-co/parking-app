@@ -42,7 +42,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
   useEffect(() => {
     if (mapInstance && selectedSpot) {
-      const LAT_OFFSET = 0.0003; // ~90 meters, adjust as needed
+      const LAT_OFFSET = 0.0006; // ~90 meters, adjust as needed
       const adjustedCenter = {
         lat: selectedSpot.coordinates.lat + LAT_OFFSET,
         lng: selectedSpot.coordinates.lng,
