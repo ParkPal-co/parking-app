@@ -69,9 +69,9 @@ const EventSearchPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="h-[calc(100vh-5rem)] flex flex-col items-center justify-center relative overflow-hidden">
+    <div className="h-min-[calc(100dvh-80px)] flex flex-col items-center justify-center relative overflow-hidden">
       <FloatingQuotesBackground />
-      <div className="max-w-2xl w-full px-4 relative z-10">
+      <div className="max-w-2xl w-full px-4 relative z-10 py-48 h-100dvh">
         <h1 className="text-4xl font-bold text-center mb-8 text-gray-900 animate-fade-in-from-top [animation-fill-mode:forwards]">
           Where is your next event?
         </h1>
@@ -103,7 +103,15 @@ const EventSearchPage: React.FC = () => {
           </div>
 
           {showResults && filteredEvents.length > 0 && (
-            <div className="absolute w-full max-h-96 overflow-y-auto z-10 mt-2">
+            <div
+              className="absolute w-full max-h-72 overflow-y-auto z-10 mt-2"
+              style={{
+                WebkitMaskImage:
+                  "linear-gradient(to bottom, black 66%, transparent 100%)",
+                maskImage:
+                  "linear-gradient(to bottom, black 66%, transparent 100%)",
+              }}
+            >
               {filteredEvents.map((event) => (
                 <Card
                   key={event.id}
@@ -111,12 +119,12 @@ const EventSearchPage: React.FC = () => {
                   shadow="small"
                   border={true}
                   variant="interactive"
-                  className="mb-2 last:mb-0 cursor-pointer"
+                  className="mb-2 last:mb-0 cursor-pointer p-2 lg:p-4"
                   onClick={() => handleEventSelect(event)}
                 >
-                  <h3 className="font-semibold text-primary-900">
+                  <h5 className="font-semibold text-primary-900">
                     {event.title}
-                  </h3>
+                  </h5>
                   <p className="text-sm text-primary-600">
                     {event.location.address}
                   </p>
@@ -134,9 +142,9 @@ const EventSearchPage: React.FC = () => {
               onClick={() => navigate("/events")}
               variant="secondary"
               size="small"
-              className="font-medium"
+              className="font-medium shadow-md bg-white"
             >
-              Events happening soon
+              Upcoming Events
             </Button>
           </div>
         </form>

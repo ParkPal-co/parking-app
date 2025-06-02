@@ -136,7 +136,7 @@ const UpcomingEventsPage: React.FC = () => {
                 type="submit"
                 size="medium"
                 variant="primary"
-                className="absolute right-3 top-1/2 -translate-y-1/2"
+                className="absolute right-3 top-1/2 -translate-y-1/2 "
                 style={{ minWidth: 100 }}
               >
                 Search
