@@ -14,7 +14,7 @@ const App: React.FC = () => {
   return (
     <Router>
       <ErrorBoundary>
-        <div className="min-h-screen bg-gray-100">
+        <div className="min-h-dvh bg-gray-100">
           <NavigationBar />
           <EmailVerificationBanner className="sticky top-20 z-40" />
           <div className="pt-20">

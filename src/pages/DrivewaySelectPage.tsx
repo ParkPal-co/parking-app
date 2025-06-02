@@ -100,7 +100,7 @@ const DrivewaySelectPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-210px)] lg:space-y-0 overflow-hidden lg:h-[calc(100vh-80px)]">
+    <div className="relative flex flex-col h-[calc(100dvh-210px)] lg:space-y-0 overflow-hidden lg:h-[calc(100vh-80px)]">
       {/* Fixed header bar below navbar */}
       <div className="fixed top-20 left-0 w-full h-14 bg-white z-30 flex items-center justify-center shadow-sm border-b border-primary-200 lg:hidden">
         <div className="absolute left-4">
@@ -117,7 +117,7 @@ const DrivewaySelectPage: React.FC = () => {
       </div>
 
       {/* Map - Fullscreen on small screens, half-width on larger screens */}
-      <div className="w-full h-full pt-14 lg:pt-0 lg:w-1/2 lg:fixed lg:right-0 lg:top-0">
+      <div className="w-full h-[calc(100dvh-210px)] pt-14 lg:pt-0 lg:w-1/2 lg:fixed lg:right-0 lg:top-0">
         <MapContainer
           center={center}
           event={event}
