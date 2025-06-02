@@ -131,12 +131,12 @@ const EventSearchPage: React.FC = () => {
           <div className="text-center mt-4 opacity-0 animate-fade-in-from-top [animation-delay:0.4s] [animation-fill-mode:forwards]">
             <Button
               type="button"
-              onClick={() => navigate("/events?nearby=true")}
+              onClick={() => navigate("/events")}
               variant="secondary"
               size="small"
               className="font-medium"
             >
-              events near me
+              Events happening soon
             </Button>
           </div>
         </form>

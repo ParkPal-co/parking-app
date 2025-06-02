@@ -55,7 +55,6 @@ const UpcomingEventsPage: React.FC = () => {
     navigate(`/rent?event=${eventId}`);
   };
 
-
   // Currently taken out
   const handleShowNearbyEvents = () => {
     if (navigator.geolocation) {
