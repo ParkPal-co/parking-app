@@ -26,7 +26,7 @@ export const DrivewayListingsPanel: React.FC<DrivewayListingsPanelProps> = ({
   const [dragging, setDragging] = useState(false);
 
   // Panel heights
-  const PEEK_HEIGHT = 150; // px
+  const PEEK_HEIGHT = 100; // px
   const PANEL_MAX_HEIGHT = 0.8 * window.innerHeight; // 80vh
 
   // Calculate translateY for drag
@@ -85,14 +85,13 @@ export const DrivewayListingsPanel: React.FC<DrivewayListingsPanelProps> = ({
           maxHeight: PANEL_MAX_HEIGHT,
           height: PANEL_MAX_HEIGHT,
           transform: `translateY(${translateY}px)`,
-          touchAction: "none",
         }}
       >
         {/* Sticky handle and header */}
         <div className="sticky top-0 z-10 bg-white border-b border-primary-100">
           <div
             className="flex flex-col items-center cursor-pointer py-2"
-            style={{ userSelect: "none" }}
+            style={{ userSelect: "none", touchAction: "none" }}
             onPointerDown={handlePointerDown}
             onClick={handleHandleClick}
           >
