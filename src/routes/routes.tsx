@@ -43,7 +43,7 @@ const RegisteredEventsPage = React.lazy(
 const BookingSuccessPage = React.lazy(
   () => import("../pages/bookings/BookingSuccessPage")
 );
-const ListPage = React.lazy(() => import("../pages/hosting/ListPage"));
+const ListPage = React.lazy(() => import("../pages/hosting/ListLandingPage"));
 const StorageMetricsPage = React.lazy(
   () => import("../pages/admin/StorageMetricsPage")
 );
