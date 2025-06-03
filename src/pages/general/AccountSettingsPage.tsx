@@ -4,11 +4,11 @@
  */
 
 import React, { useState, useRef, useEffect } from "react";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { Card } from "../components/ui/Card";
-import { Button } from "../components/ui/Button";
-import { Alert } from "../components/ui/Alert";
+import { Card } from "../../components/ui/Card";
+import { Button } from "../../components/ui/Button";
+import { Alert } from "../../components/ui/Alert";
 import { getFunctions, httpsCallable } from "firebase/functions";
 
 const AccountSettingsPage: React.FC = () => {

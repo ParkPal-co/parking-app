@@ -20,7 +20,7 @@ const MyListingsPage = React.lazy(() => import("../pages/MyListingsPage"));
 const MyBookingsPage = React.lazy(() => import("../pages/MyBookingsPage"));
 const MessagesPage = React.lazy(() => import("../pages/MessagesPage"));
 const AccountSettingsPage = React.lazy(
-  () => import("../pages/AccountSettingsPage")
+  () => import("../pages/general/AccountSettingsPage")
 );
 const AdminPanel = React.lazy(() => import("../pages/AdminPanel"));
 const RegisterDrivewayPage = React.lazy(
