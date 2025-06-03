@@ -1,10 +1,10 @@
 /**
- * src/pages/RegisteredEventsPage.tsx
+ * src/pages/admin/RegisteredEventsPage.tsx
  * Page component for managing registered events
  */
 
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 import {
   collection,
   query,
@@ -14,7 +14,7 @@ import {
   deleteDoc,
   where,
 } from "firebase/firestore";
-import { db, storage } from "../firebase/config";
+import { db, storage } from "../../firebase/config";
 import {
   ref,
   uploadBytes,

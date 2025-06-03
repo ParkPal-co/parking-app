@@ -1,14 +1,14 @@
 /**
- * src/pages/RegisterPage.tsx
+ * src/pages/auth/RegisterAccountPage.tsx
  * Page component for user registration
  */
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 import { GoogleAuthProvider } from "firebase/auth";
-import { FloatingQuotesBackground } from "../components/background/FloatingQuotesBackground";
-import { Button, Input, Card, Alert } from "../components/ui";
+import { FloatingQuotesBackground } from "../../components/background/FloatingQuotesBackground";
+import { Button, Input, Card, Alert } from "../../components/ui";
 
 const RegisterPage: React.FC = () => {
   const [email, setEmail] = useState("");

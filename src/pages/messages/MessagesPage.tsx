@@ -1,18 +1,18 @@
 /**
- * src/pages/MessagesPage.tsx
+ * src/pages/messages/MessagesPage.tsx
  * Page component for user messaging
  */
 
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../hooks/useAuth";
-import { useMessages } from "../hooks/useMessages";
-import ConversationsList from "../components/messages/ConversationsList";
-import MessagesArea from "../components/messages/MessagesArea";
-import MessageInput from "../components/messages/MessageInput";
-import ConversationsDrawer from "../components/messages/ConversationsDrawer";
-import MessagesHeader from "../components/messages/MessagesHeader";
-import EmptyState from "../components/messages/EmptyState";
-import useParticipants from "../hooks/useParticipants";
+import { useAuth } from "../../hooks/useAuth";
+import { useMessages } from "../../hooks/useMessages";
+import ConversationsList from "../../components/messages/ConversationsList";
+import MessagesArea from "../../components/messages/MessagesArea";
+import MessageInput from "../../components/messages/MessageInput";
+import ConversationsDrawer from "../../components/messages/ConversationsDrawer";
+import MessagesHeader from "../../components/messages/MessagesHeader";
+import EmptyState from "../../components/messages/EmptyState";
+import useParticipants from "../../hooks/useParticipants";
 
 const MessagesPage: React.FC = () => {
   const { user } = useAuth();

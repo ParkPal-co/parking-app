@@ -1,7 +1,12 @@
+/**
+ * src/pages/admin/StorageMetricsPage.tsx
+ * Page component for displaying storage metrics
+ */
+
 import React, { useState, useEffect } from "react";
 import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
-import { db } from "../firebase/config";
-import { useAuth } from "../hooks/useAuth";
+import { db } from "../../firebase/config";
+import { useAuth } from "../../hooks/useAuth";
 
 interface StorageMetrics {
   timestamp: string;

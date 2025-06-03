@@ -1,14 +1,14 @@
 /**
- * src/pages/LoginPage.tsx
+ * src/pages/auth/LoginPage.tsx
  * Page component for user login
  */
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 import { GoogleAuthProvider } from "firebase/auth";
-import { FloatingQuotesBackground } from "../components/background/FloatingQuotesBackground";
-import { Button, Input, Card, Alert } from "../components/ui";
+import { FloatingQuotesBackground } from "../../components/background/FloatingQuotesBackground";
+import { Button, Input, Card, Alert } from "../../components/ui";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");

@@ -1,16 +1,16 @@
 /**
- * src/pages/BookingConfirmationPage.tsx
+ * src/pages/bookings/BookingConfirmationPage.tsx
  * Page for confirming and completing a parking spot booking
  */
 
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Event, ParkingSpot } from "../types";
-import { fetchEventById } from "../services/eventService";
-import { fetchParkingSpotById } from "../services/parkingSpotService";
-import { createBooking } from "../services/bookingService";
-import { createConversation } from "../services/messageService";
-import { useAuth } from "../hooks/useAuth";
+import { Event, ParkingSpot } from "../../types";
+import { fetchEventById } from "../../services/eventService";
+import { fetchParkingSpotById } from "../../services/parkingSpotService";
+import { createBooking } from "../../services/bookingService";
+import { createConversation } from "../../services/messageService";
+import { useAuth } from "../../hooks/useAuth";
 import {
   PaymentElement,
   useStripe,
@@ -19,10 +19,10 @@ import {
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { getFunctions, httpsCallable } from "firebase/functions";
-import { Card } from "../components/ui/Card";
-import { Button } from "../components/ui/Button";
-import { Alert } from "../components/ui/Alert";
-import { Modal } from "../components/ui/Modal";
+import { Card } from "../../components/ui/Card";
+import { Button } from "../../components/ui/Button";
+import { Alert } from "../../components/ui/Alert";
+import { Modal } from "../../components/ui/Modal";
 
 // Initialize Stripe
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);

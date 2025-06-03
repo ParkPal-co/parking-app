@@ -1,5 +1,5 @@
 /**
- * src/pages/AccountSettingsPage.tsx
+ * src/pages/auth/AccountSettingsPage.tsx
  * Page component for user account settings
  */
 

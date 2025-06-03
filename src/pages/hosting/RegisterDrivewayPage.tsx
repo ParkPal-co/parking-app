@@ -1,21 +1,21 @@
 /**
- * src/pages/RegisterDrivewayPage.tsx
+ * src/pages/hosting/RegisterDrivewayPage.tsx
  * Page component for registering new driveways
  */
 
 import React, { useState } from "react";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 import { collection, addDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { db, storage, auth } from "../firebase/config";
+import { db, storage, auth } from "../../firebase/config";
 import { useNavigate, Link } from "react-router-dom";
-import { useEvents } from "../hooks/useEvents";
-import { Event } from "../types";
+import { useEvents } from "../../hooks/useEvents";
+import { Event } from "../../types";
 import {
   verifyAndGeocodeAddress,
   type AddressComponents,
   type VerifiedAddress,
-} from "../utils/geocoding";
+} from "../../utils/geocoding";
 
 interface DrivewayFormData {
   eventId: string;

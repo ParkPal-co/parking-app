@@ -1,20 +1,20 @@
 /**
- * src/pages/RegisterAnEventPage.tsx
+ * src/pages/admin/RegisterAnEventPage.tsx
  * Page component for registering new events
  */
 
 import React, { useState } from "react";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 import { collection, addDoc } from "firebase/firestore";
-import { db } from "../firebase/config";
+import { db } from "../../firebase/config";
 import { useNavigate } from "react-router-dom";
-import { storage } from "../firebase/config";
+import { storage } from "../../firebase/config";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import {
   verifyAndGeocodeAddress,
   type AddressComponents,
   type VerifiedAddress,
-} from "../utils/geocoding";
+} from "../../utils/geocoding";
 
 interface EventFormData {
   title: string;

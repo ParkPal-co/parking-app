@@ -1,11 +1,11 @@
 /**
- * src/pages/ListPage.tsx
+ * src/pages/hosting/ListPage.tsx
  * Page component for handling the List navigation option
  */
 
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 
 const ListPage: React.FC = () => {
   const { user, loading: authLoading } = useAuth();

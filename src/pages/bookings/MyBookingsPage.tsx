@@ -1,11 +1,11 @@
 /**
- * src/pages/MyBookingsPage.tsx
+ * src/pages/bookings/MyBookingsPage.tsx
  * Page component for displaying user's parking spot bookings
  */
 
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 import {
   collection,
   query,
@@ -15,9 +15,9 @@ import {
   doc,
   DocumentData,
 } from "firebase/firestore";
-import { db } from "../firebase/config";
-import { Booking, ParkingSpot, Event } from "../types";
-import { createConversation } from "../services/messageService";
+import { db } from "../../firebase/config";
+import { Booking, ParkingSpot, Event } from "../../types";
+import { createConversation } from "../../services/messageService";
 
 interface BookingWithDetails extends Booking {
   parkingSpot?: ParkingSpot;

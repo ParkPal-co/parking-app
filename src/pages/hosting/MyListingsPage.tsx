@@ -1,10 +1,10 @@
 /**
- * src/pages/MyListingsPage.tsx
+ * src/pages/hosting/MyListingsPage.tsx
  * Page component for displaying user's driveway listings
  */
 
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 import {
   collection,
   query,
@@ -15,7 +15,7 @@ import {
   updateDoc,
   getDoc,
 } from "firebase/firestore";
-import { db } from "../firebase/config";
+import { db } from "../../firebase/config";
 import { Link } from "react-router-dom";
 
 interface Event {

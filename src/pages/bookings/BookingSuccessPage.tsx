@@ -1,10 +1,10 @@
 /**
- * src/pages/BookingSuccessPage.tsx
+ * src/pages/bookings/BookingSuccessPage.tsx
  * Page shown after a successful booking
  */
 import React, { useEffect, useState } from "react";
 import { useSearchParams, Link, useNavigate } from "react-router-dom";
-import { getBookingById } from "../services/bookingService";
+import { getBookingById } from "../../services/bookingService";
 
 const BookingSuccessPage: React.FC = () => {
   const [searchParams] = useSearchParams();

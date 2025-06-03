@@ -1,19 +1,19 @@
 /**
- * src/pages/DrivewaySelectPage.tsx
+ * src/pages/bookings/DrivewaySelectPage.tsx
  * Page for selecting a parking spot for a specific event
  */
 
 import React, { useState, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useLoadScript, Libraries } from "@react-google-maps/api";
-import { ParkingSpot } from "../types";
-import { DrivewayListingsPanel } from "../components/parking/DrivewayListingsPanel";
-import { BackButton } from "../components/navigation/BackButton";
-import { Alert } from "../components/ui/Alert";
-import { Card } from "../components/ui/Card";
-import { MapContainer } from "../components/map/MapContainer";
-import { DrivewayListings } from "../components/parking/DrivewayListings";
-import { useEventAndSpots } from "../hooks/useEventAndSpots";
+import { ParkingSpot } from "../../types";
+import { DrivewayListingsPanel } from "../../components/parking/DrivewayListingsPanel";
+import { BackButton } from "../../components/navigation/BackButton";
+import { Alert } from "../../components/ui/Alert";
+import { Card } from "../../components/ui/Card";
+import { MapContainer } from "../../components/map/MapContainer";
+import { DrivewayListings } from "../../components/parking/DrivewayListings";
+import { useEventAndSpots } from "../../hooks/useEventAndSpots";
 
 // Constants
 const GOOGLE_MAP_LIBRARIES: Libraries = ["marker"];

@@ -1,10 +1,10 @@
 /**
- * src/pages/AdminPanel.tsx
+ * src/pages/admin/AdminPanel.tsx
  * Admin panel for managing events and driveways
  */
 
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 import {
   collection,
   query,
@@ -13,7 +13,7 @@ import {
   updateDoc,
   deleteDoc,
 } from "firebase/firestore";
-import { db } from "../firebase/config";
+import { db } from "../../firebase/config";
 import { Link } from "react-router-dom";
 
 interface Event {
