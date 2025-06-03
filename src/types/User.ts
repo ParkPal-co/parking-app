@@ -11,4 +11,5 @@ export interface User {
   address?: string;
   emailVerified: boolean;
   createdAt: Date;
+  stripeAccountId?: string; // Stripe Connect account ID for host payouts
 } 

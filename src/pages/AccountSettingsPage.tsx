@@ -6,6 +6,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { Card } from "../components/ui/Card";
+import { Button } from "../components/ui/Button";
+import { Alert } from "../components/ui/Alert";
+import { getFunctions, httpsCallable } from "firebase/functions";
 
 const AccountSettingsPage: React.FC = () => {
   const { user, updateUserProfile } = useAuth();
@@ -20,6 +24,9 @@ const AccountSettingsPage: React.FC = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const storage = getStorage();
+  const [stripeLoading, setStripeLoading] = useState(false);
+  const [stripeError, setStripeError] = useState<string | null>(null);
+  const [stripeSuccess, setStripeSuccess] = useState<string | null>(null);
 
   // Format phone number as (XXX) XXX-XXXX
   const formatPhoneNumber = (value: string) => {
@@ -122,6 +129,32 @@ const AccountSettingsPage: React.FC = () => {
     setNewProfileImage(null);
     setImagePreview(null);
     setError(null);
+  };
+
+  const handleConnectStripe = async () => {
+    setStripeLoading(true);
+    setStripeError(null);
+    setStripeSuccess(null);
+    try {
+      const functions = getFunctions();
+      const createOrGetStripeAccountLink = httpsCallable(
+        functions,
+        "createOrGetStripeAccountLink"
+      );
+      const origin = window.location.origin;
+      const { data } = await createOrGetStripeAccountLink({ origin });
+      const url = (data as any).url;
+      if (url) {
+        setStripeSuccess("Redirecting to Stripe...");
+        window.location.href = url;
+      } else {
+        setStripeError("Failed to get Stripe onboarding link.");
+      }
+    } catch (err: any) {
+      setStripeError(err.message || "Failed to connect with Stripe.");
+    } finally {
+      setStripeLoading(false);
+    }
   };
 
   return (
@@ -295,6 +328,60 @@ const AccountSettingsPage: React.FC = () => {
               </div>
             </div>
           </div>
+
+          {/* Stripe Connect Section for Hosts */}
+          {user?.isHost && (
+            <Card className="mt-8">
+              <div className="flex flex-col gap-4">
+                <h2 className="text-lg font-semibold text-primary-900 mb-2">
+                  Payout Method
+                </h2>
+                <p className="text-primary-700 text-sm">
+                  Connect your Stripe account to receive payouts for your
+                  driveway bookings. You can update your payout method at any
+                  time.
+                </p>
+                {user.stripeAccountId ? (
+                  <Alert
+                    variant="success"
+                    message="Stripe account connected. You can update your payout method below."
+                    className="mb-2"
+                  />
+                ) : (
+                  <Alert
+                    variant="info"
+                    message="You have not connected a Stripe account yet."
+                    className="mb-2"
+                  />
+                )}
+                {stripeError && (
+                  <Alert
+                    variant="error"
+                    message={stripeError}
+                    className="mb-2"
+                  />
+                )}
+                {stripeSuccess && (
+                  <Alert
+                    variant="success"
+                    message={stripeSuccess}
+                    className="mb-2"
+                  />
+                )}
+                <Button
+                  type="button"
+                  variant="primary"
+                  isLoading={stripeLoading}
+                  onClick={handleConnectStripe}
+                  fullWidth
+                >
+                  {user.stripeAccountId
+                    ? "Update Payout Method"
+                    : "Connect Stripe Account"}
+                </Button>
+              </div>
+            </Card>
+          )}
 
           {isEditing && (
             <div className="flex justify-end">

@@ -92,6 +92,7 @@ export function useAuth() {
         isHost,
         emailVerified: false,
         createdAt: new Date(),
+        // stripeAccountId will be set later if the user becomes a host and connects Stripe
       };
       if (phoneNumber) userData.phoneNumber = phoneNumber;
       if (profileImageUrl) userData.profileImageUrl = profileImageUrl;
