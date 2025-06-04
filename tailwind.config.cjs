@@ -150,6 +150,36 @@ module.exports = {
             transform: 'translateY(0)',
           },
         },
+        fadeInFromRight: {
+          '0%': {
+            opacity: '0',
+            transform: 'translateX(40px)',
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'translateX(0)',
+          },
+        },
+        fadeInFromLeft: {
+          '0%': {
+            opacity: '0',
+            transform: 'translateX(-40px)',
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'translateX(0)',
+          },
+        },
+        fadeInFromBottom: {
+          '0%': {
+            opacity: '0',
+            transform: 'translateY(40px)',
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'translateY(0)',
+          },
+        },
         shimmer: {
           '100%': {
             transform: 'translateX(100%)',
@@ -158,6 +188,9 @@ module.exports = {
       },
       animation: {
         'fade-in-from-top': 'fadeInFromTop 0.8s ease-out',
+        'fade-in-from-right': 'fadeInFromRight 0.8s ease-out',
+        'fade-in-from-left': 'fadeInFromLeft 0.8s ease-out',
+        'fade-in-from-bottom': 'fadeInFromBottom 0.8s ease-out',
         shimmer: 'shimmer 1.5s infinite',
       },
     },
