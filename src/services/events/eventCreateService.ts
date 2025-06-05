@@ -2,7 +2,7 @@ import { collection, addDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { storage } from "../../firebase/config";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { verifyAndGeocodeAddress, type AddressComponents, type VerifiedAddress } from "../../utils/geocoding";
+import { type AddressComponents } from "../../utils/geocoding";
 
 /**
  * Event form data structure (matches RegisterAnEventPage)
@@ -58,19 +58,6 @@ export async function createEvent(
   if (isNaN(attendance) || attendance <= 0) {
     throw new Error("Expected attendance must be a positive number");
   }
-
-  // Optionally verify and geocode address (if not already done)
-  // Uncomment if you want to always verify here:
-  // const verified = await verifyAndGeocodeAddress(formData.address);
-  // if (verified) {
-  //   formData.address = {
-  //     street: verified.street || formData.address.street,
-  //     city: verified.city || formData.address.city,
-  //     state: verified.state || formData.address.state,
-  //     zipCode: verified.zipCode || formData.address.zipCode,
-  //   };
-  //   formData.coordinates = verified.coordinates;
-  // }
 
   let imageUrl = "";
   if (imageFile) {

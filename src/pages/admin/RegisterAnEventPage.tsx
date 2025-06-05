@@ -5,11 +5,7 @@
 
 import React, { useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
-import { collection, addDoc, updateDoc } from "firebase/firestore";
-import { db } from "../../firebase/config";
 import { useNavigate } from "react-router-dom";
-import { storage } from "../../firebase/config";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import {
   verifyAndGeocodeAddress,
   type AddressComponents,

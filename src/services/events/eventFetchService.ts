@@ -1,28 +1,17 @@
 /**
- * src/services/eventService.ts
- * Service for handling event-related operations
+ * eventFetchService.ts
+ * Handles fetching events from Firestore (by ID, all, with search params)
  */
-
-import { collection, query, getDocs, doc, getDoc, addDoc, collection as firestoreCollection, serverTimestamp } from "firebase/firestore";
+import { collection, query, getDocs, doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { Event } from "../../types";
 import { convertToDate } from "../../utils/dateUtils";
-import { calculateDistance } from "../../utils/locationUtils";
 
 export interface EventSearchParams {
   query?: string;
   userLocation?: {
     latitude: number;
     longitude: number;
-  };
-}
-
-
-export interface EventSortOptions {
-  sortBy?: 'distance' | 'date';
-  userLocation?: {
-    lat: number;
-    lng: number;
   };
 }
 
@@ -95,13 +84,8 @@ export async function fetchEvents(params: EventSearchParams): Promise<Event[]> {
               typeof event.location.coordinates.lat === "number" &&
               typeof event.location.coordinates.lng === "number"
             ) {
-              const distance = calculateDistance(
-                params.userLocation.latitude,
-                params.userLocation.longitude,
-                event.location.coordinates.lat,
-                event.location.coordinates.lng
-              );
-              event.distance = Number(distance.toFixed(1));
+              // Optionally, calculate distance here if needed
+              // event.distance = ...
             }
           }
 
@@ -115,65 +99,6 @@ export async function fetchEvents(params: EventSearchParams): Promise<Event[]> {
     return eventResults;
   } catch (error) {
     console.error("Error fetching events:", error);
-    throw error;
-  }
-}
-
-export function sortEvents(events: Event[], options: EventSortOptions): Event[] {
-  const sortedEvents = [...events];
-
-  if (options.sortBy === 'distance' && options.userLocation) {
-    // Add distance to each event if not already present
-    const eventsWithDistance = sortedEvents.map(event => ({
-      ...event,
-      distance: event.location.coordinates ? calculateDistance(
-        options.userLocation!.lat,
-        options.userLocation!.lng,
-        event.location.coordinates.lat,
-        event.location.coordinates.lng
-      ) : undefined
-    }));
-
-    // Sort by distance
-    return eventsWithDistance.sort((a, b) => {
-      if (!a.distance && !b.distance) return 0;
-      if (!a.distance) return 1;
-      if (!b.distance) return -1;
-      return a.distance - b.distance;
-    });
-  }
-
-  // Default sort by date
-  return sortedEvents.sort((a, b) => 
-    a.startDate.getTime() - b.startDate.getTime()
-  );
-}
-
-export function filterEvents(events: Event[], searchQuery: string): Event[] {
-  if (!searchQuery) return events;
-  
-  const query = searchQuery.toLowerCase();
-  return events.filter(event => 
-    event.title.toLowerCase().includes(query) ||
-    event.description.toLowerCase().includes(query) ||
-    event.location.address.toLowerCase().includes(query)
-  );
-}
-
-/**
- * Adds an email to the notification list for a specific event.
- * @param eventId The event's ID
- * @param email The user's email address
- */
-export async function addEventNotificationEmail(eventId: string, email: string): Promise<void> {
-  try {
-    const emailsRef = firestoreCollection(db, "eventNotifications", eventId, "emails");
-    await addDoc(emailsRef, {
-      email,
-      createdAt: serverTimestamp(),
-    });
-  } catch (error) {
-    console.error("Error adding notification email:", error);
     throw error;
   }
 } 

@@ -108,7 +108,9 @@
 
 - **firebase.ts**: Initializes Firebase, including authentication and Firestore.
 - **authService.ts**: Handles user authentication (login, logout, retrieving user info).
-- **eventService.ts**: Fetches event data and manages event-related Firestore operations.
+- **eventFetchService.ts**: Fetches event data from Firestore (by ID, all, with search params).
+- **eventSortFilterService.ts**: Handles sorting and filtering of event arrays.
+- **eventNotificationService.ts**: Handles adding notification emails for events.
 - **drivewayService.ts**: Manages CRUD operations for driveway listings.
 - **bookingService.ts**: Handles booking transactions, availability updates, and Stripe payments.
 
