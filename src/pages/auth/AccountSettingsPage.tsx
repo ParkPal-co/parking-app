@@ -323,7 +323,7 @@ const AccountSettingsPage: React.FC = () => {
                   className="h-4 w-4 text-black focus:ring-black border-gray-300 rounded disabled:bg-gray-50 disabled:text-gray-500"
                 />
                 <span className="ml-2 text-sm text-gray-700">
-                  {isHost ? "Host" : "Not a Host"}
+                  Host
                 </span>
               </div>
             </div>
