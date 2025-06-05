@@ -75,7 +75,6 @@ export const DrivewayListings: React.FC<DrivewayListingsProps> = ({
               <Button
                 className="absolute top-1/2 right-0 -translate-y-1/2 px-4 py-2"
                 onClick={handleNotifyMe}
-                disabled={loading || !email}
                 style={{ minWidth: 100 }}
               >
                 {loading ? "Submitting..." : "Notify Me"}

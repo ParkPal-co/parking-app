@@ -17,7 +17,7 @@ export const BackButton: React.FC = () => {
   return (
     <button
       onClick={handleBack}
-      className="flex items-center text-gray-600 hover:text-black transition-colors pb-4"
+      className="flex items-center text-gray-600 hover:text-black transition-colors py-2"
       aria-label="Go back"
     >
       <ArrowLeftIcon className="h-5 w-5 mr-1" />

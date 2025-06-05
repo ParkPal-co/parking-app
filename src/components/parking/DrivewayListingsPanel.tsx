@@ -91,41 +91,46 @@ export const DrivewayListingsPanel: React.FC<DrivewayListingsPanelProps> = ({
             style={{ userSelect: "none" }}
             onClick={handleHandleClick}
           >
-            {isOpen ? (
-              // Down arrow SVG
-              <svg
-                width="32"
-                height="16"
-                viewBox="0 0 32 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M4 6L16 14L28 6"
-                  stroke="#A0AEC0"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            ) : (
-              // Up arrow SVG
-              <svg
-                width="32"
-                height="16"
-                viewBox="0 0 32 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M28 10L16 2L4 10"
-                  stroke="#A0AEC0"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            )}
+            <div
+              className="bg-primary-100 rounded-full px-4 py-2 shadow-sm flex items-center justify-center"
+              style={{ minWidth: 48, minHeight: 32 }}
+            >
+              {isOpen ? (
+                // Down arrow SVG
+                <svg
+                  width="32"
+                  height="16"
+                  viewBox="0 0 32 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M4 6L16 14L28 6"
+                    stroke="#A0AEC0"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              ) : (
+                // Up arrow SVG
+                <svg
+                  width="32"
+                  height="16"
+                  viewBox="0 0 32 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M28 10L16 2L4 10"
+                    stroke="#A0AEC0"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
+            </div>
           </div>
           <h2 className="text-xl font-bold mb-4 text-center">
             Available Spots
@@ -152,7 +157,6 @@ export const DrivewayListingsPanel: React.FC<DrivewayListingsPanelProps> = ({
                   <button
                     className="absolute top-1/2 right-0 -translate-y-1/2 px-4 py-2 bg-primary-600 text-white rounded-md font-semibold disabled:opacity-50"
                     onClick={handleNotifyMe}
-                    disabled={loading || !email}
                     style={{ minWidth: 100 }}
                   >
                     {loading ? "Submitting..." : "Notify Me"}
