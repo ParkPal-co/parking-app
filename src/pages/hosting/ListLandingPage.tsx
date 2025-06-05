@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { Card, Button, Alert } from "../../components/ui";
 import { FloatingQuotesBackground } from "../../components/background/FloatingQuotesBackground";
 import drivewayImg from "../../assets/images/Icon1WhiteBkgd.png";
+import carInDrivewayImg from "../../assets/images/CarInDriveway.png";
 import { useInView } from "../../hooks/useInView";
 
 const ListLandingPage: React.FC = () => {
@@ -36,7 +37,11 @@ const ListLandingPage: React.FC = () => {
             }`}
             style={{ animationDelay: "0.3s" }}
           >
-            <Card padding="large" shadow="large" className="h-full flex flex-col justify-center min-h-72 gap-4">
+            <Card
+              padding="large"
+              shadow="large"
+              className="h-full flex flex-col justify-center min-h-72 gap-4"
+            >
               <h1 className="text-3xl md:text-5xl font-bold text-primary-900 mb-2">
                 Let the <span className="font-black">pavement</span> do the work
               </h1>
@@ -58,10 +63,10 @@ const ListLandingPage: React.FC = () => {
             }`}
             style={{ animationDelay: "0.6s" }}
           >
-            <Card padding="large" shadow="large">
+            <Card padding="large" shadow="large" className="p-0">
               <img
-                src={drivewayImg}
-                alt="Driveway with dollar signs"
+                src={carInDrivewayImg}
+                alt="Car in driveway"
                 className="max-h-96 w-auto object-contain drop-shadow-lg"
                 style={{ filter: "saturate(1.1)" }}
               />

@@ -10,6 +10,7 @@ import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
 import { Alert } from "../../components/ui/Alert";
 import { getFunctions, httpsCallable } from "firebase/functions";
+import { useNavigate } from "react-router-dom";
 
 const AccountSettingsPage: React.FC = () => {
   const { user, updateUserProfile } = useAuth();
@@ -27,6 +28,7 @@ const AccountSettingsPage: React.FC = () => {
   const [stripeLoading, setStripeLoading] = useState(false);
   const [stripeError, setStripeError] = useState<string | null>(null);
   const [stripeSuccess, setStripeSuccess] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   // Format phone number as (XXX) XXX-XXXX
   const formatPhoneNumber = (value: string) => {
@@ -314,18 +316,32 @@ const AccountSettingsPage: React.FC = () => {
                   </p>
                 )}
               </div>
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={isHost}
-                  onChange={(e) => setIsHost(e.target.checked)}
-                  disabled={!isEditing}
-                  className="h-4 w-4 text-black focus:ring-black border-gray-300 rounded disabled:bg-gray-50 disabled:text-gray-500"
-                />
-                <span className="ml-2 text-sm text-gray-700">
-                  Host
-                </span>
-              </div>
+              {!isHost && (
+                <div className="flex flex-col items-end">
+                  <Button
+                    type="button"
+                    variant="primary"
+                    onClick={() => navigate("/hosting/list")}
+                    disabled={!user?.emailVerified || !user?.stripeAccountId}
+                  >
+                    Become a Host
+                  </Button>
+                  {(!user?.emailVerified || !user?.stripeAccountId) && (
+                    <span className="text-xs text-gray-500 mt-1 max-w-xs text-right">
+                      {!user?.emailVerified && !user?.stripeAccountId
+                        ? "You must verify your email and connect your Stripe account to become a host."
+                        : !user?.emailVerified
+                        ? "You must verify your email to become a host."
+                        : "You must connect your Stripe account to become a host."}
+                    </span>
+                  )}
+                </div>
+              )}
+              {isHost && (
+                <div className="flex items-center">
+                  <span className="ml-2 text-sm text-gray-700">Host</span>
+                </div>
+              )}
             </div>
           </div>
 
