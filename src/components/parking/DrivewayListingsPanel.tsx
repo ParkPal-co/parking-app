@@ -1,6 +1,7 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { ParkingSpot } from "../../types";
 import { ParkingSpotCard } from "./ParkingSpotCard";
+import { addEventNotificationEmail } from "../../services/eventService";
 
 interface DrivewayListingsPanelProps {
   spots: ParkingSpot[];
@@ -47,6 +48,7 @@ export const DrivewayListingsPanel: React.FC<DrivewayListingsPanelProps> = ({
 
   // Drag handlers
   const handlePointerDown = (e: React.PointerEvent) => {
+    console.log("Pointer down", e.type, e.clientY);
     setDragging(true);
     setDragStartY(e.clientY);
     window.addEventListener("pointermove", handlePointerMove);
@@ -55,11 +57,19 @@ export const DrivewayListingsPanel: React.FC<DrivewayListingsPanelProps> = ({
 
   const handlePointerMove = (e: PointerEvent) => {
     if (dragStartY !== null) {
+      console.log(
+        "Pointer move",
+        e.type,
+        e.clientY,
+        "Delta:",
+        e.clientY - dragStartY
+      );
       setDragDelta(e.clientY - dragStartY);
     }
   };
 
   const handlePointerUp = () => {
+    console.log("Pointer up");
     setDragging(false);
     if (Math.abs(dragDelta) > 60) {
       // If dragged more than 60px, toggle
@@ -75,6 +85,45 @@ export const DrivewayListingsPanel: React.FC<DrivewayListingsPanelProps> = ({
   const handleHandleClick = () => {
     if (!dragging) onToggle();
   };
+
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+
+  const handleNotifyMe = async () => {
+    setLoading(true);
+    setSuccess("");
+    setError("");
+    try {
+      if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+        setError("Please enter a valid email address.");
+        setLoading(false);
+        return;
+      }
+      // Use the first spot's eventId if available, otherwise fallback to a placeholder
+      const eventId = spots[0]?.eventId || "unknownEvent";
+      await addEventNotificationEmail(eventId, email);
+      setSuccess("You'll be notified when more spots are available!");
+      setEmail("");
+    } catch (e) {
+      setError("There was a problem signing up. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Prevent background scroll when panel is open or dragging
+  useEffect(() => {
+    if (isOpen || dragging) {
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
+    return () => {
+      document.body.classList.remove("overflow-hidden");
+    };
+  }, [isOpen, dragging]);
 
   return (
     <div className="lg:hidden">
@@ -104,9 +153,33 @@ export const DrivewayListingsPanel: React.FC<DrivewayListingsPanelProps> = ({
         <div className="p-4 pt-0">
           <div className="grid grid-cols-1 gap-4">
             {spots.length === 0 ? (
-              <p className="text-center text-gray-600">
-                No parking spots available for this event
-              </p>
+              <div className="text-center text-gray-600">
+                <p className="text-primary-600 pt-4">
+                  It looks like all the driveways for this event have already
+                  been booked, but more will be added as the event approaches!
+                  We can let you know when more spots are available.
+                </p>
+                <div className="relative mt-4">
+                  <input
+                    type="email"
+                    placeholder="Enter your email"
+                    className="w-full border border-gray-300 rounded-md px-4 pr-32 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={loading}
+                  />
+                  <button
+                    className="absolute top-1/2 right-0 -translate-y-1/2 px-4 py-2 bg-primary-600 text-white rounded-md font-semibold disabled:opacity-50"
+                    onClick={handleNotifyMe}
+                    disabled={loading || !email}
+                    style={{ minWidth: 100 }}
+                  >
+                    {loading ? "Submitting..." : "Notify Me"}
+                  </button>
+                </div>
+                {success && <p className="text-green-600 mt-2">{success}</p>}
+                {error && <p className="text-red-600 mt-2">{error}</p>}
+              </div>
             ) : (
               spots.map((spot) => (
                 <ParkingSpotCard

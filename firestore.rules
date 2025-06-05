@@ -104,5 +104,12 @@ service cloud.firestore {
     match /{document=**} {
       allow read, write: if false;
     }
+
+    // Allow anyone to add their email to event notification lists
+    match /eventNotifications/{eventId}/emails/{emailId} {
+     allow create: if true; // Anyone can add their email
+     allow read: if isAdmin(); // Only admins can read
+     allow update, delete: if false; // No one can update or delete
+   }
   }
 } 

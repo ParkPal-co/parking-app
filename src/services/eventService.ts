@@ -3,7 +3,7 @@
  * Service for handling event-related operations
  */
 
-import { collection, query, getDocs, doc, getDoc } from "firebase/firestore";
+import { collection, query, getDocs, doc, getDoc, addDoc, collection as firestoreCollection, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase/config";
 import { Event } from "../types";
 import { convertToDate } from "../utils/dateUtils";
@@ -157,4 +157,22 @@ export function filterEvents(events: Event[], searchQuery: string): Event[] {
     event.description.toLowerCase().includes(query) ||
     event.location.address.toLowerCase().includes(query)
   );
+}
+
+/**
+ * Adds an email to the notification list for a specific event.
+ * @param eventId The event's ID
+ * @param email The user's email address
+ */
+export async function addEventNotificationEmail(eventId: string, email: string): Promise<void> {
+  try {
+    const emailsRef = firestoreCollection(db, "eventNotifications", eventId, "emails");
+    await addDoc(emailsRef, {
+      email,
+      createdAt: serverTimestamp(),
+    });
+  } catch (error) {
+    console.error("Error adding notification email:", error);
+    throw error;
+  }
 } 

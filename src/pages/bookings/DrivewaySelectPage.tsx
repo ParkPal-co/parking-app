@@ -102,7 +102,7 @@ const DrivewaySelectPage: React.FC = () => {
   return (
     <div className="relative flex flex-col h-[calc(100dvh-180px)] lg:space-y-0 overflow-hidden lg:h-[calc(100vh-80px)]">
       {/* Fixed header bar below navbar */}
-      <div className="fixed top-20 left-0 w-full h-14 bg-white z-30 flex items-center justify-center shadow-sm border-b border-primary-200 lg:hidden">
+      <div className="fixed top-20 left-0 w-full h-14 bg-white z-30 flex items-center justify-center shadow-sm border-b\]] border-primary-200 lg:hidden">
         <div className="absolute left-4">
           <BackButton />
         </div>

@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 import { Card, Button, Alert } from "../../components/ui";
 import { FloatingQuotesBackground } from "../../components/background/FloatingQuotesBackground";
 import drivewayImg from "../../assets/images/Icon1WhiteBkgd.png";
-import reactSvg from "../../assets/images/react.svg";
 import { useInView } from "../../hooks/useInView";
 
 const ListLandingPage: React.FC = () => {
