@@ -5,7 +5,7 @@
 
 import React, { useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { useNavigate } from "react-router-dom";
 import { storage } from "../../firebase/config";
@@ -190,7 +190,9 @@ const RegisterAnEventPage: React.FC = () => {
         createdBy: user.email,
       };
 
-      await addDoc(collection(db, "events"), eventData);
+      const docRef = await addDoc(collection(db, "events"), eventData);
+      // Save the generated ID as a field in the document
+      await updateDoc(docRef, { id: docRef.id });
       setSuccess(true);
       setTimeout(() => {
         navigate("/registered-events");
