@@ -7,7 +7,6 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, Button, Alert } from "../../components/ui";
 import { FloatingQuotesBackground } from "../../components/background/FloatingQuotesBackground";
-import drivewayImg from "../../assets/images/Icon1WhiteBkgd.png";
 import carInDrivewayImg from "../../assets/images/CarInDriveway.png";
 import { useInView } from "../../hooks/useInView";
 
@@ -43,7 +42,7 @@ const ListLandingPage: React.FC = () => {
               className="h-full flex flex-col justify-center min-h-72 gap-4"
             >
               <h1 className="text-3xl md:text-5xl font-bold text-primary-900 mb-2">
-                Let the <span className="font-black">pavement</span> do the work
+                Let your <span className="font-black">pavement</span> pay you
               </h1>
               <Button
                 size="large"
@@ -87,6 +86,14 @@ const ListLandingPage: React.FC = () => {
             shadow="large"
             padding="large"
           >
+            <Card
+              className="bg-primary-50 border border-primary-200 rounded-lg p-8 w-full flex flex-col justify-center items-center"
+              padding="large"
+            >
+              <p className=" text-start font-bold text-3xl">
+                List your driveway as parking for Events near your home
+              </p>
+            </Card>
             <div className="flex flex-col gap-2">
               <h2 className="text-2xl md:text-4xl font-bold text-primary-900 mb-2">
                 How it works
@@ -100,15 +107,6 @@ const ListLandingPage: React.FC = () => {
                 <li>Post your listing</li>
               </ol>
             </div>
-            <Card
-              className="bg-primary-50 border border-primary-200 rounded-lg p-8 w-full flex flex-col justify-center items-center"
-              padding="large"
-            >
-              <p className=" text-start font-bold text-2xl">
-                We make sure your driveway gets in front of the right people,
-                and notify you when someone books it!
-              </p>
-            </Card>
           </Card>
         </section>
 
