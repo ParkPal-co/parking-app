@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { ParkingSpot } from "../../types";
 import { ParkingSpotCard } from "./ParkingSpotCard";
-import { addEventNotificationEmail } from "../../services/eventService";
+import { addEventNotificationEmail } from "../../services/events/eventService";
 
 interface DrivewayListingsPanelProps {
   spots: ParkingSpot[];

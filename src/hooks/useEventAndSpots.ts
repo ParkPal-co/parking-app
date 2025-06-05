@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Event, ParkingSpot } from '../types';
-import { fetchEventById } from '../services/eventService';
+import { fetchEventById } from '../services/events/eventService';
 import { fetchParkingSpots } from '../services/parkingSpotService';
 
 interface UseEventAndSpotsResult {

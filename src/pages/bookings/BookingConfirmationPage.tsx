@@ -6,7 +6,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Event, ParkingSpot } from "../../types";
-import { fetchEventById } from "../../services/eventService";
+import { fetchEventById } from "../../services/events/eventService";
 import { fetchParkingSpotById } from "../../services/parkingSpotService";
 import { createBooking } from "../../services/bookingService";
 import { createConversation } from "../../services/messageService";

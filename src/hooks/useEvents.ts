@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from "react";
 import { Event } from "../types";
-import { fetchEvents } from "../services/eventService";
+import { fetchEvents } from "../services/events/eventService";
 import { useLocation } from "./useLocation";
 
 export function useEvents() {

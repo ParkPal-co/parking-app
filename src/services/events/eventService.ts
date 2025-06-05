@@ -4,10 +4,10 @@
  */
 
 import { collection, query, getDocs, doc, getDoc, addDoc, collection as firestoreCollection, serverTimestamp } from "firebase/firestore";
-import { db } from "../firebase/config";
-import { Event } from "../types";
-import { convertToDate } from "../utils/dateUtils";
-import { calculateDistance } from "../utils/locationUtils";
+import { db } from "../../firebase/config";
+import { Event } from "../../types";
+import { convertToDate } from "../../utils/dateUtils";
+import { calculateDistance } from "../../utils/locationUtils";
 
 export interface EventSearchParams {
   query?: string;

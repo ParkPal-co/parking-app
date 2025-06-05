@@ -7,7 +7,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEvents } from "../../hooks/useEvents";
 import { Event } from "../../types";
-import { sortEvents, filterEvents } from "../../services/eventService";
+import { sortEvents, filterEvents } from "../../services/events/eventService";
 import { Input } from "../../components/ui/Input";
 import { Button } from "../../components/ui/Button";
 import { EventCard } from "../../components/events/EventCard";
