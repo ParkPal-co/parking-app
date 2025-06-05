@@ -15,6 +15,7 @@ import {
   type AddressComponents,
   type VerifiedAddress,
 } from "../../utils/geocoding";
+import { createEvent } from "../../services/events/eventCreateService";
 
 interface EventFormData {
   title: string;
@@ -135,71 +136,19 @@ const RegisterAnEventPage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-
-      // Validate dates
-      const startDate = new Date(formData.startDate);
-      const endDate = new Date(formData.endDate);
-      const now = new Date();
-
-      if (startDate < now) {
-        setError("Start date cannot be in the past");
-        return;
-      }
-
-      if (endDate <= startDate) {
-        setError("End date must be after start date");
-        return;
-      }
-
-      // Validate expected attendance
-      const attendance = Number(formData.expectedAttendance);
-      if (isNaN(attendance) || attendance <= 0) {
-        setError("Expected attendance must be a positive number");
-        return;
-      }
-
-      let imageUrl = "";
-      if (imageFile) {
-        const storageRef = ref(
-          storage,
-          `events/${Date.now()}-${imageFile.name}`
-        );
-        const snapshot = await uploadBytes(storageRef, imageFile);
-        imageUrl = await getDownloadURL(snapshot.ref);
-      }
-
-      // Format the event data to match existing structure
-      const eventData = {
-        createdAt: new Date().toISOString(),
-        description: formData.description,
-        endDate: formData.endDate,
-        expectedAttendance: attendance,
-        imageUrl,
-        location: {
-          address: `${formData.address.street}, ${formData.address.city}, ${formData.address.state} ${formData.address.zipCode}`,
-          coordinates: {
-            lat: formData.coordinates.lat,
-            lng: formData.coordinates.lng,
-          },
-        },
-        startDate: formData.startDate,
-        status: "upcoming",
-        title: formData.title,
-        venue: formData.venue,
-        website: formData.website,
-        createdBy: user.email,
-      };
-
-      const docRef = await addDoc(collection(db, "events"), eventData);
-      // Save the generated ID as a field in the document
-      await updateDoc(docRef, { id: docRef.id });
+      // Use the modular event creation service
+      // Coerce isAdmin to boolean to satisfy the type
+      await createEvent(formData, imageFile, {
+        email: user.email,
+        isAdmin: !!user.isAdmin,
+      });
       setSuccess(true);
       setTimeout(() => {
         navigate("/registered-events");
       }, 2000);
     } catch (err) {
       console.error("Error registering event:", err);
-      setError("Failed to register event");
+      setError(err instanceof Error ? err.message : "Failed to register event");
     } finally {
       setLoading(false);
     }

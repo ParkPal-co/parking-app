@@ -17,6 +17,7 @@ export interface EventSearchParams {
   };
 }
 
+
 export interface EventSortOptions {
   sortBy?: 'distance' | 'date';
   userLocation?: {
