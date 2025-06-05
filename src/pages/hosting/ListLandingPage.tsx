@@ -28,16 +28,16 @@ const ListLandingPage: React.FC = () => {
       {/* Main content overlay */}
       <div className="relative z-10 flex flex-col gap-8">
         {/* Hero Section */}
-        <section className="w-full flex flex-col md:flex-row gap-6 md:gap-4 items-center justify-center mt-4">
+        <section className="flex flex-col md:flex-row gap-6 md:gap-4 mt-4 md:items-stretch">
           {/* Card 1: Headline + CTA */}
           <div
             ref={heroCard1Ref}
-            className={`flex-1 flex flex-col justify-center items-start gap-6 min-h-96 w-full opacity-0 [animation-fill-mode:forwards] ${
+            className={`flex-auto flex-col [animation-fill-mode:forwards] opacity-0 ${
               heroCard1InView ? "animate-fade-in-from-top" : ""
             }`}
-            style={{ animationDelay: "0.1s" }}
+            style={{ animationDelay: "0.3s" }}
           >
-            <Card padding="large" shadow="large">
+            <Card padding="large" shadow="large" className="h-full flex flex-col justify-center min-h-72 gap-4">
               <h1 className="text-3xl md:text-5xl font-bold text-primary-900 mb-2">
                 Let the <span className="font-black">pavement</span> do the work
               </h1>
@@ -45,7 +45,7 @@ const ListLandingPage: React.FC = () => {
                 size="large"
                 variant="primary"
                 onClick={() => navigate("/account-settings")}
-                className="mt-4 shadow-md font-bold"
+                className="mt-4 shadow-md font-bold max-w-48"
               >
                 Become a Host
               </Button>
@@ -54,16 +54,16 @@ const ListLandingPage: React.FC = () => {
           {/* Card 2: Driveway graphic placeholder */}
           <div
             ref={heroCard2Ref}
-            className={`flex-1 flex items-center justify-center min-h-96 hidden md:flex w-full opacity-0 [animation-fill-mode:forwards] ${
+            className={`flex hidden md:flex [animation-fill-mode:forwards] opacity-0 ${
               heroCard2InView ? "animate-fade-in-from-right" : ""
             }`}
-            style={{ animationDelay: "0.3s" }}
+            style={{ animationDelay: "0.6s" }}
           >
             <Card padding="large" shadow="large">
               <img
                 src={drivewayImg}
                 alt="Driveway with dollar signs"
-                className="max-h-48 w-auto object-contain drop-shadow-lg"
+                className="max-h-96 w-auto object-contain drop-shadow-lg"
                 style={{ filter: "saturate(1.1)" }}
               />
             </Card>
