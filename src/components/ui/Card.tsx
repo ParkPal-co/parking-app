@@ -41,7 +41,7 @@ export const Card: React.FC<CardProps> = ({
   };
 
   const baseStyles = twMerge(
-    "bg-white rounded-lg",
+    "bg-white rounded-2xl",
     border && "border border-primary-200",
     paddingStyles[padding],
     shadowStyles[shadow],
