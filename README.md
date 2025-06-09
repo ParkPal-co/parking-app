@@ -1,115 +1,48 @@
 # Event Parking App
 
-A modern web application that connects event attendees with local driveway owners for convenient parking solutions. Built with React, TypeScript, and Firebase.
+A modern web application that connects event attendees with local driveway owners for convenient parking solutions.
 
-## 🚀 Quick Start
+## 🌐 Live Site
 
-### Prerequisites
+Visit the app: [https://ParkPal.co](https://ParkPal.co)
 
-- Node.js (Latest LTS version recommended)
-- npm (comes with Node.js)
-- Git
+## 📝 About
 
-### Setup Steps
+Event Parking App helps event-goers find and book parking spots at local driveways, and allows homeowners to list their available parking for extra income.
 
-1. Clone the repository:
+## 🚀 Features
 
-```bash
-git clone https://github.com/aleczaitz/parking-app.git
-cd parking-app
-```
-
-2. Make the setup script executable and run it:
-
-```bash
-chmod +x setup.sh
-./setup.sh
-```
-
-3. Configure environment variables:
-
-   - Copy `.env.example` to `.env` (this is done automatically by setup.sh)
-   - Fill in your Firebase and Google Maps API credentials in the `.env` file
-
-4. Start the application:
-
-```bash
-npm run dev
-```
-
-5. Open your browser and navigate to `http://localhost:5173`
-
-### Test Payment Information
-
-For testing the payment system:
-
-- Card Number: 4242 4242 4242 4242
-- Any future expiry date
-- Any 3-digit CVC
-- Any postal code
+- User authentication
+- Event search and discovery
+- Driveway listing and management
+- Secure payment processing (Stripe)
+- Interactive maps (Google Maps)
+- User messaging
+- User profiles and settings
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: React + TypeScript + Vite
-- **Styling**: Tailwind CSS
-- **Backend**: Firebase (Firestore, Authentication)
-- **Payment Processing**: Stripe
-- **Maps Integration**: Google Maps API
-- **State Management**: React Context API + Custom Hooks
-
-## 📱 Features
-
-- 🔐 User Authentication
-- 🎯 Event Search and Discovery
-- 🏠 Driveway Listing and Management
-- 💳 Secure Payment Processing
-- 📍 Interactive Maps Integration
-- 💬 User-to-User Messaging
-- 👤 User Profiles and Settings
-
-## 🏗️ Project Structure
-
-```
-src/
-├── components/     # Reusable UI components
-├── pages/         # Page components
-├── hooks/         # Custom React hooks
-├── context/       # Global state management
-├── services/      # Firebase and API services
-├── styles/        # Global styles
-└── utils/         # Utility functions
-```
-
-## 🔧 Development Scripts
-
-- `npm run dev` - Start the development server
-- `npm run build` - Build the frontend for production
-- `npm run lint` - Run ESLint
-- `npm run preview` - Preview the production build locally
-- `npm run deploy` - Deploy to Firebase
-- `npm run deploy:functions` - Deploy Firebase Functions
-- `npm run deploy:hosting` - Deploy to Firebase Hosting
-- `npm run emulators` - Start Firebase emulators
+- React + TypeScript
+- Firebase (Firestore, Auth, Hosting)
+- Stripe
+- Google Maps API
+- Tailwind CSS
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+We welcome contributions! Please fork the repo and open a pull request.
+
+## 📬 Contact
+
+For questions or support, contact [aleczaitz@gmail.com](mailto:aleczaitz@gmail.com).
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 👥 Authors
-
-- Alec Zaitz - [aleczaitz@gmail.com](mailto:aleczaitz@gmail.com)
+MIT License. See [LICENSE](LICENSE) for details.
 
 ## Acknowledgments
 
-- Firebase for backend infrastructure
-- Stripe for payment processing
-- Google Maps Platform for mapping features
-- React and TypeScript communities for excellent tools and documentation
+- Firebase
+- Stripe
+- Google Maps Platform
+- React and TypeScript communities
