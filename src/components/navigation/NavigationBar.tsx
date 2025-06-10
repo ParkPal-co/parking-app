@@ -11,6 +11,7 @@ import { twMerge } from "tailwind-merge";
 import { UserMenu } from "./UserMenu";
 import { FeedbackModal } from "../../pages/general/FeedbackModal";
 import { addFeedback } from "../../services/feedbackService";
+import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline";
 
 interface NavLinkProps {
   to: string;
@@ -92,14 +93,13 @@ export const NavigationBar: React.FC = () => {
   };
 
   const handleSubmitFeedback = async (feedbackText: string) => {
-    if (!user) return;
     setFeedbackLoading(true);
     setFeedbackError(undefined);
     setFeedbackSuccess(false);
     try {
       await addFeedback({
-        userId: user.id,
-        userName: user.name,
+        userId: user ? user.id : null,
+        userName: user ? user.name : "Anonymous",
         feedbackText,
       });
       setFeedbackSuccess(true);
@@ -164,7 +164,6 @@ export const NavigationBar: React.FC = () => {
                 isOpen={isMenuOpen}
                 onClose={() => setIsMenuOpen(false)}
                 onLogout={handleLogout}
-                onOpenFeedback={handleOpenFeedback}
               />
             )}
           </div>
@@ -179,6 +178,16 @@ export const NavigationBar: React.FC = () => {
         error={feedbackError}
         success={feedbackSuccess}
       />
+      {/* Floating Feedback Button */}
+      <button
+        className="fixed z-40 bottom-6 right-6 bg-accent text-white rounded-full shadow-lg flex items-center gap-2 px-5 py-3 hover:bg-accent-light focus-ring transition-normal"
+        onClick={handleOpenFeedback}
+        aria-label="Send Feedback"
+        style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.12)" }}
+      >
+        <ChatBubbleLeftRightIcon className="h-6 w-6" />
+        <span className="font-semibold">Feedback</span>
+      </button>
     </nav>
   );
 };

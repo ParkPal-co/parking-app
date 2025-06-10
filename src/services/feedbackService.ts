@@ -2,7 +2,7 @@ import { db } from "../firebase/config";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 export interface Feedback {
-  userId: string;
+  userId: string | null;
   userName: string;
   feedbackText: string;
 }

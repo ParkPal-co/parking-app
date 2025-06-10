@@ -110,6 +110,13 @@ service cloud.firestore {
      allow create: if true; // Anyone can add their email
      allow read: if isAdmin(); // Only admins can read
      allow update, delete: if false; // No one can update or delete
-   }
+    }
+
+    // Feedback rules
+    match /feedback/{feedbackId} {
+      allow create: if true; // Anyone can submit feedback
+      allow read: if isAdmin(); // Only admins can read
+      allow update, delete: if false;
+    }
   }
 } 
