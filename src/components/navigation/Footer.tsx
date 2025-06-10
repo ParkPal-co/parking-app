@@ -1,8 +1,8 @@
 import React from "react";
-import Logo from "../../assets/images/LogoOverHouse.png";
+import Logo from "../../assets/images/Icon1.png";
 
 const Footer: React.FC = () => (
-  <footer className="relative w-full bg-primary-300 text-primary-700 py-6 lg:py-10 z-10">
+  <footer className="relative w-full bg-primary-300 text-primary-700 py-6 lg:py-10 z-10 mt-8">
     <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between px-4 gap-4">
       <div className="flex items-center gap-2">
         <img src={Logo} alt="ParkPal Logo" className="h-8 w-8" />
@@ -22,7 +22,7 @@ const Footer: React.FC = () => (
           Privacy
         </a>
       </nav>
-      <div className="text-xs text-gray-300">
+      <div className="text-xs text-gray-700">
         © {new Date().getFullYear()} ParkPal. All rights reserved.
       </div>
     </div>
