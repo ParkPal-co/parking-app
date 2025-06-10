@@ -9,6 +9,7 @@ import { Card, Button, Alert } from "../../components/ui";
 import { FloatingQuotesBackground } from "../../components/background/FloatingQuotesBackground";
 import carInDrivewayImg from "../../assets/images/CarInDriveway.png";
 import { useInView } from "../../hooks/useInView";
+import Footer from "../../components/navigation/Footer";
 
 const ListLandingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ const ListLandingPage: React.FC = () => {
       <FloatingQuotesBackground />
 
       {/* Main content overlay */}
-      <div className="relative z-10 flex flex-col gap-8">
+      <div className="relative z-10 flex flex-col gap-8 container mx-auto px-4 py-8">
         {/* Hero Section */}
         <section className="flex flex-col md:flex-row gap-6 md:gap-4 mt-4 md:items-stretch">
           {/* Card 1: Headline + CTA */}
@@ -66,7 +67,7 @@ const ListLandingPage: React.FC = () => {
               <img
                 src={carInDrivewayImg}
                 alt="Car in driveway"
-                className="max-h-96 w-auto object-contain drop-shadow-lg"
+                className="max-h-96 w-auto object-contain drop-shadow-lg rounded-2xl"
                 style={{ filter: "saturate(1.1)" }}
               />
             </Card>
@@ -201,6 +202,7 @@ const ListLandingPage: React.FC = () => {
           </Card>
         </section>
       </div>
+      <Footer />
     </div>
   );
 };

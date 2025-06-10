@@ -62,7 +62,7 @@ export const routes: RouteObject[] = [
     element: (
       <ProtectedRoute>
         <VerifiedEmailRoute>
-          <PageLayout>
+          <PageLayout fullWidth={true}>
             <ListPage />
           </PageLayout>
         </VerifiedEmailRoute>

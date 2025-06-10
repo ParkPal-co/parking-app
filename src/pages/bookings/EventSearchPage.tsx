@@ -14,6 +14,7 @@ import { Card } from "../../components/ui/Card";
 import { CheckIcon } from "@heroicons/react/24/outline";
 import iconPinsImg from "../../assets/images/IconPins.png";
 import LogoOverHouse from "../../assets/images/LogoOverHouse.png";
+import Footer from "../../components/navigation/Footer";
 
 const EventSearchPage: React.FC = () => {
   const navigate = useNavigate();
@@ -158,7 +159,7 @@ const EventSearchPage: React.FC = () => {
         {/* Renting Hero Section */}
         <section className="flex flex-col lg:flex-row lg:px-16 lg:gap-8 w-full">
           <Card
-            className="h-full w-full flex flex-col gap-4 lg:flex-row lg:h-[calc(100dvh-320px)] animate-fade-in-from-top opacity-0 [animation-fill-mode:forwards]"
+            className="h-full w-full flex flex-col gap-4 lg:flex-row lg:h-[calc(100vh-320px)] animate-fade-in-from-top opacity-0 [animation-fill-mode:forwards]"
             style={{ animationDelay: "1s" }}
             padding="normal"
             shadow="large"
@@ -203,7 +204,7 @@ const EventSearchPage: React.FC = () => {
                 </Button>
               </Card>
             </div>
-            <div className="max-h-[calc(100dvh-360px)] lg:w-1/2 rounded-2xl overflow-hidden border border-primary-300">
+            <div className="max-h-[calc(100vh-360px)] lg:w-1/2 rounded-2xl overflow-hidden border border-primary-300">
               <img
                 src={iconPinsImg}
                 alt="Event Search Page Hero"
@@ -212,21 +213,24 @@ const EventSearchPage: React.FC = () => {
               />
             </div>
           </Card>
-          
         </section>
         {/* Hosting Hero Section */}
-        <section className="w-full lg:px-16 min-h-[calc(100dvh-280px)] mt-4">
+        <section className="w-full lg:px-16 min-h-[calc(100vh-280px)] mt-4">
           <Card
             className="h-full w-full flex flex-col lg:items-center lg:flex-row-reverse animate-fade-in-from-top opacity-0 [animation-fill-mode:forwards] gap-4"
             style={{ animationDelay: "1s" }}
             padding="large"
-            shadow="large">
+            shadow="large"
+          >
             <div className="h-full w-full flex flex-col gap-2 text-center lg:text-right">
               <h1 className="text-4xl lg:text-6xl font-bold mb-4 text-gray-900">
-                The <span className="font-black text-5xl lg:text-7xl">purest</span> form of passive income
+                The{" "}
+                <span className="font-black text-5xl lg:text-7xl">purest</span>{" "}
+                form of passive income
               </h1>
               <p className="text-xl lg:text-2xl text-primary-700 font-bold">
-                With a few simple clicks, post your driveway to the platform and start earning.
+                With a few simple clicks, post your driveway to the platform and
+                start earning.
               </p>
             </div>
             <div className="flex flex-col items-center">
@@ -251,6 +255,7 @@ const EventSearchPage: React.FC = () => {
           </Card>
         </section>
       </div>
+      <Footer />
     </div>
   );
 };
