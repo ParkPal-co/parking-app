@@ -7,7 +7,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, Button, Alert } from "../../components/ui";
 import { FloatingQuotesBackground } from "../../components/background/FloatingQuotesBackground";
-import carInDrivewayImg from "../../assets/images/CarInDriveway.png";
+import carInDrivewayImg from "../../assets/images/LogoOverHouse.png";
 import { useInView } from "../../hooks/useInView";
 import Footer from "../../components/navigation/Footer";
 

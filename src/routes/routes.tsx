@@ -47,6 +47,9 @@ const ListPage = React.lazy(() => import("../pages/hosting/ListLandingPage"));
 const StorageMetricsPage = React.lazy(
   () => import("../pages/admin/StorageMetricsPage")
 );
+const UnderConstruction = React.lazy(
+  () => import("../pages/general/UnderConstruction")
+);
 
 export const routes: RouteObject[] = [
   {
@@ -221,6 +224,38 @@ export const routes: RouteObject[] = [
           <StorageMetricsPage />
         </PageLayout>
       </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/about",
+    element: (
+      <PageLayout fullWidth={true} showBackButton={false}>
+        <UnderConstruction />
+      </PageLayout>
+    ),
+  },
+  {
+    path: "/contact",
+    element: (
+      <PageLayout fullWidth={true} showBackButton={false}>
+        <UnderConstruction />
+      </PageLayout>
+    ),
+  },
+  {
+    path: "/terms",
+    element: (
+      <PageLayout fullWidth={true} showBackButton={false}>
+        <UnderConstruction />
+      </PageLayout>
+    ),
+  },
+  {
+    path: "/privacy",
+    element: (
+      <PageLayout fullWidth={true} showBackButton={false}>
+        <UnderConstruction />
+      </PageLayout>
     ),
   },
   {
