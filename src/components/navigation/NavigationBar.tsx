@@ -182,15 +182,17 @@ export const NavigationBar: React.FC = () => {
         success={feedbackSuccess}
       />
       {/* Floating Feedback Button */}
-      <button
-        className="fixed z-40 mt-4 right-6 bg-accent text-white rounded-full shadow-lg flex items-center gap-2 px-5 py-3 hover:bg-accent-light focus-ring transition-normal"
-        onClick={handleOpenFeedback}
-        aria-label="Send Feedback"
-        style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.12)" }}
-      >
-        <ChatBubbleLeftRightIcon className="h-6 w-6" />
-        <span className="font-semibold">Feedback</span>
-      </button>
+      {!user?.isAdmin && (
+        <button
+          className="fixed z-40 mt-4 right-6 bg-accent text-white rounded-full shadow-lg flex items-center gap-2 px-5 py-3 hover:bg-accent-light focus-ring transition-normal"
+          onClick={handleOpenFeedback}
+          aria-label="Send Feedback"
+          style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.12)" }}
+        >
+          <ChatBubbleLeftRightIcon className="h-6 w-6" />
+          <span className="font-semibold">Feedback</span>
+        </button>
+      )}
     </nav>
   );
 };

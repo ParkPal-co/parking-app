@@ -10,6 +10,7 @@ import { FloatingQuotesBackground } from "../../components/background/FloatingQu
 import carInDrivewayImg from "../../assets/images/LogoOverHouse.png";
 import { useInView } from "../../hooks/useInView";
 import Footer from "../../components/navigation/Footer";
+import { BackButton } from "../../components/navigation/BackButton";
 
 const ListLandingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -24,9 +25,9 @@ const ListLandingPage: React.FC = () => {
     <div className="relative min-h-[80vh] overflow-x-hidden">
       {/* Animated floating quotes background */}
       <FloatingQuotesBackground />
-
       {/* Main content overlay */}
       <div className="relative z-10 flex flex-col gap-8 container mx-auto px-4 py-8">
+        <BackButton />
         {/* Hero Section */}
         <section className="flex flex-col md:flex-row gap-6 md:gap-4 mt-4 md:items-stretch">
           {/* Card 1: Headline + CTA */}
