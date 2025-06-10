@@ -12,6 +12,7 @@ import { UserMenu } from "./UserMenu";
 import { FeedbackModal } from "../../pages/general/FeedbackModal";
 import { addFeedback } from "../../services/feedbackService";
 import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline";
+import { useNotification } from "../ui/NotificationProvider";
 
 interface NavLinkProps {
   to: string;
@@ -44,6 +45,7 @@ export const NavigationBar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
+  const { notify } = useNotification();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
@@ -68,6 +70,7 @@ export const NavigationBar: React.FC = () => {
   const handleLogout = async () => {
     try {
       await logout();
+      notify("Sign out successful", { variant: "success" });
       navigate("/");
     } catch (error) {
       console.error("Error logging out:", error);
@@ -180,7 +183,7 @@ export const NavigationBar: React.FC = () => {
       />
       {/* Floating Feedback Button */}
       <button
-        className="fixed z-40 bottom-6 right-6 bg-accent text-white rounded-full shadow-lg flex items-center gap-2 px-5 py-3 hover:bg-accent-light focus-ring transition-normal"
+        className="fixed z-40 mt-4 right-6 bg-accent text-white rounded-full shadow-lg flex items-center gap-2 px-5 py-3 hover:bg-accent-light focus-ring transition-normal"
         onClick={handleOpenFeedback}
         aria-label="Send Feedback"
         style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.12)" }}

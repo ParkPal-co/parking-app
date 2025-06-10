@@ -9,6 +9,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { GoogleAuthProvider } from "firebase/auth";
 import { FloatingQuotesBackground } from "../../components/background/FloatingQuotesBackground";
 import { Button, Input, Card, Alert } from "../../components/ui";
+import { useNotification } from "../../components/ui/NotificationProvider";
 
 const RegisterPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -18,6 +19,7 @@ const RegisterPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { signup, handleSocialLogin } = useAuth();
+  const { notify } = useNotification();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,6 +27,7 @@ const RegisterPage: React.FC = () => {
       setError("");
       setLoading(true);
       await signup(email, password, name, false);
+      notify("Account creation successful", { variant: "success" });
       navigate("/");
     } catch (err) {
       setError("Failed to create an account.");
@@ -38,6 +41,7 @@ const RegisterPage: React.FC = () => {
       setError("");
       setLoading(true);
       await handleSocialLogin(new GoogleAuthProvider());
+      notify("Account creation successful", { variant: "success" });
       navigate("/");
     } catch (err) {
       setError("Failed to sign in with Google.");

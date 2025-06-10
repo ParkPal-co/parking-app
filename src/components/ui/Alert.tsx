@@ -7,6 +7,7 @@ export interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
   message: string;
   onClose?: () => void;
   showIcon?: boolean;
+  duration?: number; // in ms, optional
 }
 
 export const Alert: React.FC<AlertProps> = ({
@@ -16,6 +17,7 @@ export const Alert: React.FC<AlertProps> = ({
   className,
   onClose,
   showIcon = true,
+  duration,
   ...props
 }) => {
   const baseStyles = "rounded-lg p-4";
@@ -81,6 +83,13 @@ export const Alert: React.FC<AlertProps> = ({
       </svg>
     ),
   };
+
+  React.useEffect(() => {
+    if (duration && onClose) {
+      const timer = setTimeout(onClose, duration);
+      return () => clearTimeout(timer);
+    }
+  }, [duration, onClose]);
 
   return (
     <div

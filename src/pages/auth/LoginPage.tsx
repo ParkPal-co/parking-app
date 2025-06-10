@@ -9,6 +9,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { GoogleAuthProvider } from "firebase/auth";
 import { FloatingQuotesBackground } from "../../components/background/FloatingQuotesBackground";
 import { Button, Input, Card, Alert } from "../../components/ui";
+import { useNotification } from "../../components/ui/NotificationProvider";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -17,6 +18,7 @@ const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login, handleSocialLogin } = useAuth();
+  const { notify } = useNotification();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,6 +26,7 @@ const LoginPage: React.FC = () => {
       setError("");
       setLoading(true);
       await login(email, password);
+      notify("Sign in successful", { variant: "success" });
       const returnPath = sessionStorage.getItem("returnPath") || "/";
       navigate(returnPath);
     } catch (err) {
@@ -43,6 +46,7 @@ const LoginPage: React.FC = () => {
       setError("");
       setLoading(true);
       await handleSocialLogin(new GoogleAuthProvider());
+      notify("Sign in successful", { variant: "success" });
       const returnPath = sessionStorage.getItem("returnPath") || "/";
       navigate(returnPath);
     } catch (err) {
