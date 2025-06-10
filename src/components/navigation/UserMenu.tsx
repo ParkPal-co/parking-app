@@ -20,6 +20,7 @@ interface UserMenuProps {
   isOpen: boolean;
   onClose: () => void;
   onLogout: () => void;
+  onOpenFeedback: () => void;
 }
 
 const menuItems: MenuItem[] = [
@@ -34,6 +35,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({
   isOpen,
   onClose,
   onLogout,
+  onOpenFeedback,
 }) => {
   if (!isOpen) return null;
 
@@ -66,6 +68,22 @@ export const UserMenu: React.FC<UserMenuProps> = ({
             {item.label}
           </Link>
         ))}
+
+        {/* Feedback Button */}
+        <button
+          type="button"
+          className={twMerge(
+            "flex w-full items-center px-6 py-3 text-base text-left",
+            "text-primary-700 hover:bg-primary-50",
+            "transition-colors duration-150"
+          )}
+          onClick={() => {
+            onOpenFeedback();
+            onClose();
+          }}
+        >
+          Send Feedback
+        </button>
 
         {user.isAdmin && (
           <Link

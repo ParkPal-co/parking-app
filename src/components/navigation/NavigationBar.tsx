@@ -9,6 +9,8 @@ import { useAuth } from "../../hooks/useAuth";
 import Icon1 from "../../assets/images/Icon1.png";
 import { twMerge } from "tailwind-merge";
 import { UserMenu } from "./UserMenu";
+import { FeedbackModal } from "../../pages/general/FeedbackModal";
+import { addFeedback } from "../../services/feedbackService";
 
 interface NavLinkProps {
   to: string;
@@ -43,6 +45,12 @@ export const NavigationBar: React.FC = () => {
   const { user, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const [feedbackLoading, setFeedbackLoading] = useState(false);
+  const [feedbackError, setFeedbackError] = useState<string | undefined>(
+    undefined
+  );
+  const [feedbackSuccess, setFeedbackSuccess] = useState(false);
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -70,6 +78,37 @@ export const NavigationBar: React.FC = () => {
     location.pathname.includes("list") ||
     location.pathname.includes("my-listings") ||
     location.pathname.includes("register-driveway");
+
+  const handleOpenFeedback = () => {
+    setIsFeedbackOpen(true);
+    setFeedbackError(undefined);
+    setFeedbackSuccess(false);
+  };
+
+  const handleCloseFeedback = () => {
+    setIsFeedbackOpen(false);
+    setFeedbackError(undefined);
+    setFeedbackSuccess(false);
+  };
+
+  const handleSubmitFeedback = async (feedbackText: string) => {
+    if (!user) return;
+    setFeedbackLoading(true);
+    setFeedbackError(undefined);
+    setFeedbackSuccess(false);
+    try {
+      await addFeedback({
+        userId: user.id,
+        userName: user.name,
+        feedbackText,
+      });
+      setFeedbackSuccess(true);
+    } catch (err) {
+      setFeedbackError("Failed to send feedback. Please try again.");
+    } finally {
+      setFeedbackLoading(false);
+    }
+  };
 
   return (
     <nav className="bg-white shadow-sm fixed top-0 left-0 right-0 z-50 border-b border-primary-200">
@@ -125,11 +164,21 @@ export const NavigationBar: React.FC = () => {
                 isOpen={isMenuOpen}
                 onClose={() => setIsMenuOpen(false)}
                 onLogout={handleLogout}
+                onOpenFeedback={handleOpenFeedback}
               />
             )}
           </div>
         </div>
       </div>
+      {/* Feedback Modal */}
+      <FeedbackModal
+        isOpen={isFeedbackOpen}
+        onClose={handleCloseFeedback}
+        onSubmit={handleSubmitFeedback}
+        isLoading={feedbackLoading}
+        error={feedbackError}
+        success={feedbackSuccess}
+      />
     </nav>
   );
 };

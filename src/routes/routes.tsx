@@ -50,6 +50,7 @@ const StorageMetricsPage = React.lazy(
 const UnderConstruction = React.lazy(
   () => import("../pages/general/UnderConstruction")
 );
+const FeedbackPage = React.lazy(() => import("../pages/admin/FeedbackPage"));
 
 export const routes: RouteObject[] = [
   {
@@ -164,6 +165,16 @@ export const routes: RouteObject[] = [
       <ProtectedRoute>
         <PageLayout>
           <AdminPanel />
+        </PageLayout>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/admin/feedback",
+    element: (
+      <ProtectedRoute>
+        <PageLayout>
+          <FeedbackPage />
         </PageLayout>
       </ProtectedRoute>
     ),
