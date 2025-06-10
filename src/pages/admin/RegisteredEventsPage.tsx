@@ -21,6 +21,7 @@ import {
   getDownloadURL,
   deleteObject,
 } from "firebase/storage";
+import { fetchEventNotificationEmails } from "../../services/events/eventNotificationService";
 
 interface Event {
   id: string;
@@ -64,6 +65,17 @@ const RegisteredEventsPage: React.FC = () => {
   );
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [expandedEventId, setExpandedEventId] = useState<string | null>(null);
+  const [notificationEmails, setNotificationEmails] = useState<
+    Record<
+      string,
+      {
+        loading: boolean;
+        emails: { id: string; email: string; createdAt: any }[];
+        error: string | null;
+      }
+    >
+  >({});
 
   // Fetch events and their associated parking spot counts
   useEffect(() => {
@@ -248,6 +260,36 @@ const RegisteredEventsPage: React.FC = () => {
     } finally {
       setLoading(false);
       setShowDeleteConfirm(null);
+    }
+  };
+
+  const handleToggleEmails = async (eventId: string) => {
+    if (expandedEventId === eventId) {
+      setExpandedEventId(null);
+      return;
+    }
+    setExpandedEventId(eventId);
+    if (!notificationEmails[eventId]) {
+      setNotificationEmails((prev) => ({
+        ...prev,
+        [eventId]: { loading: true, emails: [], error: null },
+      }));
+      try {
+        const emails = await fetchEventNotificationEmails(eventId);
+        setNotificationEmails((prev) => ({
+          ...prev,
+          [eventId]: { loading: false, emails, error: null },
+        }));
+      } catch (err) {
+        setNotificationEmails((prev) => ({
+          ...prev,
+          [eventId]: {
+            loading: false,
+            emails: [],
+            error: "Failed to load emails",
+          },
+        }));
+      }
     }
   };
 
@@ -510,6 +552,51 @@ const RegisteredEventsPage: React.FC = () => {
                     >
                       {event.website}
                     </a>
+                  </div>
+
+                  <div className="mt-6">
+                    <button
+                      className="text-sm text-blue-600 hover:underline"
+                      onClick={() => handleToggleEmails(event.id)}
+                    >
+                      {expandedEventId === event.id ? "Hide" : "Show"}{" "}
+                      Notification Emails
+                    </button>
+                    {expandedEventId === event.id && (
+                      <div className="mt-2 bg-gray-50 border border-gray-200 rounded p-4">
+                        {notificationEmails[event.id]?.loading ? (
+                          <div>Loading emails...</div>
+                        ) : notificationEmails[event.id]?.error ? (
+                          <div className="text-red-600">
+                            {notificationEmails[event.id].error}
+                          </div>
+                        ) : notificationEmails[event.id]?.emails.length ? (
+                          <ul className="divide-y divide-gray-200">
+                            {notificationEmails[event.id].emails.map(
+                              (email) => (
+                                <li
+                                  key={email.id}
+                                  className="py-1 flex justify-between items-center"
+                                >
+                                  <span>{email.email}</span>
+                                  <span className="text-xs text-gray-400 ml-2">
+                                    {email.createdAt?.seconds
+                                      ? new Date(
+                                          email.createdAt.seconds * 1000
+                                        ).toLocaleString()
+                                      : ""}
+                                  </span>
+                                </li>
+                              )
+                            )}
+                          </ul>
+                        ) : (
+                          <div className="text-gray-500">
+                            No notification emails for this event.
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   <div className="mt-6 flex justify-end space-x-3">
