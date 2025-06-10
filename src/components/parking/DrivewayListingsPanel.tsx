@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { ParkingSpot } from "../../types";
+import { Event, ParkingSpot } from "../../types";
 import { ParkingSpotCard } from "./ParkingSpotCard";
 import { addEventNotificationEmail } from "../../services/events/eventNotificationService";
+import { Input } from "../ui/Input";
+import { Button } from "../ui/Button";
 
 interface DrivewayListingsPanelProps {
+  event: Event;
   spots: ParkingSpot[];
   selectedSpot: ParkingSpot | null;
   onSpotSelect: (spot: ParkingSpot) => void;
@@ -13,6 +16,7 @@ interface DrivewayListingsPanelProps {
 }
 
 export const DrivewayListingsPanel: React.FC<DrivewayListingsPanelProps> = ({
+  event,
   spots,
   selectedSpot,
   onSpotSelect,
@@ -49,9 +53,7 @@ export const DrivewayListingsPanel: React.FC<DrivewayListingsPanelProps> = ({
         setLoading(false);
         return;
       }
-      // Use the first spot's eventId if available, otherwise fallback to a placeholder
-      const eventId = spots[0]?.eventId || "unknownEvent";
-      await addEventNotificationEmail(eventId, email);
+      await addEventNotificationEmail(event.id, email);
       setSuccess("You'll be notified when more spots are available!");
       setEmail("");
     } catch (e) {
@@ -146,21 +148,20 @@ export const DrivewayListingsPanel: React.FC<DrivewayListingsPanelProps> = ({
                   We can let you know when more spots are available.
                 </p>
                 <div className="relative mt-4">
-                  <input
-                    type="email"
+                  <Input
                     placeholder="Enter your email"
-                    className="w-full border border-gray-300 rounded-md px-4 pr-32 py-2 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                    className="pr-32"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     disabled={loading}
                   />
-                  <button
-                    className="absolute top-1/2 right-0 -translate-y-1/2 px-4 py-2 bg-primary-600 text-white rounded-md font-semibold disabled:opacity-50"
+                  <Button
+                    className="absolute top-1/2 right-0 -translate-y-1/2 px-4 py-2"
                     onClick={handleNotifyMe}
                     style={{ minWidth: 100 }}
                   >
                     {loading ? "Submitting..." : "Notify Me"}
-                  </button>
+                  </Button>
                 </div>
                 {success && <p className="text-green-600 mt-2">{success}</p>}
                 {error && <p className="text-red-600 mt-2">{error}</p>}

@@ -140,6 +140,7 @@ const DrivewaySelectPage: React.FC = () => {
 
       {/* Mobile panel */}
       <DrivewayListingsPanel
+        event={event}
         spots={spots}
         selectedSpot={selectedSpot}
         onSpotSelect={handleSpotSelect}
