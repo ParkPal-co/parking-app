@@ -13,6 +13,7 @@ import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
 import { CheckIcon } from "@heroicons/react/24/outline";
 import iconPinsImg from "../../assets/images/IconPins.png";
+import LogoOverHouse from "../../assets/images/LogoOverHouse.png";
 
 const EventSearchPage: React.FC = () => {
   const navigate = useNavigate();
@@ -76,7 +77,7 @@ const EventSearchPage: React.FC = () => {
       {/* Main content overlay */}
       <div className="w-full px-4 relative z-10 flex flex-col gap-4 items-center">
         {/* Search Section */}
-        <section className="h-[calc(100dvh-120px)] flex flex-col justify-center max-w-2xl w-full">
+        <section className="h-[calc(100dvh-120px)] flex flex-col justify-center max-w-4xl w-full">
           <h1 className="text-4xl font-bold text-center mb-8 text-gray-900 animate-fade-in-from-top [animation-fill-mode:forwards] lg:text-6xl">
             Where is your next event?
           </h1>
@@ -155,60 +156,99 @@ const EventSearchPage: React.FC = () => {
           </form>
         </section>
         {/* Renting Hero Section */}
-        <section className="flex flex-col lg:flex-row gap-4 w-full">
+        <section className="flex flex-col lg:flex-row lg:px-16 lg:gap-8 w-full">
           <Card
-            className="h-full w-full flex flex-col lg:h-[calc(100dvh-200px)] animate-fade-in-from-bottom opacity-0 [animation-fill-mode:forwards]"
+            className="h-full w-full flex flex-col gap-4 lg:flex-row lg:h-[calc(100dvh-320px)] animate-fade-in-from-top opacity-0 [animation-fill-mode:forwards]"
             style={{ animationDelay: "1s" }}
-            padding="large"
+            padding="normal"
             shadow="large"
           >
-            <h1 className="text-5xl lg:text-6xl font-bold mb-4 text-gray-900">
-              Skip the walk
-            </h1>
-            <p className="text-xl lg:text-2xl text-primary-700 font-bold">
-              Book a neighbor's driveway as event parking
-            </p>
-            <Card
-              className="lg:text-2xl bg-primary-50 border border-primary-200 rounded-lg p-4 lg:p-8 mt-4 h-full w-full flex flex-col justify-center"
-              padding="large"
-            >
-              <ul className="flex flex-col lg:gap-8">
-                <li className="flex items-center gap-2">
-                  <CheckIcon className="w-6 h-6" />
-                  <span>No walk-ups, no waiting</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckIcon className="w-6 h-6" />
-                  <span>Book ahead of time</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckIcon className="w-6 h-6" />
-                  <span>Payments are secure</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckIcon className="w-6 h-6" />
-                  <span>Support the community</span>
-                </li>
-              </ul>
+            <div className="lg:w-1/2 h-full flex flex-col">
+              <h1 className="text-5xl lg:text-6xl font-bold mb-4 text-gray-900">
+                Skip the walk
+              </h1>
+              <p className="text-xl lg:text-2xl text-primary-700 font-bold">
+                Book a neighbor's driveway as event parking
+              </p>
+              <Card
+                className="flex-1 w-full bg-primary-50 border border-primary-200 rounded-lg p-4 mt-4 flex flex-col justify-center"
+                padding="large"
+              >
+                <ul className="flex flex-col lg:gap-4">
+                  <li className="flex items-center gap-2">
+                    <CheckIcon className="w-6 h-6" />
+                    <span>No walk-ups, no waiting</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckIcon className="w-6 h-6" />
+                    <span>Book ahead of time</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckIcon className="w-6 h-6" />
+                    <span>Payments are secure</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckIcon className="w-6 h-6" />
+                    <span>Support the community</span>
+                  </li>
+                </ul>
+                <Button
+                  type="button"
+                  onClick={() => navigate("/events")}
+                  variant="primary"
+                  size="large"
+                  className="mt-4 lg:mt-4 lg:w-1/2"
+                >
+                  Find a driveway
+                </Button>
+              </Card>
+            </div>
+            <div className="max-h-[calc(100dvh-360px)] lg:w-1/2 rounded-2xl overflow-hidden border border-primary-300">
+              <img
+                src={iconPinsImg}
+                alt="Event Search Page Hero"
+                className="w-full h-full object-cover"
+                style={{ filter: "brightness(1.1) saturate(.5)" }}
+              />
+            </div>
+          </Card>
+          
+        </section>
+        {/* Hosting Hero Section */}
+        <section className="w-full lg:px-16 min-h-[calc(100dvh-280px)] mt-4">
+          <Card
+            className="h-full w-full flex flex-col lg:items-center lg:flex-row-reverse animate-fade-in-from-top opacity-0 [animation-fill-mode:forwards] gap-4"
+            style={{ animationDelay: "1s" }}
+            padding="large"
+            shadow="large">
+            <div className="h-full w-full flex flex-col gap-2 text-center lg:text-right">
+              <h1 className="text-4xl lg:text-6xl font-bold mb-4 text-gray-900">
+                The <span className="font-black text-5xl lg:text-7xl">purest</span> form of passive income
+              </h1>
+              <p className="text-xl lg:text-2xl text-primary-700 font-bold">
+                With a few simple clicks, post your driveway to the platform and start earning.
+              </p>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="aspect-square w-[min(100%,500px)] rounded-2xl overflow-hidden">
+                <img
+                  src={LogoOverHouse}
+                  alt="Event Search Page Hero"
+                  className="w-full h-full object-cover"
+                  style={{ filter: "brightness(1.1) saturate(.5)" }}
+                />
+              </div>
               <Button
                 type="button"
-                onClick={() => navigate("/events")}
+                onClick={() => navigate("/list")}
                 variant="primary"
                 size="large"
-                className="mt-4 lg:mt-8 lg:w-1/2"
+                className="mt-2 lg:mt-4 lg:w-1/2"
               >
-                Find a driveway
+                Host your driveway
               </Button>
-            </Card>
+            </div>
           </Card>
-          <div className="h-full w-full lg:h-[calc(100dvh-200px)] rounded-2xl overflow-hidden lg:animate-fade-in-from-bottom lg:opacity-0 lg:[animation-fill-mode:forwards] lg:[animation-delay:1.2s]">
-            <img
-              src={iconPinsImg}
-              alt="Event Search Page Hero"
-              className="w-full h-full object-cover"
-              style={{ filter: "brightness(1.1) saturate(.5)" }}
-            />
-          </div>
         </section>
       </div>
     </div>
