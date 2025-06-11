@@ -4,7 +4,6 @@
  */
 
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { Card, Button, Alert } from "../../components/ui";
 import { FloatingQuotesBackground } from "../../components/background/FloatingQuotesBackground";
 import carInDrivewayImg from "../../assets/images/LogoOverHouse.png";
@@ -13,13 +12,11 @@ import Footer from "../../components/navigation/Footer";
 import { BackButton } from "../../components/navigation/BackButton";
 
 const ListLandingPage: React.FC = () => {
-  const navigate = useNavigate();
 
   // Animation hooks for each section
   const [heroCard1Ref, heroCard1InView] = useInView();
   const [heroCard2Ref, heroCard2InView] = useInView();
   const [howItWorksRef, howItWorksInView] = useInView();
-  const [stripeRef, stripeInView] = useInView();
 
   return (
     <div className="relative min-h-[80vh] overflow-x-hidden">
@@ -122,7 +119,6 @@ const ListLandingPage: React.FC = () => {
         {/* Stripe Connect Section */}
         <section
           id="stripe-connect-section"
-          ref={stripeRef}
           className="w-full flex flex-col items-center gap-8"
         >
           <Card

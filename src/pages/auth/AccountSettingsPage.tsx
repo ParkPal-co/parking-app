@@ -159,6 +159,31 @@ const AccountSettingsPage: React.FC = () => {
     }
   };
 
+  const handleGoToStripeDashboard = async () => {
+    setStripeLoading(true);
+    setStripeError(null);
+    setStripeSuccess(null);
+    try {
+      const functions = getFunctions();
+      const createStripeDashboardLink = httpsCallable(
+        functions,
+        "createStripeDashboardLink"
+      );
+      const { data } = await createStripeDashboardLink({});
+      const url = (data as any).url;
+      if (url) {
+        setStripeSuccess("Redirecting to Stripe...");
+        window.location.href = url;
+      } else {
+        setStripeError("Failed to get Stripe dashboard link.");
+      }
+    } catch (err: any) {
+      setStripeError(err.message || "Failed to open Stripe dashboard.");
+    } finally {
+      setStripeLoading(false);
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-2xl mx-auto">
@@ -388,11 +413,15 @@ const AccountSettingsPage: React.FC = () => {
                   type="button"
                   variant="primary"
                   isLoading={stripeLoading}
-                  onClick={handleConnectStripe}
+                  onClick={
+                    user.stripeAccountId
+                      ? handleGoToStripeDashboard
+                      : handleConnectStripe
+                  }
                   fullWidth
                 >
                   {user.stripeAccountId
-                    ? "Update Payout Method"
+                    ? "Go to Stripe Account"
                     : "Connect Stripe Account"}
                 </Button>
               </div>

@@ -28,3 +28,6 @@ export { monitorStorageUsage } from './storage/monitorStorageUsage';
 
 // Create or get a Stripe Connect account onboarding link for a host
 export { createOrGetStripeAccountLink } from './payments/createOrGetStripeAccountLink';
+
+// Export Stripe Express Dashboard login link function
+export { createStripeDashboardLink } from './payments/createStripeDashboardLink';
