@@ -22,6 +22,7 @@ import {
   deleteObject,
 } from "firebase/storage";
 import { fetchEventNotificationEmails } from "../../services/events/eventNotificationService";
+import { getFunctions, httpsCallable } from "firebase/functions";
 
 interface Event {
   id: string;
@@ -43,6 +44,7 @@ interface Event {
   status: string;
   createdAt: string;
   createdBy: string;
+  payoutStatus: string;
 }
 
 interface ParkingSpot {
@@ -76,6 +78,14 @@ const RegisteredEventsPage: React.FC = () => {
       }
     >
   >({});
+  const [expandedBookingsEventId, setExpandedBookingsEventId] = useState<
+    string | null
+  >(null);
+  const [bookingsByEvent, setBookingsByEvent] = useState<Record<string, any[]>>(
+    {}
+  );
+  const [payoutLoading, setPayoutLoading] = useState<string | null>(null);
+  const [payoutError, setPayoutError] = useState<string | null>(null);
 
   // Fetch events and their associated parking spot counts
   useEffect(() => {
@@ -290,6 +300,66 @@ const RegisteredEventsPage: React.FC = () => {
           },
         }));
       }
+    }
+  };
+
+  const handleToggleBookings = async (eventId: string) => {
+    if (expandedBookingsEventId === eventId) {
+      setExpandedBookingsEventId(null);
+      return;
+    }
+    setExpandedBookingsEventId(eventId);
+    if (!bookingsByEvent[eventId]) {
+      try {
+        const bookingsSnap = await getDocs(
+          query(collection(db, "bookings"), where("eventId", "==", eventId))
+        );
+        setBookingsByEvent((prev) => ({
+          ...prev,
+          [eventId]: bookingsSnap.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          })),
+        }));
+      } catch (err) {
+        setBookingsByEvent((prev) => ({ ...prev, [eventId]: [] }));
+      }
+    }
+  };
+
+  const handleInitiatePayouts = async (eventId: string) => {
+    setPayoutLoading(eventId);
+    setPayoutError(null);
+    try {
+      const functions = getFunctions();
+      const initiatePayouts = httpsCallable(functions, "initiateEventPayouts");
+      await initiatePayouts({ eventId });
+      // Refresh event and bookings data
+      const eventsSnapshot = await getDocs(collection(db, "events"));
+      setEvents(
+        eventsSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Event[]
+      );
+      if (expandedBookingsEventId === eventId) {
+        const bookingsSnap = await getDocs(
+          query(collection(db, "bookings"), where("eventId", "==", eventId))
+        );
+        setBookingsByEvent((prev) => ({
+          ...prev,
+          [eventId]: bookingsSnap.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          })),
+        }));
+      }
+      setSuccess("Payouts initiated successfully!");
+      setTimeout(() => setSuccess(null), 3000);
+    } catch (err) {
+      setPayoutError("Failed to initiate payouts.");
+    } finally {
+      setPayoutLoading(null);
     }
   };
 
@@ -552,6 +622,83 @@ const RegisteredEventsPage: React.FC = () => {
                     >
                       {event.website}
                     </a>
+                  </div>
+
+                  <div className="mt-4 flex items-center gap-2">
+                    <span
+                      className={`px-2 py-1 rounded text-xs font-semibold ${
+                        event.payoutStatus === "complete"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-yellow-100 text-yellow-800"
+                      }`}
+                    >
+                      {event.payoutStatus === "complete"
+                        ? "Payouts Complete"
+                        : "Payouts Pending"}
+                    </span>
+                    {event.payoutStatus === "pending" && (
+                      <button
+                        className="ml-2 px-3 py-1 bg-blue-600 text-white rounded text-xs disabled:opacity-50"
+                        onClick={() => handleInitiatePayouts(event.id)}
+                        disabled={payoutLoading === event.id}
+                      >
+                        {payoutLoading === event.id
+                          ? "Processing..."
+                          : "Initiate Payouts"}
+                      </button>
+                    )}
+                    {payoutError && (
+                      <span className="ml-2 text-xs text-red-600">
+                        {payoutError}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="mt-4">
+                    <button
+                      className="text-sm text-blue-600 hover:underline"
+                      onClick={() => handleToggleBookings(event.id)}
+                    >
+                      {expandedBookingsEventId === event.id ? "Hide" : "Show"}{" "}
+                      Bookings
+                    </button>
+                    {expandedBookingsEventId === event.id && (
+                      <div className="mt-2 bg-gray-50 border border-gray-200 rounded p-4">
+                        <h4 className="font-semibold mb-2">Bookings</h4>
+                        {bookingsByEvent[event.id] ? (
+                          bookingsByEvent[event.id].length > 0 ? (
+                            <ul>
+                              {bookingsByEvent[event.id].map((booking) => (
+                                <li
+                                  key={booking.id}
+                                  className="flex justify-between items-center py-1"
+                                >
+                                  <span>
+                                    {booking.renterName || booking.userId} ($
+                                    {booking.totalPrice})
+                                  </span>
+                                  <span
+                                    className={`text-xs font-semibold ${
+                                      booking.paidOut
+                                        ? "text-green-600"
+                                        : "text-yellow-600"
+                                    }`}
+                                  >
+                                    {booking.paidOut ? "Paid" : "Unpaid"}
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <div className="text-gray-500">
+                              No bookings for this event.
+                            </div>
+                          )
+                        ) : (
+                          <div>Loading bookings...</div>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   <div className="mt-6">

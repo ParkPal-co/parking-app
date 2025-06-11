@@ -12,6 +12,7 @@ import Footer from "../../components/navigation/Footer";
 import { BackButton } from "../../components/navigation/BackButton";
 import { useAuth } from "../../hooks/useAuth";
 import { getFunctions, httpsCallable } from "firebase/functions";
+import { useNavigate } from "react-router-dom";
 
 const ListLandingPage: React.FC = () => {
   // Animation hooks for each section
@@ -22,6 +23,7 @@ const ListLandingPage: React.FC = () => {
   const [stripeLoading, setStripeLoading] = useState(false);
   const [stripeError, setStripeError] = useState<string | null>(null);
   const [stripeSuccess, setStripeSuccess] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const handleConnectStripe = async () => {
     setStripeLoading(true);
@@ -279,6 +281,16 @@ const ListLandingPage: React.FC = () => {
                     </li>
                   </ul>
                 </div>
+                <Button
+                  size="large"
+                  variant="primary"
+                  className="shadow-md w-full md:w-auto mt-2"
+                  onClick={() => {
+                    navigate("/register-driveway");
+                  }}
+                >
+                  List Your First Driveway
+                </Button>
               </div>
             </div>
           </Card>

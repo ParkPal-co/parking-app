@@ -90,6 +90,7 @@ export async function createEvent(
     venue: formData.venue,
     website: formData.website,
     createdBy: user.email,
+    payoutStatus: "pending",
   };
 
   // Add the event to Firestore

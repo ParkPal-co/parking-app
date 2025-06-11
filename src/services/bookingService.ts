@@ -58,6 +58,7 @@ export async function createBooking(
       totalPrice,
       status: "confirmed" as const,
       createdAt: new Date(),
+      paidOut: false,
     };
 
     const bookingRef = doc(collection(db, "bookings"));
