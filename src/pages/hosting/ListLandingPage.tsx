@@ -3,20 +3,76 @@
  * Page component for handling the List navigation option
  */
 
-import React from "react";
+import React, { useState } from "react";
 import { Card, Button, Alert } from "../../components/ui";
 import { FloatingQuotesBackground } from "../../components/background/FloatingQuotesBackground";
 import carInDrivewayImg from "../../assets/images/LogoOverHouse.png";
 import { useInView } from "../../hooks/useInView";
 import Footer from "../../components/navigation/Footer";
 import { BackButton } from "../../components/navigation/BackButton";
+import { useAuth } from "../../hooks/useAuth";
+import { getFunctions, httpsCallable } from "firebase/functions";
 
 const ListLandingPage: React.FC = () => {
-
   // Animation hooks for each section
   const [heroCard1Ref, heroCard1InView] = useInView();
   const [heroCard2Ref, heroCard2InView] = useInView();
   const [howItWorksRef, howItWorksInView] = useInView();
+  const { user } = useAuth();
+  const [stripeLoading, setStripeLoading] = useState(false);
+  const [stripeError, setStripeError] = useState<string | null>(null);
+  const [stripeSuccess, setStripeSuccess] = useState<string | null>(null);
+
+  const handleConnectStripe = async () => {
+    setStripeLoading(true);
+    setStripeError(null);
+    setStripeSuccess(null);
+    try {
+      const functions = getFunctions();
+      const createOrGetStripeAccountLink = httpsCallable(
+        functions,
+        "createOrGetStripeAccountLink"
+      );
+      const origin = window.location.origin;
+      const { data } = await createOrGetStripeAccountLink({ origin });
+      const url = (data as any).url;
+      if (url) {
+        setStripeSuccess("Redirecting to Stripe...");
+        window.location.href = url;
+      } else {
+        setStripeError("Failed to get Stripe onboarding link.");
+      }
+    } catch (err: any) {
+      setStripeError(err.message || "Failed to connect with Stripe.");
+    } finally {
+      setStripeLoading(false);
+    }
+  };
+
+  const handleGoToStripeDashboard = async () => {
+    setStripeLoading(true);
+    setStripeError(null);
+    setStripeSuccess(null);
+    try {
+      const functions = getFunctions();
+      const createStripeDashboardLink = httpsCallable(
+        functions,
+        "createStripeDashboardLink"
+      );
+      const { data } = await createStripeDashboardLink({});
+      const url = (data as any).url;
+      if (url) {
+        setStripeSuccess("Redirecting to Stripe...");
+        window.location.href = url;
+      } else {
+        setStripeError("Failed to get Stripe dashboard link.");
+      }
+    } catch (err: any) {
+      setStripeError(err.message || "Failed to open Stripe dashboard.");
+    } finally {
+      setStripeLoading(false);
+    }
+  };
 
   return (
     <div className="relative min-h-[80vh] overflow-x-hidden">
@@ -47,11 +103,13 @@ const ListLandingPage: React.FC = () => {
                 size="large"
                 variant="primary"
                 onClick={() => {
-                  const element = document.getElementById('stripe-connect-section');
+                  const element = document.getElementById(
+                    "stripe-connect-section"
+                  );
                   const topOffset = element?.getBoundingClientRect().top ?? 0;
                   window.scrollTo({
                     top: window.scrollY + topOffset - 80,
-                    behavior: 'smooth'
+                    behavior: "smooth",
                   });
                 }}
                 className="mt-4 shadow-md font-bold max-w-48"
@@ -147,9 +205,31 @@ const ListLandingPage: React.FC = () => {
                   size="large"
                   variant="primary"
                   className="shadow-md w-full md:w-auto"
+                  isLoading={stripeLoading}
+                  onClick={() =>
+                    user?.stripeAccountId
+                      ? handleGoToStripeDashboard()
+                      : handleConnectStripe()
+                  }
                 >
-                  Stripe Setup
+                  {user?.stripeAccountId
+                    ? "Go to Stripe Dashboard"
+                    : "Connect Stripe Account"}
                 </Button>
+                {stripeError && (
+                  <Alert
+                    variant="error"
+                    message={stripeError}
+                    className="mb-2 mt-2"
+                  />
+                )}
+                {stripeSuccess && (
+                  <Alert
+                    variant="success"
+                    message={stripeSuccess}
+                    className="mb-2 mt-2"
+                  />
+                )}
               </div>
             </div>
             <div className="flex flex-col gap-4 items-center justify-center">

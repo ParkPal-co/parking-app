@@ -421,7 +421,7 @@ const AccountSettingsPage: React.FC = () => {
                   fullWidth
                 >
                   {user.stripeAccountId
-                    ? "Go to Stripe Account"
+                    ? "Go to Stripe Dashboard"
                     : "Connect Stripe Account"}
                 </Button>
               </div>
