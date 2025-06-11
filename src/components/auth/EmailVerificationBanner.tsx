@@ -33,7 +33,7 @@ const EmailVerificationBanner: React.FC<EmailVerificationBannerProps> = ({
 
   return (
     <div
-      className={`bg-yellow-50 border-l-4 border-yellow-400 p-4 ${className}`}
+      className={`bg-yellow-50 border-l-4 border-yellow-400 p-4 z-50 md:z-0 ${className}`}
     >
       <div className="flex">
         <div className="flex-shrink-0">
