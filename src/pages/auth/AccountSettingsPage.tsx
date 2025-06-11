@@ -321,7 +321,7 @@ const AccountSettingsPage: React.FC = () => {
                   <Button
                     type="button"
                     variant="primary"
-                    onClick={() => navigate("/hosting/list")}
+                    onClick={() => navigate("/list")}
                     disabled={!user?.emailVerified || !user?.stripeAccountId}
                   >
                     Become a Host

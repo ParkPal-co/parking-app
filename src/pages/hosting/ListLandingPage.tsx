@@ -49,7 +49,14 @@ const ListLandingPage: React.FC = () => {
               <Button
                 size="large"
                 variant="primary"
-                onClick={() => navigate("/account-settings")}
+                onClick={() => {
+                  const element = document.getElementById('stripe-connect-section');
+                  const topOffset = element?.getBoundingClientRect().top ?? 0;
+                  window.scrollTo({
+                    top: window.scrollY + topOffset - 80,
+                    behavior: 'smooth'
+                  });
+                }}
                 className="mt-4 shadow-md font-bold max-w-48"
               >
                 Become a Host
@@ -114,14 +121,12 @@ const ListLandingPage: React.FC = () => {
 
         {/* Stripe Connect Section */}
         <section
+          id="stripe-connect-section"
           ref={stripeRef}
           className="w-full flex flex-col items-center gap-8"
         >
           <Card
-            className={`flex flex-col md:flex-row items-center md:items-stretch gap-8 p-8 w-full [&>*]:md:w-1/2 opacity-0 [animation-fill-mode:forwards] ${
-              stripeInView ? "animate-fade-in-from-bottom" : ""
-            }`}
-            style={{ animationDelay: "0.3s" }}
+            className="flex flex-col md:flex-row items-center md:items-stretch gap-8 p-8 w-full [&>*]:md:w-1/2"
             shadow="large"
             padding="large"
           >
