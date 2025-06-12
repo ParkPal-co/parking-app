@@ -50,6 +50,8 @@ const StorageMetricsPage = React.lazy(
 const UnderConstruction = React.lazy(
   () => import("../pages/general/UnderConstruction")
 );
+const PortlandLandingPage = React.lazy(() => import("../pages/hosting/PortlandLandingPage"));
+
 const FeedbackPage = React.lazy(() => import("../pages/admin/FeedbackPage"));
 
 export const routes: RouteObject[] = [
@@ -273,11 +275,11 @@ export const routes: RouteObject[] = [
     path: "/portland-WLF",
     element: (
       <PageLayout fullWidth={true} showBackButton={false}>
-        <ListPage />
+        <PortlandLandingPage />
       </PageLayout>
     ),
   },
-  {
+  { 
     path: "*",
     element: <Navigate to="/" replace />,
   },

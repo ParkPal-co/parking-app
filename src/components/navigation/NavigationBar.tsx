@@ -131,7 +131,7 @@ export const NavigationBar: React.FC = () => {
               Rent
             </NavLink>
             <NavLink to="/list" isActive={isListActive}>
-              List
+              Host
             </NavLink>
           </div>
 
