@@ -54,6 +54,7 @@ const PortlandLandingPage = React.lazy(
   () => import("../pages/hosting/PortlandLandingPage")
 );
 const Contact = React.lazy(() => import("../pages/general/Contact"));
+const TermsPage = React.lazy(() => import("../pages/general/TermsPage"));
 
 const FeedbackPage = React.lazy(() => import("../pages/admin/FeedbackPage"));
 
@@ -262,7 +263,7 @@ export const routes: RouteObject[] = [
     path: "/terms",
     element: (
       <PageLayout fullWidth={true} showBackButton={false}>
-        <UnderConstruction />
+        <TermsPage />
       </PageLayout>
     ),
   },
