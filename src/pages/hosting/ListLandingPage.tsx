@@ -192,7 +192,7 @@ const ListLandingPage: React.FC = () => {
                 Payout Setup
               </h2>
               <p className="text-primary-800 text-lg flex items-center gap-2">
-                To you get paid, ParkPal uses Stripe - a leading payments
+                To get you paid, ParkPal uses Stripe - a leading payments
                 platform trusted for its top-tier security and compliance.
               </p>
               <p className="text-primary-800 text-lg flex items-center gap-2">

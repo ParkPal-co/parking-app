@@ -1,6 +1,8 @@
 import React from "react";
 import { BackButton } from "../../components/navigation/BackButton";
 
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
 const TermsPage: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center h-[calc(100vh-120px)] pb-4 pt-12 px-2">
@@ -9,25 +11,41 @@ const TermsPage: React.FC = () => {
         ParkPal Terms and Conditions
       </h1>
       <div className="w-full max-w-3xl h-[70vh] md:h-[80vh] bg-white rounded shadow overflow-hidden">
-        <object
-          data="/ParkPalTermsandConditions.pdf"
-          type="application/pdf"
-          width="100%"
-          height="100%"
-        >
-          <p className="p-4 text-center">
-            Unable to display PDF. You can
+        {isMobile ? (
+          <div className="flex flex-col items-center justify-center h-full p-4">
+            <p className="text-center mb-2">
+              PDF viewing is limited on mobile devices.
+            </p>
             <a
               href="/ParkPalTermsandConditions.pdf"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline text-primary-700 ml-1"
+              className="underline text-primary-700"
             >
-              download and view the Terms and Conditions here
+              Tap here to view or download the Terms and Conditions
             </a>
-            .
-          </p>
-        </object>
+          </div>
+        ) : (
+          <object
+            data="/ParkPalTermsandConditions.pdf"
+            type="application/pdf"
+            width="100%"
+            height="100%"
+          >
+            <p className="p-4 text-center">
+              Unable to display PDF. You can
+              <a
+                href="/ParkPalTermsandConditions.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline text-primary-700 ml-1"
+              >
+                download and view the Terms and Conditions here
+              </a>
+              .
+            </p>
+          </object>
+        )}
       </div>
     </div>
   );

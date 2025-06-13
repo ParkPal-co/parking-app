@@ -22,6 +22,7 @@ const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const { signup, handleSocialLogin } = useAuth();
   const { notify } = useNotification();
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -203,28 +204,44 @@ const RegisterPage: React.FC = () => {
         title="ParkPal Terms and Conditions"
         size="fullscreen"
       >
-        <div className="w-full h-[60vh] md:h-[70vh]">
-          <object
-            data="/public/ParkPalTermsandConditions.pdf"
-            type="application/pdf"
-            width="100%"
-            height="100%"
-          >
-            <p>
-              {
-                "Unable to display PDF. You can download and view the Terms and Conditions "
-              }
+        <div className="w-full h-[60dvh] md:h-[70dvh]">
+          {isMobile ? (
+            <div className="flex flex-col items-center justify-center h-full p-4">
+              <p className="text-center mb-2">
+                PDF viewing is limited on mobile devices.
+              </p>
               <a
-                href="/public/ParkPalTermsandConditions.pdf"
+                href="/ParkPalTermsandConditions.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline text-primary-700"
               >
-                here
+                Tap here to view or download the Terms and Conditions
               </a>
-              .
-            </p>
-          </object>
+            </div>
+          ) : (
+            <object
+              data="/ParkPalTermsandConditions.pdf"
+              type="application/pdf"
+              width="100%"
+              height="100%"
+            >
+              <p>
+                {
+                  "Unable to display PDF. You can download and view the Terms and Conditions "
+                }
+                <a
+                  href="/ParkPalTermsandConditions.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline text-primary-700"
+                >
+                  here
+                </a>
+                .
+              </p>
+            </object>
+          )}
         </div>
       </Modal>
     </div>
