@@ -8,14 +8,19 @@ const faqs = [
       "Payments are processed securely through Stripe. Once your driveway is booked and the event is complete, funds (minus fees) are automatically transferred to your connected bank account.",
   },
   {
-    question: "What information does Stripe require?",
-    answer:
-      "Stripe will ask for your name, date of birth, and last 4 digits of your SSN to verify your identity, as required by U.S. law. ParkPal never sees or stores this information.",
-  },
-  {
     question: "What if I want to list multiple spots in my driveway?",
     answer:
       "You can list as many driveways spaces as you want. Just make sure each listing specifies which side of the driveway it is on, etc.",
+  },
+  {
+    question: "How will I communicate with who books my spot?",
+    answer:
+      "You will be able to communicate with the renter through the app. You will also be able to see the renter's name and profile picture.",
+  },
+  {
+    question: "What information does Stripe require?",
+    answer:
+      "Stripe will ask for your name, date of birth, and last 4 digits of your SSN to verify your identity, as required by U.S. law. ParkPal never sees or stores this information.",
   },
   {
     question: "Can I set my own price?",
