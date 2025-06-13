@@ -18,6 +18,20 @@ async function fetchUserNameById(userId: string): Promise<string | null> {
   return null;
 }
 
+// Helper to fetch user info by userId
+async function fetchUserInfoById(userId: string): Promise<{ name: string; email: string } | null> {
+  const userRef = doc(db, "users", userId);
+  const userSnap = await getDoc(userRef);
+  if (userSnap.exists()) {
+    const userData = userSnap.data();
+    return {
+      name: userData.name || userData.email || "",
+      email: userData.email || "",
+    };
+  }
+  return null;
+}
+
 export async function createBooking(
   spot: ParkingSpot,
   userId: string,
@@ -28,7 +42,7 @@ export async function createBooking(
 ): Promise<Booking> {
   // Fetch renter's name before transaction
   const renterName = await fetchUserNameById(userId);
-  return await runTransaction(db, async (transaction) => {
+  const booking = await runTransaction(db, async (transaction) => {
     const spotRef = doc(db, "parkingSpots", spot.id!);
     const spotDoc = await transaction.get(spotRef);
 
@@ -69,6 +83,38 @@ export async function createBooking(
       ...bookingData,
     } as Booking;
   });
+
+  // After booking is created, send confirmation emails
+  try {
+    const [renter, host] = await Promise.all([
+      fetchUserInfoById(userId),
+      fetchUserInfoById(hostId),
+    ]);
+    if (renter && host) {
+      // Dynamically import firebase/functions to avoid SSR issues
+      const { getFunctions, httpsCallable } = await import("firebase/functions");
+      const { app } = await import("../firebase/config");
+      const functions = getFunctions(app);
+      const sendBookingConfirmation = httpsCallable(functions, "sendBookingConfirmation");
+      await sendBookingConfirmation({
+        renterEmail: renter.email,
+        renterName: renter.name,
+        hostEmail: host.email,
+        hostName: host.name,
+        bookingDetails: {
+          startTime: booking.startTime instanceof Date ? booking.startTime.toLocaleString() : String(booking.startTime),
+          endTime: booking.endTime instanceof Date ? booking.endTime.toLocaleString() : String(booking.endTime),
+          location: spot.address,
+          price: booking.totalPrice,
+        },
+      });
+    }
+  } catch (err) {
+    // Log but do not block booking creation if email fails
+    console.error("Failed to send booking confirmation email:", err);
+  }
+
+  return booking;
 }
 
 export async function getBookingById(bookingId: string): Promise<Booking | null> {

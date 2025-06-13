@@ -25,4 +25,4 @@ export const storage = getStorage(app);
 // Only initialize analytics in browser environment
 export const analytics = typeof window !== 'undefined' ? getAnalytics(app) : null;
 
-export default app; 
+export { app }; 
