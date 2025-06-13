@@ -3,15 +3,14 @@
  * Page component for handling the List navigation option
  */
 
-import React, { useState } from "react";
-import { Card, Button, Alert } from "../../components/ui";
+import React from "react";
+import { Card, Button } from "../../components/ui";
 import { FloatingQuotesBackground } from "../../components/background/FloatingQuotesBackground";
 import LaurelhurstPark from "../../assets/images/LaurelhurstPark.png";
 import { useInView } from "../../hooks/useInView";
 import Footer from "../../components/navigation/Footer";
 import { BackButton } from "../../components/navigation/BackButton";
 import { useAuth } from "../../hooks/useAuth";
-import { getFunctions, httpsCallable } from "firebase/functions";
 import { useNavigate } from "react-router-dom";
 import FAQSection from "../../components/ui/FAQSection";
 
