@@ -40,7 +40,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({
   return (
     <div
       className={twMerge(
-        "absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg py-2 z-50",
+        "absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg py-2 z-[9999]",
         "border border-primary-200",
         "transform transition-all duration-200 ease-out",
         "animate-menu-enter"

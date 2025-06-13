@@ -53,7 +53,7 @@ export const Modal: React.FC<ModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 overflow-y-auto"
+      className="fixed inset-0 z-49 overflow-y-auto"
       role="dialog"
       aria-modal="true"
       aria-labelledby={title ? "modal-title" : undefined}

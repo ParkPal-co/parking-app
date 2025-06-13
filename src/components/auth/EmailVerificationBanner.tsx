@@ -33,7 +33,7 @@ const EmailVerificationBanner: React.FC<EmailVerificationBannerProps> = ({
 
   return (
     <div
-      className={`bg-yellow-50 border-l-4 border-yellow-400 p-4 z-50 md:z-0 ${className}`}
+      className={`bg-yellow-50 border-l-4 border-yellow-400 p-4 ${className}`}
     >
       <div className="flex">
         <div className="flex-shrink-0">
@@ -51,7 +51,7 @@ const EmailVerificationBanner: React.FC<EmailVerificationBannerProps> = ({
         </div>
         <div className="ml-3">
           <p className="text-sm text-yellow-700">
-            Please verify your email address to access all features.
+            Please verify your email.
             {error && <span className="block mt-1 text-red-600">{error}</span>}
             {success && (
               <span className="block mt-1 text-green-600">

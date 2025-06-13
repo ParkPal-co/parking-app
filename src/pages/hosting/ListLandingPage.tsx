@@ -13,6 +13,7 @@ import { BackButton } from "../../components/navigation/BackButton";
 import { useAuth } from "../../hooks/useAuth";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import { useNavigate } from "react-router-dom";
+import FAQSection from "../../components/ui/FAQSection";
 
 const ListLandingPage: React.FC = () => {
   // Animation hooks for each section
@@ -203,21 +204,38 @@ const ListLandingPage: React.FC = () => {
                 lots' and 'parkpal.co'
               </p>
               <div className="mt-2">
-                <Button
-                  size="large"
-                  variant="primary"
-                  className="shadow-md w-full md:w-auto"
-                  isLoading={stripeLoading}
-                  onClick={() =>
-                    user?.stripeAccountId
-                      ? handleGoToStripeDashboard()
-                      : handleConnectStripe()
-                  }
-                >
-                  {user?.stripeAccountId
-                    ? "Go to Stripe Dashboard"
-                    : "Connect Stripe Account"}
-                </Button>
+                {user?.stripeAccountId ? (
+                  <div className="flex flex-col gap-2 w-full md:w-auto">
+                    <Button
+                      size="large"
+                      variant="primary"
+                      className="shadow-md w-full md:w-auto"
+                      isLoading={stripeLoading}
+                      onClick={handleGoToStripeDashboard}
+                    >
+                      Go to Stripe Dashboard
+                    </Button>
+                    <Button
+                      size="small"
+                      variant="secondary"
+                      className="shadow-md w-full md:w-auto"
+                      isLoading={stripeLoading}
+                      onClick={handleConnectStripe}
+                    >
+                      Finish Stripe Setup
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    size="large"
+                    variant="primary"
+                    className="shadow-md w-full md:w-auto"
+                    isLoading={stripeLoading}
+                    onClick={handleConnectStripe}
+                  >
+                    Connect Stripe Account
+                  </Button>
+                )}
                 {stripeError && (
                   <Alert
                     variant="error"
@@ -286,6 +304,12 @@ const ListLandingPage: React.FC = () => {
                   variant="primary"
                   className="shadow-md w-full md:w-auto mt-2"
                   onClick={() => {
+                    if (!user?.stripeAccountId) {
+                      alert(
+                        "You must finish Stripe setup before listing your driveway."
+                      );
+                      return;
+                    }
                     navigate("/register-driveway");
                   }}
                 >
@@ -294,6 +318,9 @@ const ListLandingPage: React.FC = () => {
               </div>
             </div>
           </Card>
+        </section>
+        <section className="w-full flex flex-col items-center gap-8">
+          <FAQSection />
         </section>
       </div>
       <Footer />
