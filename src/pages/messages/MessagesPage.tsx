@@ -82,7 +82,7 @@ const MessagesPage: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 max-w-6xl">
+    <div className="container mx-auto max-w-6xl">
       <div className="flex h-[calc(100vh-200px)] bg-white rounded-lg shadow-lg overflow-hidden relative">
         {/* Conversations List - Desktop/Tablet */}
         <div className="hidden md:flex w-1/3 border-r border-gray-200 flex-col">
