@@ -20,8 +20,11 @@ export const createOrGetStripeAccountLink = functions.https.onCall(async (data, 
     if (!userData) {
       throw new functions.https.HttpsError('not-found', 'User data not found');
     }
-    if (!userData.isHost) {
-      throw new functions.https.HttpsError('permission-denied', 'Only hosts can onboard with Stripe');
+    if (!userData.email) {
+      throw new functions.https.HttpsError('invalid-argument', 'User email is required for Stripe onboarding');
+    }
+    if (!userData.emailVerified) {
+      throw new functions.https.HttpsError('permission-denied', 'Email must be verified for Stripe onboarding');
     }
     let stripeAccountId = userData.stripeAccountId;
     const stripe = new Stripe(functions.config().stripe.secret_key, {
@@ -48,6 +51,11 @@ export const createOrGetStripeAccountLink = functions.https.onCall(async (data, 
       stripeAccountId = account.id;
       // Save to Firestore
       await userRef.update({ stripeAccountId });
+    }
+    // Ensure user is marked as a host
+    if (!userData.isHost) {
+      await userRef.update({ isHost: true });
+      userData.isHost = true;
     }
     // Create an account link for onboarding
     const origin = data.origin || 'https://parkpal.co';
