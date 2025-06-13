@@ -1,8 +1,8 @@
 import * as functions from 'firebase-functions';
-import * as sgMail from '@sendgrid/mail';
+import sgMail from '@sendgrid/mail';
 
 // Initialize SendGrid with API key from Firebase Functions config
-gconst sendgridApiKey = functions.config().sendgrid.api_key;
+const sendgridApiKey = functions.config().sendgrid.api_key;
 sgMail.setApiKey(sendgridApiKey);
 
 /**
@@ -20,7 +20,7 @@ sgMail.setApiKey(sendgridApiKey);
  *   }
  * }
  */
-export const sendBookingConfirmation = functions.https.onCall(async (data, context) => {
+export const sendBookingConfirmation = functions.https.onCall(async (data) => {
   const {
     renterEmail,
     renterName,
