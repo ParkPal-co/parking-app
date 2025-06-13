@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { GoogleAuthProvider } from "firebase/auth";
 import { FloatingQuotesBackground } from "../../components/background/FloatingQuotesBackground";
-import { Button, Input, Card, Alert } from "../../components/ui";
+import { Button, Input, Card, Alert, Modal } from "../../components/ui";
 import { useNotification } from "../../components/ui/NotificationProvider";
 
 const RegisterPage: React.FC = () => {
@@ -17,16 +17,32 @@ const RegisterPage: React.FC = () => {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [termsChecked, setTermsChecked] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
   const navigate = useNavigate();
   const { signup, handleSocialLogin } = useAuth();
   const { notify } = useNotification();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!termsChecked) {
+      setError("You must agree to the Terms and Conditions.");
+      return;
+    }
     try {
       setError("");
       setLoading(true);
-      await signup(email, password, name, false);
+      await signup(
+        email,
+        password,
+        name,
+        false,
+        undefined,
+        undefined,
+        undefined,
+        true,
+        new Date()
+      );
       notify("Account creation successful", { variant: "success" });
       navigate("/");
     } catch (err) {
@@ -37,10 +53,14 @@ const RegisterPage: React.FC = () => {
   };
 
   const handleGoogleSignIn = async () => {
+    if (!termsChecked) {
+      setError("You must agree to the Terms and Conditions.");
+      return;
+    }
     try {
       setError("");
       setLoading(true);
-      await handleSocialLogin(new GoogleAuthProvider());
+      await handleSocialLogin(new GoogleAuthProvider(), true, new Date());
       notify("Account creation successful", { variant: "success" });
       navigate("/");
     } catch (err) {
@@ -95,6 +115,28 @@ const RegisterPage: React.FC = () => {
               placeholder="Password"
               disabled={loading}
             />
+            <div className="flex items-start mt-2">
+              <input
+                id="terms"
+                type="checkbox"
+                checked={termsChecked}
+                onChange={(e) => setTermsChecked(e.target.checked)}
+                className="h-4 w-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                required
+                disabled={loading}
+              />
+              <label htmlFor="terms" className="ml-2 text-sm text-gray-700">
+                I have read and agree to the
+                <button
+                  type="button"
+                  className="ml-1 underline text-primary-700 hover:text-primary-900"
+                  onClick={() => setShowTermsModal(true)}
+                  tabIndex={0}
+                >
+                  ParkPal Terms and Conditions
+                </button>
+              </label>
+            </div>
           </div>
 
           <Button type="submit" fullWidth isLoading={loading}>
@@ -154,6 +196,37 @@ const RegisterPage: React.FC = () => {
           </p>
         </div>
       </Card>
+
+      <Modal
+        isOpen={showTermsModal}
+        onClose={() => setShowTermsModal(false)}
+        title="ParkPal Terms and Conditions"
+        size="fullscreen"
+      >
+        <div className="w-full h-[60vh] md:h-[70vh]">
+          <object
+            data="/public/ParkPalTermsandConditions.pdf"
+            type="application/pdf"
+            width="100%"
+            height="100%"
+          >
+            <p>
+              {
+                "Unable to display PDF. You can download and view the Terms and Conditions "
+              }
+              <a
+                href="/public/ParkPalTermsandConditions.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline text-primary-700"
+              >
+                here
+              </a>
+              .
+            </p>
+          </object>
+        </div>
+      </Modal>
     </div>
   );
 };

@@ -7,7 +7,7 @@ export interface ModalProps {
   title?: string;
   description?: string;
   children: React.ReactNode;
-  size?: "small" | "medium" | "large";
+  size?: "small" | "medium" | "large" | "fullscreen";
   className?: string;
   hideCloseButton?: boolean;
   footer?: React.ReactNode;
@@ -49,11 +49,12 @@ export const Modal: React.FC<ModalProps> = ({
     small: "max-w-md",
     medium: "max-w-lg",
     large: "max-w-2xl",
+    fullscreen: "w-screen h-screen max-w-none max-h-none rounded-none",
   };
 
   return (
     <div
-      className="fixed inset-0 z-49 overflow-y-auto"
+      className="fixed inset-0 z-50 overflow-y-auto"
       role="dialog"
       aria-modal="true"
       aria-labelledby={title ? "modal-title" : undefined}
@@ -70,11 +71,12 @@ export const Modal: React.FC<ModalProps> = ({
       <div className="flex min-h-screen items-center justify-center p-4">
         <div
           className={twMerge(
-            "relative bg-white rounded-lg shadow-xl w-full transform transition-all",
+            "relative bg-white shadow-xl w-full transform transition-all",
             "animate-modal-enter",
             sizeClasses[size],
             className
           )}
+          style={size === "fullscreen" ? { height: "100vh" } : {}}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
@@ -143,4 +145,3 @@ export const Modal: React.FC<ModalProps> = ({
     </div>
   );
 };
- 

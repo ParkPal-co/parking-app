@@ -67,7 +67,9 @@ export function useAuth() {
     isHost: boolean,
     phoneNumber?: string,
     profileImageUrl?: string,
-    address?: string
+    address?: string,
+    termsAccepted?: boolean,
+    termsAcceptedAt?: Date
   ) => {
     setSignupInProgress(true);
     try {
@@ -92,6 +94,8 @@ export function useAuth() {
         isHost,
         emailVerified: false,
         createdAt: new Date(),
+        termsAccepted: termsAccepted ?? false,
+        termsAcceptedAt: termsAcceptedAt ?? undefined,
         // stripeAccountId will be set later if the user becomes a host and connects Stripe
       };
       if (phoneNumber) userData.phoneNumber = phoneNumber;
@@ -157,7 +161,7 @@ export function useAuth() {
     }
   };
 
-  const handleSocialLogin = async (provider: GoogleAuthProvider | FacebookAuthProvider) => {
+  const handleSocialLogin = async (provider: GoogleAuthProvider | FacebookAuthProvider, termsAccepted?: boolean, termsAcceptedAt?: Date) => {
     try {
       const result = await signInWithPopup(auth, provider);
       const { user: firebaseUser } = result;
@@ -177,6 +181,8 @@ export function useAuth() {
             isHost: false,
             emailVerified: firebaseUser.emailVerified,
             createdAt: new Date(),
+            termsAccepted: termsAccepted ?? false,
+            termsAcceptedAt: termsAcceptedAt ?? undefined,
           };
           transaction.set(userRef, newUserData);
           return newUserData;

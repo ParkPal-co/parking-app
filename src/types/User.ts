@@ -12,4 +12,6 @@ export interface User {
   emailVerified: boolean;
   createdAt: Date;
   stripeAccountId?: string; // Stripe Connect account ID for host payouts
+  termsAccepted?: boolean; // Whether the user accepted the Terms and Conditions
+  termsAcceptedAt?: Date; // When the user accepted the Terms and Conditions
 } 
