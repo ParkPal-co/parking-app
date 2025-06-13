@@ -34,3 +34,6 @@ export { createStripeDashboardLink } from './payments/createStripeDashboardLink'
 
 // Export admin-initiated event payout function
 export { initiateEventPayouts } from './payments/initiateEventPayouts';
+
+// Export booking confirmation email function
+export { sendBookingConfirmation } from './emails/sendBookingConfirmation';
