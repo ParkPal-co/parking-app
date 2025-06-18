@@ -28,6 +28,7 @@ const Contact: React.FC = () => {
         userId: user ? user.id : null,
         userName: user ? user.name : "Anonymous",
         feedbackText: feedback,
+        email: user ? user.email : undefined,
       });
       setSuccess(true);
     } catch (e) {

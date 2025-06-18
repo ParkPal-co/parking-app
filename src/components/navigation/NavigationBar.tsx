@@ -104,6 +104,7 @@ export const NavigationBar: React.FC = () => {
         userId: user ? user.id : null,
         userName: user ? user.name : "Anonymous",
         feedbackText,
+        email: user ? user.email : undefined,
       });
       setFeedbackSuccess(true);
     } catch (err) {

@@ -51,7 +51,7 @@ export const sendBookingConfirmation = functions.https.onCall(async (data) => {
         <li><b>Price:</b> $${bookingDetails.price}</li>
       </ul>
       <p>You can view or manage your bookings <a href="https://parkpal.co/bookings/mybookings">here</a>.</p>
-      <p>If you have any questions, reply to this email or contact support at <a href="mailto:support@parkpal.co">support@parkpal.co</a>.</p>
+      <p>If you have any questions, reply to this email or contact support at <a href="mailto:alec@parkpal.co">support@parkpal.co</a>.</p>
       <br>
       <p>Thank you for using ParkPal!</p>
     `,
@@ -75,7 +75,7 @@ export const sendBookingConfirmation = functions.https.onCall(async (data) => {
         <li><b>Price:</b> $${bookingDetails.price}</li>
       </ul>
       <p>You can view your listings <a href="https://parkpal.co/hosting/mylistingspage">here</a>.</p>
-      <p>If you have any questions, reply to this email or contact support at <a href="mailto:support@parkpal.co">support@parkpal.co</a>.</p>
+      <p>If you have any questions, reply to this email or contact support at <a href="mailto:alec@parkpal.co">support@parkpal.co</a>.</p>
       <br>
       <p>Thank you for being a ParkPal host!</p>
     `,
