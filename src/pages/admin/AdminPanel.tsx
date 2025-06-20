@@ -207,6 +207,15 @@ const AdminPanel: React.FC = () => {
             View and manage user feedback submitted through the app.
           </p>
         </Link>
+
+        {/* Archived Events Card */}
+        <Link
+          to="/archived-events"
+          className="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
+        >
+          <h2 className="text-xl font-semibold mb-2">Archived Events</h2>
+          <p className="text-gray-600">View and manage all archived events.</p>
+        </Link>
       </div>
 
       {error && (

@@ -2,7 +2,7 @@
  * eventFetchService.ts
  * Handles fetching events from Firestore (by ID, all, with search params)
  */
-import { collection, query, getDocs, doc, getDoc } from "firebase/firestore";
+import { collection, query, getDocs, doc, getDoc, where } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { Event } from "../../types";
 import { convertToDate } from "../../utils/dateUtils";
@@ -52,7 +52,7 @@ export async function fetchEventById(eventId: string): Promise<Event | null> {
 export async function fetchEvents(params: EventSearchParams): Promise<Event[]> {
   try {
     const eventsRef = collection(db, "events");
-    const q = query(eventsRef);
+    const q = query(eventsRef, where("status", "!=", "completed"));
     const querySnapshot = await getDocs(q);
 
     const eventResults: Event[] = [];

@@ -91,8 +91,12 @@ const RegisteredEventsPage: React.FC = () => {
   useEffect(() => {
     const fetchEventsAndCounts = async () => {
       try {
-        // Fetch events
-        const eventsSnapshot = await getDocs(collection(db, "events"));
+        // Fetch events that are not completed
+        const eventsQuery = query(
+          collection(db, "events"),
+          where("status", "!=", "completed")
+        );
+        const eventsSnapshot = await getDocs(eventsQuery);
         const eventsData = eventsSnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
@@ -360,6 +364,21 @@ const RegisteredEventsPage: React.FC = () => {
       setPayoutError("Failed to initiate payouts.");
     } finally {
       setPayoutLoading(null);
+    }
+  };
+
+  const handleArchive = async (eventId: string) => {
+    try {
+      const eventRef = doc(db, "events", eventId);
+      await updateDoc(eventRef, { status: "completed" });
+
+      // Update local state
+      setEvents((prev) => prev.filter((event) => event.id !== eventId));
+      setSuccess("Event archived successfully");
+      setTimeout(() => setSuccess(null), 3000);
+    } catch (err) {
+      console.error("Error archiving event:", err);
+      setError("Failed to archive event");
     }
   };
 
@@ -752,6 +771,12 @@ const RegisteredEventsPage: React.FC = () => {
                       className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
                     >
                       Edit
+                    </button>
+                    <button
+                      onClick={() => handleArchive(event.id)}
+                      className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+                    >
+                      Archive
                     </button>
                     {showDeleteConfirm === event.id ? (
                       <div className="flex space-x-2">

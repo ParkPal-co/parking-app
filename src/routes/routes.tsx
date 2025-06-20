@@ -40,6 +40,9 @@ const RegisterAnEventPage = React.lazy(
 const RegisteredEventsPage = React.lazy(
   () => import("../pages/admin/RegisteredEventsPage")
 );
+const ArchivedEventsPage = React.lazy(
+  () => import("../pages/admin/ArchivedEventsPage")
+);
 const BookingSuccessPage = React.lazy(
   () => import("../pages/bookings/BookingSuccessPage")
 );
@@ -216,6 +219,18 @@ export const routes: RouteObject[] = [
         <VerifiedEmailRoute>
           <PageLayout>
             <RegisteredEventsPage />
+          </PageLayout>
+        </VerifiedEmailRoute>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/archived-events",
+    element: (
+      <ProtectedRoute>
+        <VerifiedEmailRoute>
+          <PageLayout>
+            <ArchivedEventsPage />
           </PageLayout>
         </VerifiedEmailRoute>
       </ProtectedRoute>
