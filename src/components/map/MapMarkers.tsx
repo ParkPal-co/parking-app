@@ -163,7 +163,7 @@ export const MapMarkers: React.FC<MapMarkersProps> = ({
       }
     });
 
-    let markers: google.maps.marker.AdvancedMarkerElement[] = [];
+    const markers: google.maps.marker.AdvancedMarkerElement[] = [];
 
     // Event marker
     const eventMarker = new window.google.maps.marker.AdvancedMarkerElement({
