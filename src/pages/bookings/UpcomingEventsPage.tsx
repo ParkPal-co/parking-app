@@ -52,7 +52,7 @@ const UpcomingEventsPage: React.FC = () => {
     if (showNearby) {
       handleShowNearbyEvents();
     }
-  }, [location.search]);
+  }, [location.search, searchInput, setSearchInput]);
 
   const handleFindParking = (eventId: string) => {
     navigate(`/rent?event=${eventId}`);
