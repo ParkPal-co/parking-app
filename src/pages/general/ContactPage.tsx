@@ -39,7 +39,7 @@ const Contact: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col justify-between bg-primary-50">
+    <div className="relative h-[calc(100dvh-81px)] flex flex-col justify-between bg-primary-50">
       <div className="flex-1 flex flex-col items-center justify-center py-12 px-4">
         <Card className="w-full max-w-lg mx-auto flex flex-col gap-6 items-center bg-white shadow-lg">
           <h1 className="text-2xl font-bold text-primary-900">
