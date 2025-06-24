@@ -78,7 +78,7 @@ export const DrivewayListingsPanel: React.FC<DrivewayListingsPanelProps> = ({
   return (
     <div className="lg:hidden">
       <div
-        className={`fixed bottom-0 left-0 w-full bg-white rounded-t-2xl shadow-lg z-50 transition-transform duration-300 ease-in-out select-none overflow-y-auto`}
+        className={`fixed bottom-0 left-0 w-full bg-white rounded-t-2xl shadow- z-50 transition-transform duration-300 ease-in-out select-none overflow-y-auto`}
         style={{
           maxHeight: PANEL_MAX_HEIGHT,
           height: PANEL_MAX_HEIGHT,
@@ -94,7 +94,7 @@ export const DrivewayListingsPanel: React.FC<DrivewayListingsPanelProps> = ({
             onClick={handleHandleClick}
           >
             <div
-              className="bg-primary-100 rounded-full px-4 py-2 shadow-sm flex items-center justify-center"
+              className="bg-primary-200 rounded-full px-4 py-2 shadow-md flex items-center justify-center"
               style={{ minWidth: 48, minHeight: 32 }}
             >
               {isOpen ? (
