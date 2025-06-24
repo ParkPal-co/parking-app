@@ -17,7 +17,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { Booking, ParkingSpot, Event } from "../../types";
-import { createConversation } from "../../services/messageService";
+import { createConversation } from "../../services/messages/messageService";
 
 interface BookingWithDetails extends Booking {
   parkingSpot?: ParkingSpot;

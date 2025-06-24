@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ConversationsList from "./ConversationsList";
-import { Conversation } from "../../services/messageService";
+import { Conversation } from "../../services/messages/messageService";
 import { User } from "../../types";
 
 interface ConversationsDrawerProps {

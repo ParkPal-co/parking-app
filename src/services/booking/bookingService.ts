@@ -4,8 +4,8 @@
  */
 
 import { collection, doc, updateDoc, getDoc, runTransaction } from "firebase/firestore";
-import { db } from "../firebase/config";
-import { Booking, ParkingSpot } from "../types";
+import { db } from "../../firebase/config";
+import { Booking, ParkingSpot } from "../../types";
 
 // Helper to fetch user name by userId
 async function fetchUserNameById(userId: string): Promise<string | null> {
@@ -93,7 +93,7 @@ export async function createBooking(
     if (renter && host) {
       // Dynamically import firebase/functions to avoid SSR issues
       const { getFunctions, httpsCallable } = await import("firebase/functions");
-      const { app } = await import("../firebase/config");
+      const { app } = await import("../../firebase/config");
       const functions = getFunctions(app);
       const sendBookingConfirmation = httpsCallable(functions, "sendBookingConfirmation");
       await sendBookingConfirmation({

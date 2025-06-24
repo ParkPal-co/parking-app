@@ -4,8 +4,8 @@
  */
 
 import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
-import { db } from "../firebase/config";
-import { ParkingSpot } from "../types";
+import { db } from "../../firebase/config";
+import { ParkingSpot } from "../../types";
 
 export async function fetchParkingSpotById(spotId: string): Promise<ParkingSpot | null> {
   try {
