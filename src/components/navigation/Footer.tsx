@@ -1,5 +1,6 @@
 import React from "react";
 import Logo from "../../assets/images/Icon1.png";
+import { Link } from "react-router-dom";
 
 const Footer: React.FC = () => (
   <footer className="relative w-full bg-primary-200 text-primary-700 py-6 lg:py-10 z-10 mt-8 border-t border-primary-300">
@@ -9,18 +10,18 @@ const Footer: React.FC = () => (
         <span className="font-bold text-lg">ParkPal</span>
       </div>
       <nav className="flex gap-6 text-sm">
-        <a href="/about" className="hover:underline">
+        <Link to="/about" className="hover:underline">
           About
-        </a>
-        <a href="/contact" className="hover:underline">
+        </Link>
+        <Link to="/contact" className="hover:underline">
           Contact
-        </a>
-        <a href="/terms" className="hover:underline">
+        </Link>
+        <Link to="/terms" className="hover:underline">
           Terms
-        </a>
-        <a href="/privacy" className="hover:underline">
+        </Link>
+        <Link to="/privacy" className="hover:underline">
           Privacy
-        </a>
+        </Link>
       </nav>
       <div className="text-xs text-gray-700">
         © {new Date().getFullYear()} ParkPal. All rights reserved.
