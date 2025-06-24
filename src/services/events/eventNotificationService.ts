@@ -2,7 +2,7 @@
  * eventNotificationService.ts
  * Handles adding notification emails for events
  */
-import { addDoc, collection as firestoreCollection, serverTimestamp, getDocs } from "firebase/firestore";
+import { addDoc, collection as firestoreCollection, serverTimestamp, getDocs, Timestamp } from "firebase/firestore";
 import { db } from "../../firebase/config";
 
 /**
@@ -28,13 +28,13 @@ export async function addEventNotificationEmail(eventId: string, email: string):
  * @param eventId The event's ID
  * @returns Promise that resolves to an array of emails
  */
-export async function fetchEventNotificationEmails(eventId: string): Promise<{ id: string; email: string; createdAt: any }[]> {
+export async function fetchEventNotificationEmails(eventId: string): Promise<{ id: string; email: string; createdAt: Timestamp }[]> {
   try {
     const emailsRef = firestoreCollection(db, "eventNotifications", eventId, "emails");
     const snapshot = await getDocs(emailsRef);
     return snapshot.docs.map((doc) => ({
       id: doc.id,
-      ...(doc.data() as { email: string; createdAt: any })
+      ...(doc.data() as { email: string; createdAt: Timestamp })
     }));
   } catch (error) {
     console.error("Error fetching notification emails:", error);
