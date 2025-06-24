@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Conversation } from "../services/messageService";
+import { Conversation } from "../services/messages/messageService";
 import { User } from "../types";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/config";

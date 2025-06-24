@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import { Message } from "../../services/messageService";
+import { Message } from "../../services/messages/messageService";
 import { User } from "../../types";
 import MessageBubble from "./MessageBubble";
 

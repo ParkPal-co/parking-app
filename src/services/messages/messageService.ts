@@ -16,7 +16,7 @@ import {
   Timestamp,
   increment,
 } from "firebase/firestore";
-import { db } from "../firebase/config";
+import { db } from "../../firebase/config";
 
 export interface Message {
   id: string;

@@ -4,7 +4,7 @@
  */
 import React, { useEffect, useState } from "react";
 import { useSearchParams, Link, useNavigate } from "react-router-dom";
-import { getBookingById } from "../../services/bookingService";
+import { getBookingById } from "../../services/booking/bookingService";
 
 const BookingSuccessPage: React.FC = () => {
   const [searchParams] = useSearchParams();

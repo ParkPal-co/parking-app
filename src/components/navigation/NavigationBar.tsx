@@ -10,7 +10,7 @@ import Icon1 from "../../assets/images/Icon1.png";
 import { twMerge } from "tailwind-merge";
 import { UserMenu } from "./UserMenu";
 import { FeedbackModal } from "../../pages/general/FeedbackModal";
-import { addFeedback } from "../../services/feedbackService";
+import { addFeedback } from "../../services/admin/feedbackService";
 import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline";
 import { useNotification } from "../ui/NotificationProvider";
 
