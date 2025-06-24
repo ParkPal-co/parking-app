@@ -51,12 +51,12 @@ const StorageMetricsPage = React.lazy(
   () => import("../pages/admin/StorageMetricsPage")
 );
 const UnderConstruction = React.lazy(
-  () => import("../pages/general/UnderConstruction")
+  () => import("../pages/general/UnderConstructionPage")
 );
 const PortlandLandingPage = React.lazy(
   () => import("../pages/hosting/PortlandLandingPage")
 );
-const Contact = React.lazy(() => import("../pages/general/Contact"));
+const Contact = React.lazy(() => import("../pages/general/ContactPage"));
 const TermsPage = React.lazy(() => import("../pages/general/TermsPage"));
 
 const FeedbackPage = React.lazy(() => import("../pages/admin/FeedbackPage"));

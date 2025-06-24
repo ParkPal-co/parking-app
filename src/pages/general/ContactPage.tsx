@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Footer from "../../components/navigation/Footer";
 import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
-import { FeedbackModal } from "./FeedbackModal";
+import { FeedbackModal } from "../../components/ui/FeedbackModal";
 import { addFeedback } from "../../services/admin/feedbackService";
 import { useAuth } from "../../hooks/useAuth";
 
