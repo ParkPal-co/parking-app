@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Event, ParkingSpot } from "../../types";
 import { ParkingSpotCard } from "./ParkingSpotCard";
-import { addEventNotificationEmail } from "../../services/events/eventNotificationService";
+import { addEventNotificationEmail } from "../../services";
 import { Input } from "../ui/Input";
 import { Button } from "../ui/Button";
 

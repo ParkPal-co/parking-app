@@ -3,7 +3,7 @@ import Footer from "../../components/navigation/Footer";
 import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
 import { FeedbackModal } from "./FeedbackModal";
-import { addFeedback } from "../../services/feedbackService";
+import { addFeedback } from "../../services";
 import { useAuth } from "../../hooks/useAuth";
 
 const CONTACTS = [

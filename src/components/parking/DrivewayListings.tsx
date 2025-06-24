@@ -4,7 +4,7 @@ import { ParkingSpotCard } from "./ParkingSpotCard";
 import { Event, ParkingSpot } from "../../types";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
-import { addEventNotificationEmail } from "../../services/events/eventNotificationService";
+import { addEventNotificationEmail } from "../../services";
 
 interface DrivewayListingsProps {
   event: Event;

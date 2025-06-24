@@ -6,10 +6,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Event, ParkingSpot } from "../../types";
-import { fetchEventById } from "../../services/events/eventFetchService";
-import { fetchParkingSpotById } from "../../services/parkingSpotService";
-import { createBooking } from "../../services/bookingService";
-import { createConversation } from "../../services/messageService";
+import { 
+  fetchEventById, 
+  fetchParkingSpotById, 
+  createBooking, 
+  createConversation 
+} from "../../services";
 import { useAuth } from "../../hooks/useAuth";
 import {
   PaymentElement,

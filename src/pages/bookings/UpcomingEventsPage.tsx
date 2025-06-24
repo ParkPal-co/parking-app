@@ -10,7 +10,7 @@ import { Event } from "../../types";
 import {
   sortEvents,
   filterEvents,
-} from "../../services/events/eventSortFilterService";
+} from "../../services";
 import { Input } from "../../components/ui/Input";
 import { Button } from "../../components/ui/Button";
 import { EventCard } from "../../components/events/EventCard";

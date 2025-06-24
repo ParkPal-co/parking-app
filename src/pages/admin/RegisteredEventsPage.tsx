@@ -21,7 +21,7 @@ import {
   getDownloadURL,
   deleteObject,
 } from "firebase/storage";
-import { fetchEventNotificationEmails } from "../../services/events/eventNotificationService";
+import { fetchEventNotificationEmails } from "../../services";
 import { getFunctions, httpsCallable } from "firebase/functions";
 
 interface Event {

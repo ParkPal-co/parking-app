@@ -1,5 +1,5 @@
 import React from "react";
-import { Message } from "../../services/messageService";
+import { Message } from "../../services";
 import { User } from "../../types";
 import Avatar from "./Avatar";
 

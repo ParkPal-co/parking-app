@@ -12,7 +12,7 @@ import {
   subscribeToMessages,
   sendMessage as sendMessageService,
   markConversationAsRead as markRead,
-} from "../services/messageService";
+} from "../services";
 
 export function useMessages() {
   const { user } = useAuth();

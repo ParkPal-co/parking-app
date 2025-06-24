@@ -11,7 +11,7 @@ import {
   type AddressComponents,
   type VerifiedAddress,
 } from "../../utils/geocoding";
-import { createEvent } from "../../services/events/eventCreateService";
+import { createEvent } from "../../services";
 
 interface EventFormData {
   title: string;
