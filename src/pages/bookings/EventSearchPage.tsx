@@ -78,7 +78,7 @@ const EventSearchPage: React.FC = () => {
       {/* Main content overlay */}
       <div className="w-full px-4 relative z-10 flex flex-col gap-4 items-center">
         {/* Search Section */}
-        <section className="h-[calc(100dvh-160px)] flex flex-col justify-center max-w-4xl w-full">
+        <section className="h-[calc(100vh-160px)] flex flex-col justify-center max-w-4xl w-full">
           <h1 className="text-4xl font-bold text-center mb-8 text-gray-900 animate-fade-in-from-top [animation-fill-mode:forwards] lg:text-6xl">
             Where is your next event?
           </h1>
