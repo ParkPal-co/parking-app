@@ -12,7 +12,7 @@ import { Input } from "../../components/ui/Input";
 import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
 import { CheckIcon } from "@heroicons/react/24/outline";
-import iconPinsImg from "../../assets/images/IconPins.png";
+import ParkPalphoneScreen from "../../assets/images/CroppedParkPalphoneScreen.png";
 import LogoOverHouse from "../../assets/images/LogoOverHouse.png";
 import Footer from "../../components/navigation/Footer";
 
@@ -78,7 +78,7 @@ const EventSearchPage: React.FC = () => {
       {/* Main content overlay */}
       <div className="w-full px-4 relative z-10 flex flex-col gap-4 items-center">
         {/* Search Section */}
-        <section className="h-[calc(100dvh-120px)] flex flex-col justify-center max-w-4xl w-full">
+        <section className="h-[calc(100dvh-160px)] flex flex-col justify-center max-w-4xl w-full">
           <h1 className="text-4xl font-bold text-center mb-8 text-gray-900 animate-fade-in-from-top [animation-fill-mode:forwards] lg:text-6xl">
             Where is your next event?
           </h1>
@@ -156,73 +156,93 @@ const EventSearchPage: React.FC = () => {
             </div>
           </form>
         </section>
-        {/* Renting Hero Section */}
-        <section className="flex flex-col lg:flex-row lg:px-16 lg:gap-8 w-full">
-          <Card
-            className="h-full w-full flex flex-col gap-4 lg:flex-row lg:h-[calc(100vh-320px)] animate-fade-in-from-top opacity-0 [animation-fill-mode:forwards]"
-            style={{ animationDelay: "1s" }}
-            padding="normal"
-            shadow="large"
-          >
-            <div className="lg:w-1/2 h-full flex flex-col">
-              <h1 className="text-5xl lg:text-6xl font-bold mb-4 text-gray-900">
-                Skip the walk
-              </h1>
-              <p className="text-xl lg:text-2xl text-primary-700 font-bold">
-                Book a neighbor's driveway as event parking
-              </p>
-              <Card
-                className="flex-1 w-full bg-primary-50 border border-primary-200 rounded-lg p-4 mt-4 flex flex-col justify-center"
-                padding="large"
-              >
-                <ul className="flex flex-col lg:gap-4">
-                  <li className="flex items-center gap-2">
-                    <CheckIcon className="w-6 h-6" />
-                    <span>No walk-ups, no waiting</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckIcon className="w-6 h-6" />
-                    <span>Book ahead of time</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckIcon className="w-6 h-6" />
-                    <span>Payments are secure</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckIcon className="w-6 h-6" />
-                    <span>Support the community</span>
-                  </li>
-                </ul>
-                <Button
-                  type="button"
-                  onClick={() => navigate("/events")}
-                  variant="primary"
-                  size="large"
-                  className="mt-4 lg:mt-4 lg:w-1/2"
-                >
-                  Find a driveway
-                </Button>
-              </Card>
-            </div>
-            <div className="max-h-[calc(100vh-360px)] lg:w-1/2 rounded-2xl overflow-hidden border border-primary-300">
-              <img
-                src={iconPinsImg}
-                alt="Event Search Page Hero"
-                className="w-full h-full object-cover"
-                style={{ filter: "brightness(1.1) saturate(.5)" }}
-              />
-            </div>
-          </Card>
-        </section>
-        {/* Hosting Hero Section */}
+
+        {/* New Renting Hero Section */}
+
         <section className="w-full lg:px-16 min-h-[calc(100vh-280px)] mt-4">
           <Card
-            className="h-full w-full flex flex-col lg:items-center lg:flex-row-reverse animate-fade-in-from-top opacity-0 [animation-fill-mode:forwards] gap-4"
+            className="h-full w-full flex flex-col lg:items-center lg:flex-row lg:p-16 animate-fade-in-from-top opacity-0 [animation-fill-mode:forwards] gap-4"
             style={{ animationDelay: "1s" }}
             padding="large"
             shadow="large"
           >
-            <div className="h-full w-full flex flex-col gap-2 text-center lg:text-right">
+
+            {/* Text */}
+            <div className="h-full w-full flex flex-col gap-2 text-center lg:text-left lg:items-start">
+              <h1 className="text-4xl lg:text-6xl font-bold mb-4 text-gray-900">
+                No Lots, No Hassle. 
+                <br></br>
+                <span className="font-black text-5xl lg:text-7xl">
+                  Just Private Driveways
+                </span>
+                
+                
+              </h1>
+              <p className="text-xl lg:text-2xl text-primary-700 font-bold">
+                Book a neighbor's driveway as your event parking
+              </p>
+              <ul className="flex flex-col lg:gap-2 mt-4 text-primary-700">
+                <li className="flex items-center gap-2">
+                  <CheckIcon className="w-6 h-6" />
+                  <span>Book ahead of time</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckIcon className="w-6 h-6" />
+                  <span>Payments are secure</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckIcon className="w-6 h-6" />
+                  <span>Support the community</span>
+                </li>
+              </ul>
+
+                {/* Desktop Button */}
+              <Button
+                  type="button"
+                  onClick={() => navigate("/events")}
+                  variant="primary"
+                  size="large"
+                  className="mt-4 lg:mt-4 hidden lg:block"
+                >
+                  Find a driveway
+                </Button>
+            </div>
+
+            {/* Image */}
+            <div className="flex flex-col items-center">
+              <div className="w-[min(100%,500px)] rounded-2xl overflow-hidden">
+                <img
+                  src={ParkPalphoneScreen}
+                  alt="Event Search Page Hero"
+                  className="w-full h-full object-cover"
+                  style={{ filter: "brightness(1.05)" }}
+                />
+              </div>
+            </div>
+
+            {/* Mobile Button */}
+            <Button
+                  type="button"
+                  onClick={() => navigate("/events")}
+                  variant="primary"
+                  size="large"
+                  className="mt-4 lg:mt-4 lg:hidden"
+                >
+                  Find a driveway
+                </Button>
+          </Card>
+        </section>
+
+        {/* Hosting Hero Section */}
+        <section className="w-full lg:px-16 min-h-[calc(100vh-280px)] mt-4">
+          <Card
+            className="h-full w-full flex flex-col lg:items-center lg:flex-row-reverse lg:p-16 animate-fade-in-from-top opacity-0 [animation-fill-mode:forwards] gap-4"
+            style={{ animationDelay: "1s" }}
+            padding="large"
+            shadow="large"
+          >
+            {/* Text */}
+            <div className="h-full w-full flex flex-col gap-2 text-center lg:text-right lg:items-end">
               <h1 className="text-4xl lg:text-6xl font-bold mb-4 text-gray-900">
                 The{" "}
                 <span className="font-black text-5xl lg:text-7xl">purest</span>{" "}
@@ -232,26 +252,39 @@ const EventSearchPage: React.FC = () => {
                 With a few simple clicks, post your driveway to the platform and
                 start earning.
               </p>
+              <Button
+                type="button"
+                onClick={() => navigate("/list")}
+                variant="primary"
+                size="large"
+                className="mt-2 lg:mt-4 hidden lg:block"
+              >
+                Host your driveway
+              </Button>
             </div>
+
+            {/* Image */}
             <div className="flex flex-col items-center">
               <div className="aspect-square w-[min(100%,500px)] rounded-2xl overflow-hidden">
                 <img
                   src={LogoOverHouse}
                   alt="Event Search Page Hero"
                   className="w-full h-full object-cover"
-                  style={{ filter: "brightness(1.1) saturate(.5)" }}
+                  style={{ filter: "brightness(1.1) saturate(.75)" }}
                 />
               </div>
-              <Button
-                type="button"
-                onClick={() => navigate("/list")}
-                variant="primary"
-                size="large"
-                className="mt-2 lg:mt-4 lg:w-1/2"
-              >
-                Host your driveway
-              </Button>
             </div>
+
+            {/* Mobile Button */}
+            <Button
+              type="button"
+              onClick={() => navigate("/list")}
+              variant="primary"
+              size="large"
+              className="mt-4 lg:mt-4 lg:hidden"
+            >
+              Host your driveway
+            </Button>
           </Card>
         </section>
       </div>

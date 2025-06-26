@@ -2,7 +2,7 @@ import React from "react";
 import { twMerge } from "tailwind-merge";
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
-  padding?: "none" | "small" | "normal" | "large";
+  padding?: "none" | "small" | "normal" | "large" | "xlarge";
   shadow?: "none" | "small" | "normal" | "large";
   border?: boolean;
   variant?: "default" | "hover" | "interactive";
@@ -24,6 +24,7 @@ export const Card: React.FC<CardProps> = ({
     small: "p-4",
     normal: "p-6",
     large: "p-8",
+    xlarge: "p-16",
   };
 
   const shadowStyles = {

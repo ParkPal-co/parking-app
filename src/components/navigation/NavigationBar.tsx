@@ -129,7 +129,7 @@ export const NavigationBar: React.FC = () => {
           {/* Rent/List Toggle */}
           <div className="flex items-center justify-center space-x-8 w-2/4">
             <NavLink to="/" isActive={isRentActive}>
-              Rent
+              Park
             </NavLink>
             <NavLink to="/list" isActive={isListActive}>
               Host
