@@ -26,10 +26,6 @@ const RegisterPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!termsChecked) {
-      setError("You must agree to the Terms and Conditions.");
-      return;
-    }
     try {
       setError("");
       setLoading(true);
@@ -54,10 +50,6 @@ const RegisterPage: React.FC = () => {
   };
 
   const handleGoogleSignIn = async () => {
-    if (!termsChecked) {
-      setError("You must agree to the Terms and Conditions.");
-      return;
-    }
     try {
       setError("");
       setLoading(true);
@@ -116,28 +108,6 @@ const RegisterPage: React.FC = () => {
               placeholder="Password"
               disabled={loading}
             />
-            <div className="flex items-start mt-2">
-              <input
-                id="terms"
-                type="checkbox"
-                checked={termsChecked}
-                onChange={(e) => setTermsChecked(e.target.checked)}
-                className="h-4 w-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
-                required
-                disabled={loading}
-              />
-              <label htmlFor="terms" className="ml-2 text-sm text-gray-700">
-                I have read and agree to the
-                <button
-                  type="button"
-                  className="ml-1 underline text-primary-700 hover:text-primary-900"
-                  onClick={() => setShowTermsModal(true)}
-                  tabIndex={0}
-                >
-                  ParkPal Terms and Conditions
-                </button>
-              </label>
-            </div>
           </div>
 
           <Button type="submit" fullWidth isLoading={loading}>
@@ -194,6 +164,21 @@ const RegisterPage: React.FC = () => {
             >
               Sign in
             </button>
+          </p>
+        </div>
+
+        <div className="mt-6 text-center">
+          <p className="text-sm text-gray-600">
+            By continuing, you agree to the{" "}
+            <a
+              href="/ParkPalTermsandConditions.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline text-primary-700 hover:text-primary-900"
+            >
+              Terms and Conditions
+            </a>
+            .
           </p>
         </div>
       </Card>

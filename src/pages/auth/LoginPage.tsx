@@ -45,7 +45,7 @@ const LoginPage: React.FC = () => {
     try {
       setError("");
       setLoading(true);
-      await handleSocialLogin(new GoogleAuthProvider());
+      await handleSocialLogin(new GoogleAuthProvider(), true, new Date());
       notify("Sign in successful", { variant: "success" });
       const returnPath = sessionStorage.getItem("returnPath") || "/";
       navigate(returnPath);
@@ -150,6 +150,21 @@ const LoginPage: React.FC = () => {
             >
               Sign up
             </button>
+          </p>
+        </div>
+
+        <div className="mt-6 text-center">
+          <p className="text-sm text-gray-600">
+            By continuing, you agree to the{" "}
+            <a
+              href="/ParkPalTermsandConditions.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline text-primary-700 hover:text-primary-900"
+            >
+              Terms and Conditions
+            </a>
+            .
           </p>
         </div>
       </Card>

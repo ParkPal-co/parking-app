@@ -17,9 +17,7 @@ const BookingConfirmationPage = React.lazy(
   () => import("../pages/bookings/BookingConfirmationPage")
 );
 const LoginPage = React.lazy(() => import("../pages/auth/LoginPage"));
-const RegisterPage = React.lazy(
-  () => import("../pages/auth/RegisterAccountPage")
-);
+const RegisterPage = React.lazy(() => import("../pages/auth/SignUpPage"));
 const MyListingsPage = React.lazy(
   () => import("../pages/hosting/MyListingsPage")
 );
