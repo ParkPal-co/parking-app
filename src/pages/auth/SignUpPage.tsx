@@ -17,7 +17,6 @@ const RegisterPage: React.FC = () => {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [termsChecked, setTermsChecked] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
   const navigate = useNavigate();
   const { signup, handleSocialLogin } = useAuth();
