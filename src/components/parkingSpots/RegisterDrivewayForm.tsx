@@ -1,6 +1,6 @@
 import React from "react";
 import { Event } from "../../types";
-import { AddressComponents, VerifiedAddress } from "../../utils/geocoding";
+import { VerifiedAddress } from "../../utils/geocoding";
 
 interface RegisterDrivewayFormProps {
   loading: boolean;
@@ -11,8 +11,6 @@ interface RegisterDrivewayFormProps {
   setSelectedEvent: (event: Event | null) => void;
   showEventResults: boolean;
   setShowEventResults: (show: boolean) => void;
-  imageFile: File | null;
-  setImageFile: (file: File | null) => void;
   imagePreview: string | null;
   setImagePreview: (url: string | null) => void;
   verifiedAddress: VerifiedAddress | null;
@@ -37,7 +35,6 @@ const RegisterDrivewayForm: React.FC<RegisterDrivewayFormProps> = ({
   formData,
   selectedEvent,
   showEventResults,
-  imageFile,
   imagePreview,
   verifiedAddress,
   addressVerificationLoading,
