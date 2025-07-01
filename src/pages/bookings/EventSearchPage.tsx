@@ -23,7 +23,6 @@ const EventSearchPage: React.FC = () => {
   const [showResults, setShowResults] = useState(false);
 
   useEffect(() => {
-    console.log("Events from useEvents:", events);
     if (searchInput.trim() && Array.isArray(events)) {
       const filtered = events.filter((event) => {
         if (!event) return false;
@@ -34,7 +33,6 @@ const EventSearchPage: React.FC = () => {
           event.location?.address?.toLowerCase().includes(searchLower)
         );
       });
-      console.log("Filtered events:", filtered);
       setFilteredEvents(filtered || []);
       setShowResults(true);
     } else {
@@ -45,18 +43,14 @@ const EventSearchPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form submitted with search input:", searchInput);
     if (searchInput.trim()) {
       handleSearch();
-      console.log("Navigating to events page");
       navigate(`/events?q=${encodeURIComponent(searchInput)}`);
     }
   };
 
   const handleEventSelect = (event: Event) => {
-    console.log("Event selected:", event);
     if (event?.id) {
-      console.log("Navigating to rent page with event ID:", event.id);
       navigate(`/rent?event=${event.id}`);
     }
   };
@@ -166,17 +160,14 @@ const EventSearchPage: React.FC = () => {
             padding="large"
             shadow="large"
           >
-
             {/* Text */}
             <div className="h-full w-full flex flex-col gap-2 text-center lg:text-left lg:items-start">
               <h1 className="text-4xl lg:text-6xl font-bold mb-4 text-gray-900">
-                No Lots, No Hassle. 
+                No Lots, No Hassle.
                 <br></br>
                 <span className="font-black text-5xl lg:text-7xl">
                   Just Private Driveways
                 </span>
-                
-                
               </h1>
               <p className="text-xl lg:text-2xl text-primary-700 font-bold">
                 Book a neighbor's driveway as your event parking
@@ -196,16 +187,16 @@ const EventSearchPage: React.FC = () => {
                 </li>
               </ul>
 
-                {/* Desktop Button */}
+              {/* Desktop Button */}
               <Button
-                  type="button"
-                  onClick={() => navigate("/events")}
-                  variant="primary"
-                  size="large"
-                  className="mt-4 lg:mt-4 hidden lg:block"
-                >
-                  Find a driveway
-                </Button>
+                type="button"
+                onClick={() => navigate("/events")}
+                variant="primary"
+                size="large"
+                className="mt-4 lg:mt-4 hidden lg:block"
+              >
+                Find a driveway
+              </Button>
             </div>
 
             {/* Image */}
@@ -222,14 +213,14 @@ const EventSearchPage: React.FC = () => {
 
             {/* Mobile Button */}
             <Button
-                  type="button"
-                  onClick={() => navigate("/events")}
-                  variant="primary"
-                  size="large"
-                  className="mt-4 lg:mt-4 lg:hidden"
-                >
-                  Find a driveway
-                </Button>
+              type="button"
+              onClick={() => navigate("/events")}
+              variant="primary"
+              size="large"
+              className="mt-4 lg:mt-4 lg:hidden"
+            >
+              Find a driveway
+            </Button>
           </Card>
         </section>
 

@@ -148,12 +148,10 @@ export const MapMarkers: React.FC<MapMarkersProps> = ({
 }) => {
   useEffect(() => {
     if (!map || !event) {
-      console.log("Map or event not available:", { map, event });
       return;
     }
 
     if (!window.google?.maps?.marker?.AdvancedMarkerElement) {
-      console.error("AdvancedMarkerElement is not available");
       return;
     }
 

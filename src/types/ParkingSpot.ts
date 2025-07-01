@@ -19,4 +19,5 @@ export interface ParkingSpot {
   createdAt: string;
   ownerId: string;
   ownerName: string;
+  status: "available" | "booked" | "unavailable";
 } 

@@ -34,23 +34,19 @@ export const verifyAndGeocodeAddress = async (address: AddressComponents): Promi
   }
 
   const formattedAddress = `${address.street}, ${address.city}, ${address.state} ${address.zipCode}`;
-  console.log('Attempting to geocode address:', formattedAddress);
 
   try {
     const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
       formattedAddress
     )}&key=${apiKey}`;
-    console.log('Geocoding API URL:', url.replace(apiKey, 'API_KEY')); // Log URL without exposing API key
 
     const response = await fetch(url);
-    console.log('Geocoding API Response Status:', response.status);
 
     if (!response.ok) {
       throw new Error(`Geocoding request failed with status: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log('Geocoding API Response:', data);
 
     if (data.error_message) {
       throw new Error(`Google Maps API Error: ${data.error_message}`);
@@ -79,10 +75,8 @@ export const verifyAndGeocodeAddress = async (address: AddressComponents): Promi
       coordinates: { lat, lng }
     };
 
-    console.log('Verified address:', verifiedAddress);
     return verifiedAddress;
   } catch (error) {
-    console.error('Detailed geocoding error:', error);
     if (error instanceof Error) {
       throw error;
     } else {

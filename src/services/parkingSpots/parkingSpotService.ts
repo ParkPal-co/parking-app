@@ -3,7 +3,7 @@
  * Service for handling parking spot-related operations
  */
 
-import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, getDoc, addDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { ParkingSpot } from "../../types";
 
@@ -54,6 +54,21 @@ export async function fetchParkingSpots(eventId: string): Promise<ParkingSpot[]>
     return spotResults;
   } catch (error) {
     console.error("Error fetching parking spots:", error);
+    throw error;
+  }
+}
+
+/**
+ * Creates a new parking spot in Firestore.
+ * @param spot ParkingSpot object (without id)
+ * @returns The created ParkingSpot with id
+ */
+export async function createParkingSpot(spot: Omit<ParkingSpot, 'id'>): Promise<ParkingSpot> {
+  try {
+    const docRef = await addDoc(collection(db, "parkingSpots"), spot);
+    return { id: docRef.id, ...spot };
+  } catch (error) {
+    console.error("Error creating parking spot:", error);
     throw error;
   }
 } 
