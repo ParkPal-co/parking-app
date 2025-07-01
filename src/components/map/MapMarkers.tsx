@@ -7,7 +7,7 @@ const MARKER_STYLES = {
     container:
       "bg-accent text-white rounded-xl px-5 py-2.5 font-semibold text-base relative flex items-center shadow-lg",
     pointer:
-      "absolute left-1/2 bottom-[-12px] transform -translate-x-1/2 w-0 h-0 border-l-[10px] border-r-[10px] border-t-[12px] border-l-transparent border-r-transparent border-t-accent",
+      "absolute left-1/2 bottom-[-11px] transform -translate-x-1/2 w-0 h-0 border-l-[10px] border-r-[10px] border-t-[12px] border-l-transparent border-r-transparent border-t-accent",
   },
   DRIVEWAY: {
     selected: {
@@ -23,7 +23,7 @@ const MARKER_STYLES = {
       container: "w-auto px-3 py-2.5 shadow-md text-base font-medium",
     },
     pointer:
-      "absolute left-1/2 bottom-[-12px] transform -translate-x-1/2 w-0 h-0 border-l-[10px] border-r-[10px] border-t-[12px] border-l-transparent border-r-transparent border-t-white",
+      "absolute left-1/2 bottom-[-11px] transform -translate-x-1/2 w-0 h-0 border-l-[10px] border-r-[10px] border-t-[12px] border-l-transparent border-r-transparent border-t-white",
   },
 } as const;
 
@@ -164,11 +164,13 @@ export const MapMarkers: React.FC<MapMarkersProps> = ({
     const markers: google.maps.marker.AdvancedMarkerElement[] = [];
 
     // Event marker
+    const EVENT_MARKER_Z_INDEX = 2000;
     const eventMarker = new window.google.maps.marker.AdvancedMarkerElement({
       map,
       position: event.location.coordinates || { lat: 37.7749, lng: -122.4194 },
       content: createEventMarkerContent(),
       title: event.title,
+      zIndex: EVENT_MARKER_Z_INDEX,
     });
     markers.push(eventMarker);
 
