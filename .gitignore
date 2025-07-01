@@ -31,5 +31,9 @@ dist-ssr
 .env.staging
 .env.development
 .env.*.bak
+scripts/.env
 
 .firebase/
+
+# Staging env service account key
+parking-app-staging-945cc1b03415.json
