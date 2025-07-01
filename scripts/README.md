@@ -31,6 +31,7 @@ This directory contains scripts for managing test data in the **staging** Fireba
 
 ### **Node.js Scripts (TypeScript)**
 
+- `seed-all.ts` — Run all seeding scripts (`seed-users.ts`, `seed-events.ts`, `seed-driveways.ts`) in sequence. Accepts `--userCount`, `--eventCount`, and `--drivewayCount` arguments.
 - `seed-users.ts` — Create test users in Firestore and Firebase Auth.
 - `seed-events.ts` — Create test events with realistic data.
 - `seed-driveways.ts` — Create test parking spots (driveways) linked to users/events.
@@ -43,6 +44,9 @@ This directory contains scripts for managing test data in the **staging** Fireba
 ## **Usage Examples**
 
 ```sh
+# Seed all test data (users, events, driveways)
+npx ts-node scripts/seed-all.ts --userCount 10 --eventCount 15 --drivewayCount 20
+
 # Seed 10 test users
 npx ts-node scripts/seed-users.ts --count 10
 

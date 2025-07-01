@@ -95,11 +95,17 @@ const AMENITIES = [
 ];
 
 const IMAGES = [
-  'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
-  'https://images.unsplash.com/photo-1464983953574-0892a716854b',
-  'https://images.unsplash.com/photo-1519125323398-675f0ddb6308',
-  'https://images.unsplash.com/photo-1523413363574-c30aa1c2a516',
-  'https://images.unsplash.com/photo-1465101046530-73398c7f28ca',
+  'https://images.unsplash.com/photo-1692133188474-8c5591e6a6a8?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  'https://images.unsplash.com/photo-1605146768851-eda79da39897?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  'https://plus.unsplash.com/premium_photo-1742418042462-193608cce718?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  'https://plus.unsplash.com/premium_photo-1742428825550-397c79480110?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  'https://images.unsplash.com/photo-1605146769289-440113cc3d00?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  'https://images.unsplash.com/photo-1523362612182-052e9ff2c8da?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  'https://images.unsplash.com/photo-1588111817213-1a12f73fbf20?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  'https://images.pexels.com/photos/1396132/pexels-photo-1396132.jpeg',
+  'https://images.pexels.com/photos/1500459/pexels-photo-1500459.jpeg',
+  'https://images.pexels.com/photos/31353860/pexels-photo-31353860.jpeg',
+  'https://images.pexels.com/photos/3555615/pexels-photo-3555615.jpeg'
 ];
 
 function randomOffset() {

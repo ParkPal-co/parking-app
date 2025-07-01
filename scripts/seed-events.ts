@@ -79,7 +79,7 @@ const PREDEFINED_EVENTS: Omit<Event, 'id' | 'createdAt' | 'isTest'>[] = [
     startDate: new Date('2025-06-21T17:00:00-07:00'),
     endDate: new Date('2025-06-21T22:00:00-07:00'),
     expectedAttendance: 2000,
-    imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1725566585424-9e15e77e48e1?q=80&w=2618&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     status: 'upcoming',
   },
   {
@@ -92,7 +92,7 @@ const PREDEFINED_EVENTS: Omit<Event, 'id' | 'createdAt' | 'isTest'>[] = [
     startDate: new Date('2025-07-03T17:00:00-06:00'),
     endDate: new Date('2025-07-03T22:30:00-06:00'),
     expectedAttendance: 5000,
-    imageUrl: 'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1562379876-c04d8b15acc4?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8Zm91cnRoJTIwb2YlMjBqdWx5fGVufDB8fDB8fHww',
     status: 'upcoming',
   },
   {
@@ -105,7 +105,7 @@ const PREDEFINED_EVENTS: Omit<Event, 'id' | 'createdAt' | 'isTest'>[] = [
     startDate: new Date('2025-07-04T19:00:00-06:00'),
     endDate: new Date('2025-07-04T22:00:00-06:00'),
     expectedAttendance: 40000,
-    imageUrl: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1623000200667-cdccdd849ff7?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     status: 'upcoming',
   },
   {
@@ -118,7 +118,7 @@ const PREDEFINED_EVENTS: Omit<Event, 'id' | 'createdAt' | 'isTest'>[] = [
     startDate: new Date('2025-06-07T10:00:00-07:00'),
     endDate: new Date('2025-06-07T13:00:00-07:00'),
     expectedAttendance: 300000,
-    imageUrl: 'https://images.unsplash.com/photo-1523413363574-c30aa1c2a516?auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://plus.unsplash.com/premium_photo-1661274050137-edc61fa89ffc?q=80&w=1738&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     status: 'upcoming',
   },
   {
@@ -131,7 +131,7 @@ const PREDEFINED_EVENTS: Omit<Event, 'id' | 'createdAt' | 'isTest'>[] = [
     startDate: new Date('2025-08-16T10:00:00-05:00'),
     endDate: new Date('2025-08-16T15:00:00-05:00'),
     expectedAttendance: 2000000,
-    imageUrl: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://plus.unsplash.com/premium_photo-1697730086436-78cb393f0dab?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     status: 'upcoming',
   },
   {
@@ -144,7 +144,7 @@ const PREDEFINED_EVENTS: Omit<Event, 'id' | 'createdAt' | 'isTest'>[] = [
     startDate: new Date('2025-07-15T18:00:00-04:00'),
     endDate: new Date('2025-07-15T22:00:00-04:00'),
     expectedAttendance: 8000,
-    imageUrl: 'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://plus.unsplash.com/premium_photo-1697730064923-dd664fc81d19?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     status: 'upcoming',
   },
   {
@@ -157,7 +157,7 @@ const PREDEFINED_EVENTS: Omit<Event, 'id' | 'createdAt' | 'isTest'>[] = [
     startDate: new Date('2025-08-02T10:00:00-07:00'),
     endDate: new Date('2025-08-04T18:00:00-07:00'),
     expectedAttendance: 100000,
-    imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://plus.unsplash.com/premium_photo-1746019870904-8cd658cf1742?q=80&w=1732&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     status: 'upcoming',
   },
   {
@@ -170,7 +170,7 @@ const PREDEFINED_EVENTS: Omit<Event, 'id' | 'createdAt' | 'isTest'>[] = [
     startDate: new Date('2025-10-03T11:00:00-05:00'),
     endDate: new Date('2025-10-12T22:00:00-05:00'),
     expectedAttendance: 450000,
-    imageUrl: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://plus.unsplash.com/premium_photo-1697730030250-e89c608af43c?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     status: 'upcoming',
   },
   {
@@ -183,7 +183,7 @@ const PREDEFINED_EVENTS: Omit<Event, 'id' | 'createdAt' | 'isTest'>[] = [
     startDate: new Date('2025-07-24T09:00:00-07:00'),
     endDate: new Date('2025-07-27T18:00:00-07:00'),
     expectedAttendance: 135000,
-    imageUrl: 'https://images.unsplash.com/photo-1523413363574-c30aa1c2a516?auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1697480157582-43d68447f959?q=80&w=1748&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     status: 'upcoming',
   },
   {
@@ -196,7 +196,7 @@ const PREDEFINED_EVENTS: Omit<Event, 'id' | 'createdAt' | 'isTest'>[] = [
     startDate: new Date('2025-09-24T17:00:00-06:00'),
     endDate: new Date('2025-09-26T22:00:00-06:00'),
     expectedAttendance: 60000,
-    imageUrl: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1639061725875-29968d6e221d?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     status: 'upcoming',
   },
   {
@@ -209,7 +209,7 @@ const PREDEFINED_EVENTS: Omit<Event, 'id' | 'createdAt' | 'isTest'>[] = [
     startDate: new Date('2025-12-04T11:00:00-05:00'),
     endDate: new Date('2025-12-07T19:00:00-05:00'),
     expectedAttendance: 77000,
-    imageUrl: 'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1545518514-ce8448f542b3?q=80&w=1742&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     status: 'upcoming',
   },
   {
@@ -222,7 +222,7 @@ const PREDEFINED_EVENTS: Omit<Event, 'id' | 'createdAt' | 'isTest'>[] = [
     startDate: new Date('2025-04-21T09:00:00-04:00'),
     endDate: new Date('2025-04-21T15:00:00-04:00'),
     expectedAttendance: 30000,
-    imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1596727362302-b8d891c42ab8?q=80&w=1385&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     status: 'upcoming',
   },
   {
@@ -235,7 +235,7 @@ const PREDEFINED_EVENTS: Omit<Event, 'id' | 'createdAt' | 'isTest'>[] = [
     startDate: new Date('2025-02-25T08:00:00-06:00'),
     endDate: new Date('2025-03-17T23:00:00-06:00'),
     expectedAttendance: 2200000,
-    imageUrl: 'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1726534609988-c0feeeb77df0?q=80&w=2576&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     status: 'upcoming',
   },
   {
@@ -248,7 +248,7 @@ const PREDEFINED_EVENTS: Omit<Event, 'id' | 'createdAt' | 'isTest'>[] = [
     startDate: new Date('2025-03-01T10:00:00-05:00'),
     endDate: new Date('2025-03-10T20:00:00-05:00'),
     expectedAttendance: 250000,
-    imageUrl: 'https://images.unsplash.com/photo-1523413363574-c30aa1c2a516?auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1552764040-3001daba7d81?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     status: 'upcoming',
   },
   {
@@ -261,7 +261,7 @@ const PREDEFINED_EVENTS: Omit<Event, 'id' | 'createdAt' | 'isTest'>[] = [
     startDate: new Date('2025-05-25T12:00:00-04:00'),
     endDate: new Date('2025-05-25T18:00:00-04:00'),
     expectedAttendance: 300000,
-    imageUrl: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1575566530168-f26fb53cfa15?q=80&w=2575&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     status: 'upcoming',
   },
   {
@@ -274,7 +274,7 @@ const PREDEFINED_EVENTS: Omit<Event, 'id' | 'createdAt' | 'isTest'>[] = [
     startDate: new Date('2025-06-29T10:30:00-07:00'),
     endDate: new Date('2025-06-29T16:00:00-07:00'),
     expectedAttendance: 1000000,
-    imageUrl: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1551841820-ccdb8a712f74?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     status: 'upcoming',
   }
 ];
