@@ -4,7 +4,8 @@
       "http://localhost:5173",
       "http://localhost:3000",
       "https://parkpal.co",
-      "https://www.parkpal.co"
+      "https://www.parkpal.co",
+      "https://staging.parkpal.co"
     ],
     "method": ["GET", "POST", "PUT", "DELETE", "HEAD"],
     "maxAgeSeconds": 3600,

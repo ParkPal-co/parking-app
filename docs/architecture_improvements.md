@@ -2,6 +2,8 @@
 
 This document outlines the proposed improvements to the Event Parking App's architecture and organization. Each section includes specific tasks and their rationale.
 
+## ⚠️ Outdated ⚠️
+
 ## 1. Component Organization
 
 ### Current State
