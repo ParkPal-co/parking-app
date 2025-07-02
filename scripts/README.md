@@ -32,7 +32,7 @@ This directory contains scripts for managing test data in the **staging** Fireba
 ### **Node.js Scripts (TypeScript)**
 
 - `seed-all.ts` — Run all seeding scripts (`seed-users.ts`, `seed-events.ts`, `seed-driveways.ts`) in sequence. Accepts `--userCount`, `--eventCount`, and `--drivewayCount` arguments.
-- `seed-users.ts` — Create test users in Firestore and Firebase Auth.
+- `seed-users.ts` — Create test users in Firestore and Firebase Auth. The password set for each user is "testtest"
 - `seed-events.ts` — Create test events with realistic data.
 - `seed-driveways.ts` — Create test parking spots (driveways) linked to users/events.
 - `delete-test-data.ts` — Delete all test data (`isTest: true`) from Firestore, Storage, and Auth.
