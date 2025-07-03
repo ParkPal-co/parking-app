@@ -10,10 +10,11 @@ import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
 import { Alert } from "../../components/ui/Alert";
 import { getFunctions, httpsCallable } from "firebase/functions";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const AccountSettingsPage: React.FC = () => {
   const { user, updateUserProfile } = useAuth();
+  const location = useLocation();
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(user?.name || "");
   const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || "");
@@ -60,6 +61,12 @@ const AccountSettingsPage: React.FC = () => {
       setIsHost(user.isHost || false);
     }
   }, [user]);
+
+  useEffect(() => {
+    if (location.search.includes("stripe=return")) {
+      navigate("/register-driveway", { replace: true });
+    }
+  }, [location, navigate]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {

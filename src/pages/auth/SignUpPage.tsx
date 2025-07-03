@@ -39,8 +39,9 @@ const RegisterPage: React.FC = () => {
         true,
         new Date()
       );
+      const returnPath = sessionStorage.getItem("returnPath") || "/";
+      navigate(returnPath);
       notify("Account creation successful", { variant: "success" });
-      navigate("/");
     } catch (err) {
       setError("Failed to create an account.");
     } finally {
@@ -53,8 +54,9 @@ const RegisterPage: React.FC = () => {
       setError("");
       setLoading(true);
       await handleSocialLogin(new GoogleAuthProvider(), true, new Date());
+      const returnPath = sessionStorage.getItem("returnPath") || "/";
+      navigate(returnPath);
       notify("Account creation successful", { variant: "success" });
-      navigate("/");
     } catch (err) {
       setError("Failed to sign in with Google.");
     } finally {

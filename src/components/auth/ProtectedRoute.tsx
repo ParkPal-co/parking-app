@@ -26,8 +26,11 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   }
 
   if (!user) {
-    // Store the current path for redirect after login
-    sessionStorage.setItem("returnPath", window.location.pathname);
+    // Store the full path with query params for redirect after login
+    sessionStorage.setItem(
+      "returnPath",
+      window.location.pathname + window.location.search
+    );
     return <Navigate to="/login" replace />;
   }
 

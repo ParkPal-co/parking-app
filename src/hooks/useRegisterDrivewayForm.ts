@@ -197,7 +197,7 @@ export function useRegisterDrivewayForm() {
         status: 'available',
       };
       await createParkingSpot(parkingSpotData);
-      navigate('/my-listings');
+      navigate('/listing-success');
     } catch (err) {
       console.error('Error registering parking spot:', err);
       if (err instanceof Error) {

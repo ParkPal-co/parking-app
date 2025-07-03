@@ -2,75 +2,39 @@
  * src/pages/bookings/BookingSuccessPage.tsx
  * Page shown after a successful booking
  */
-import React, { useEffect, useState } from "react";
-import { useSearchParams, Link, useNavigate } from "react-router-dom";
-import { getBookingById } from "../../services/booking/bookingService";
+import React from "react";
+import { Button, Card } from "../../components/ui";
+import { useNavigate } from "react-router-dom";
+import { FloatingQuotesBackground } from "../../components/background/FloatingQuotesBackground";
+import ThreeDIcon from "../../assets/images/3DIcon.png";
+// You can use an emoji or import an image like ThreeDIcon if you want
 
 const BookingSuccessPage: React.FC = () => {
-  const [searchParams] = useSearchParams();
-  const bookingId = searchParams.get("bookingId");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const verifyBooking = async () => {
-      if (!bookingId) {
-        setError("No booking ID provided");
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const booking = await getBookingById(bookingId);
-        if (!booking) {
-          setError("Booking not found");
-        }
-      } catch (err) {
-        console.error("Error verifying booking:", err);
-        setError("Failed to verify booking");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    verifyBooking();
-  }, [bookingId]);
-
-  if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-8 text-center">
-        <div className="text-center">Verifying your booking...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="container mx-auto px-4 py-8 text-center">
-        <div className="text-red-600 mb-4">{error}</div>
-        <button
+  return (
+    <div className="relative min-h-[calc(100vh-80px)] flex flex-col items-center justify-center overflow-x-hidden px-4">
+      <FloatingQuotesBackground />
+      <Card className="relative z-10 flex flex-col items-center p-10 max-w-lg w-full text-center shadow-2xl animate-fade-in-from-top">
+        <h1 className="text-4xl font-extrabold text-primary-900 mb-2">
+          🎉 Booking Confirmed!
+        </h1>
+        <p className="text-lg text-primary-800 mb-4">
+          Your booking was successful.
+          <br />
+          Thank you for using ParkPal!
+        </p>
+        <div className="flex flex-col items-center">
+          <img src={ThreeDIcon} alt="3D Icon" className=" mx-auto mb-4 w-1/2" />
+        </div>
+        <Button
+          size="large"
+          variant="primary"
+          className="font-bold mt-2"
           onClick={() => navigate("/my-bookings")}
-          className="text-blue-600 underline"
         >
           View My Bookings
-        </button>
-      </div>
-    );
-  }
-
-  return (
-    <div className="container mx-auto px-4 py-8 text-center">
-      <h1 className="text-3xl font-bold mb-4">Booking Confirmed!</h1>
-      <p className="mb-4">Your booking was successful.</p>
-      {bookingId && (
-        <p className="mb-4">
-          <strong>Booking ID:</strong> {bookingId}
-        </p>
-      )}
-      <Link to="/my-bookings" className="text-blue-600 underline">
-        View My Bookings
-      </Link>
+        </Button>
+      </Card>
     </div>
   );
 };

@@ -222,10 +222,11 @@ const RegisterDrivewayForm: React.FC<RegisterDrivewayFormProps> = ({
       {/* Description */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Description
+          Description / Instructions
         </label>
         <textarea
           name="description"
+          placeholder="e.g. 'Only 3 minute walk to stadium! Park on right side of driveway'"
           value={formData.description}
           onChange={handleInputChange}
           rows={4}

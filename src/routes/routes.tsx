@@ -54,10 +54,17 @@ const UnderConstruction = React.lazy(
 const PortlandLandingPage = React.lazy(
   () => import("../pages/hosting/PortlandLandingPage")
 );
+const StadiumOfFireLandingPage = React.lazy(
+  () => import("../pages/hosting/StadiumOfFire")
+);
 const Contact = React.lazy(() => import("../pages/general/ContactPage"));
 const TermsPage = React.lazy(() => import("../pages/general/TermsPage"));
 
 const FeedbackPage = React.lazy(() => import("../pages/admin/FeedbackPage"));
+
+const ListingSuccessPage = React.lazy(
+  () => import("../pages/hosting/ListingSuccessPage")
+);
 
 export const routes: RouteObject[] = [
   {
@@ -293,6 +300,22 @@ export const routes: RouteObject[] = [
     element: (
       <PageLayout fullWidth={true} showBackButton={false}>
         <PortlandLandingPage />
+      </PageLayout>
+    ),
+  },
+  {
+    path: "/Stadium-of-Fire",
+    element: (
+      <PageLayout fullWidth={true} showBackButton={false}>
+        <StadiumOfFireLandingPage />
+      </PageLayout>
+    ),
+  },
+  {
+    path: "/listing-success",
+    element: (
+      <PageLayout fullWidth={true} showBackButton={false}>
+        <ListingSuccessPage />
       </PageLayout>
     ),
   },

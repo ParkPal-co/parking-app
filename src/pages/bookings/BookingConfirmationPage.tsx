@@ -22,7 +22,6 @@ import { getFunctions, httpsCallable } from "firebase/functions";
 import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
 import { Alert } from "../../components/ui/Alert";
-import { Modal } from "../../components/ui/Modal";
 
 // Initialize Stripe
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
@@ -135,7 +134,6 @@ const BookingConfirmationPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   useEffect(() => {
     const loadBookingDetails = async () => {
@@ -186,7 +184,6 @@ const BookingConfirmationPage: React.FC = () => {
         currency: "usd",
       });
       setClientSecret((data as { clientSecret: string }).clientSecret);
-      setShowPaymentModal(false);
     } catch (err) {
       setError("Failed to initiate payment");
       console.error(err);
@@ -227,16 +224,27 @@ const BookingConfirmationPage: React.FC = () => {
   }
 
   const startDate = new Date(event.startDate);
-  const endDate = new Date(event.endDate);
-  const duration = Math.round(
-    (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60)
-  );
+  // Format the available from and to times for the parking spot
+  let availableFrom = "";
+  let availableTo = "";
+  if (spot && spot.availability) {
+    const fromDate = new Date(spot.availability.start);
+    const toDate = new Date(spot.availability.end);
+    availableFrom = fromDate.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    availableTo = toDate.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto py-8">
       <div className="max-w-2xl mx-auto space-y-6">
         <Card className="overflow-hidden">
-          <div className="relative h-48 md:h-64">
+          <div className="relative h-48 md:h-64 lg:h-96">
             <img
               src={spot.images[0] || "https://placehold.co/600x400"}
               alt={spot.address}
@@ -246,7 +254,7 @@ const BookingConfirmationPage: React.FC = () => {
               ${spot.price}
             </div>
           </div>
-          <div className="p-6">
+          <div className="lg:p-6 p-2">
             <h1 className="text-2xl font-bold mb-6">Confirm Your Booking</h1>
 
             <div className="space-y-4">
@@ -289,9 +297,9 @@ const BookingConfirmationPage: React.FC = () => {
                 </h2>
                 <div className="bg-primary-50 p-4 rounded-lg">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-primary-600">Duration</span>
+                    <span className="text-primary-600">Available</span>
                     <span className="font-medium text-primary-900">
-                      {duration} hours
+                      {availableFrom} - {availableTo}
                     </span>
                   </div>
                   <div className="flex justify-between items-center pt-2 border-t border-primary-200">
@@ -310,7 +318,7 @@ const BookingConfirmationPage: React.FC = () => {
 
         {!clientSecret ? (
           <Button
-            onClick={() => setShowPaymentModal(true)}
+            onClick={handleCreatePaymentIntent}
             variant="primary"
             size="large"
             fullWidth={true}
@@ -323,53 +331,6 @@ const BookingConfirmationPage: React.FC = () => {
             <BookingForm event={event} spot={spot} onError={setError} />
           </Elements>
         )}
-
-        <Modal
-          isOpen={showPaymentModal}
-          onClose={() => setShowPaymentModal(false)}
-          title="Confirm Payment"
-          description="You are about to proceed to payment. Please confirm the following details:"
-        >
-          <div className="space-y-4">
-            <div className="bg-primary-50 p-4 rounded-lg">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-primary-600">Event</span>
-                <span className="font-medium text-primary-900">
-                  {event.title}
-                </span>
-              </div>
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-primary-600">Duration</span>
-                <span className="font-medium text-primary-900">
-                  {duration} hours
-                </span>
-              </div>
-              <div className="flex justify-between items-center pt-2 border-t border-primary-200">
-                <span className="text-lg font-semibold text-primary-900">
-                  Total
-                </span>
-                <span className="text-lg font-semibold text-primary-900">
-                  ${spot.price}
-                </span>
-              </div>
-            </div>
-            <div className="flex justify-end space-x-4">
-              <Button
-                variant="secondary"
-                onClick={() => setShowPaymentModal(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="primary"
-                onClick={handleCreatePaymentIntent}
-                isLoading={loading}
-              >
-                Confirm & Pay
-              </Button>
-            </div>
-          </div>
-        </Modal>
       </div>
     </div>
   );

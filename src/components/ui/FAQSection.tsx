@@ -43,7 +43,7 @@ const FAQSection: React.FC = () => {
   const [openIndex, setOpenIndex] = React.useState<number | null>(null);
   return (
     <Card
-      className="flex flex-col lg:flex-row items-center gap-8 p-8 w-full lg:items-stretch"
+      className="flex flex-col lg:flex-row items-center gap-8 p-6 lg:p-8 w-full lg:items-stretch"
       shadow="large"
       padding="large"
     >
