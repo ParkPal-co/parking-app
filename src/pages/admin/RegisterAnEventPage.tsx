@@ -314,7 +314,7 @@ const RegisterAnEventPage: React.FC = () => {
                     </label>
                     <input
                       type="text"
-                      readOnly
+                      onChange={handleInputChange}
                       value={formData.coordinates.lat}
                       className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 bg-gray-50 sm:text-sm"
                     />
@@ -325,7 +325,7 @@ const RegisterAnEventPage: React.FC = () => {
                     </label>
                     <input
                       type="text"
-                      readOnly
+                      onChange={handleInputChange}
                       value={formData.coordinates.lng}
                       className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 bg-gray-50 sm:text-sm"
                     />
