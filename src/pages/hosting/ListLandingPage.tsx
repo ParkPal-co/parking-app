@@ -99,6 +99,13 @@ const ListLandingPage: React.FC = () => {
               shadow="large"
               className="h-full flex flex-col justify-center min-h-72 gap-4"
             >
+              <div className="flex flex-col items-center max-w-md mx-auto md:hidden">
+                <img
+                  src={carInDrivewayImg}
+                  alt="Car in driveway"
+                  className=" mx-auto mb-4 w-full"
+                />
+              </div>
               <h1 className="text-3xl md:text-5xl font-bold text-primary-900 mb-2">
                 Let your <span className="font-black">pavement</span> pay you
               </h1>
@@ -146,16 +153,14 @@ const ListLandingPage: React.FC = () => {
           className="w-full flex flex-col items-center gap-8"
         >
           <Card
-            className={`flex flex-col lg:flex-row items-center gap-8 p-8 w-full [&>*]:lg:w-1/2 lg:items-stretch opacity-0 [animation-fill-mode:forwards] ${
+            className={`flex flex-col lg:flex-row items-center gap-8 p-6 lg:p-8 w-full [&>*]:lg:w-1/2 lg:items-stretch opacity-0 [animation-fill-mode:forwards] ${
               howItWorksInView ? "animate-fade-in-from-left" : ""
             }`}
             style={{ animationDelay: "0.5s" }}
             shadow="large"
-            padding="large"
           >
             <Card
-              className="bg-primary-50 border border-primary-200 rounded-lg p-8 w-full flex flex-col justify-center items-center"
-              padding="large"
+              className="bg-primary-50 border border-primary-200 rounded-lg lg:p-8 p-4 w-full flex flex-col justify-center items-center"
             >
               <p className=" text-start font-bold text-3xl">
                 List your driveway as parking for Events near your home
@@ -183,9 +188,8 @@ const ListLandingPage: React.FC = () => {
           className="w-full flex flex-col items-center gap-8"
         >
           <Card
-            className="flex flex-col md:flex-row items-center md:items-stretch gap-8 p-8 w-full [&>*]:md:w-1/2"
+            className="flex flex-col md:flex-row items-center md:items-stretch gap-8 lg:p-8 p-6 w-full [&>*]:md:w-1/2"
             shadow="large"
-            padding="large"
           >
             <div className="flex flex-col gap-4 justify-center">
               <h2 className="text-2xl md:text-3xl font-bold text-primary-900 mb-2">
@@ -199,7 +203,7 @@ const ListLandingPage: React.FC = () => {
                 Stripe needs to verify your identity. This includes your name,
                 DOB, and last 4 of your SSN (required by U.S. law).
               </p>
-              <p className="text-primary-800 text-lg flex items-center gap-2">
+              <p className="text-primary-800 text-lg flex items-center gap-2 font-extrabold">
                 You'll also be asked for your industry and website: use 'Parking
                 lots' and 'parkpal.co'
               </p>
@@ -271,7 +275,7 @@ const ListLandingPage: React.FC = () => {
                   href="https://stripe.com/docs/security"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="underline text-primary-700 ml-1 text-sm block mt-1"
+                  className="underline text-primary-700 ml-1 text-sm block mt-1 text-center"
                 >
                   Learn more about Stripe's security
                 </a>
