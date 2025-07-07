@@ -37,3 +37,8 @@ scripts/.env
 
 # Staging env service account key
 parking-app-staging-945cc1b03415.json
+
+.firebaserc
+
+package-lock.json
+package.json
