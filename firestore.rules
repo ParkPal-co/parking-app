@@ -5,7 +5,7 @@ service cloud.firestore {
     function isAuthenticated() {
       return request.auth != null;
     }
-
+    
     // Admins collection rules
     match /admins/{email} {
       allow read: if isAuthenticated();
@@ -20,7 +20,9 @@ service cloud.firestore {
     // Helper function to check if user is admin
     function isAdmin() {
       return request.auth != null && 
-        (request.auth.token.email == "aleczaitz@gmail.com" || request.auth.token.email == "donminic30@gmail.com");
+        (request.auth.token.email == "aleczaitz@gmail.com" 
+        || request.auth.token.email == "donminic30@gmail.com"
+        || request.auth.token.email == "camden.c.taylor@gmail.com");
     }
 
     // Helper function to check if user is a participant in the conversation
@@ -104,18 +106,18 @@ service cloud.firestore {
     match /{document=**} {
       allow read, write: if false;
     }
-
+    
     // Allow anyone to add their email to event notification lists
     match /eventNotifications/{eventId}/emails/{emailId} {
      allow create: if true; // Anyone can add their email
      allow read: if isAdmin(); // Only admins can read
      allow update, delete: if false; // No one can update or delete
-    }
-
-    // Feedback rules
+   	}
+   	
+    // Feedback Rules
     match /feedback/{feedbackId} {
-      allow create: if true; // Anyone can submit feedback
-      allow read: if isAdmin(); // Only admins can read
+      allow create: if true;
+      allow read: if isAdmin(); // Only admins can read feedback
       allow update, delete: if false;
     }
   }
