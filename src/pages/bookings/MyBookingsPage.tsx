@@ -119,6 +119,46 @@ const MyBookingsPage: React.FC = () => {
     }
   };
 
+  // Handler for Get Directions button
+  const handleGetDirections = (booking: BookingWithDetails) => {
+    if (!booking.parkingSpot?.address) {
+      setError("No address found for this booking.");
+      return;
+    }
+    if (!navigator.geolocation) {
+      setError("Geolocation is not supported by your browser.");
+      return;
+    }
+    setError(null);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        const destination = encodeURIComponent(booking.parkingSpot!.address);
+
+        // Detect iOS
+        const isIOS =
+          /iPad|iPhone|iPod/.test(navigator.userAgent) &&
+          typeof window !== "undefined" &&
+          (window as any).MSStream === undefined;
+
+        if (isIOS) {
+          // Apple Maps URL
+          const appleMapsUrl = `https://maps.apple.com/?saddr=${latitude},${longitude}&daddr=${destination}`;
+          window.open(appleMapsUrl, "_blank");
+        } else {
+          // Google Maps URL
+          const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${latitude},${longitude}&destination=${destination}&travelmode=driving`;
+          window.open(googleMapsUrl, "_blank");
+        }
+      },
+      (_) => {
+        setError(
+          "Failed to get your current location. Please allow location access and try again."
+        );
+      }
+    );
+  };
+
   if (!user) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -233,6 +273,12 @@ const MyBookingsPage: React.FC = () => {
                   className="w-full mt-4 bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-colors"
                 >
                   Message Host
+                </button>
+                <button
+                  onClick={() => handleGetDirections(booking)}
+                  className="w-full mt-4 bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-colors"
+                >
+                  Get Directions
                 </button>
               </div>
             </div>
