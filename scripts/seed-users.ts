@@ -12,7 +12,6 @@
  * This script will NEVER touch the 'admins' collection.
  */
 import admin from 'firebase-admin';
-import { UserRecord } from 'firebase-admin/auth';
 import { v4 as uuidv4 } from 'uuid';
 import * as dotenv from 'dotenv';
 import yargs from 'yargs';
@@ -107,9 +106,8 @@ async function createTestUser(i: number): Promise<User> {
   const userId = uuidv4();
 
   // Create Firebase Auth user
-  let authUser: UserRecord;
   try {
-    authUser = await auth.createUser({
+    await auth.createUser({
       uid: userId,
       email,
       emailVerified: true,
@@ -120,7 +118,7 @@ async function createTestUser(i: number): Promise<User> {
     });
   } catch (err: any) {
     if (err.code === 'auth/email-already-exists') {
-      authUser = await auth.getUserByEmail(email);
+      await auth.getUserByEmail(email);
     } else {
       throw err;
     }

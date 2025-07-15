@@ -159,7 +159,7 @@ function randomNearbyAddress(baseAddress: string, eventTitle: string): string {
   return `${houseNum} ${street}, near ${eventTitle}`;
 }
 
-async function createTestDriveway(users: User[], events: Event[], i: number): Promise<ParkingSpot> {
+async function createTestDriveway(users: User[], events: Event[]): Promise<ParkingSpot> {
   const event = randomFromArray(events);
   const user = randomFromArray(users);
   const now = new Date();
@@ -210,7 +210,7 @@ async function createTestDriveway(users: User[], events: Event[], i: number): Pr
   }
   for (let i = 0; i < argv.count; i++) {
     try {
-      const spot = await createTestDriveway(users, events, i);
+      const spot = await createTestDriveway(users, events);
       console.log(`Created driveway: ${spot.address} (${spot.id}) for event ${spot.eventId}`);
     } catch (err) {
       console.error('Error creating driveway:', err);
