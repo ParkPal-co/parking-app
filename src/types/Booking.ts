@@ -10,4 +10,6 @@ export interface Booking {
   totalPrice: number;
   status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
   createdAt: Date;
+  licensePlate: string;
+  carDescription: string;
 } 

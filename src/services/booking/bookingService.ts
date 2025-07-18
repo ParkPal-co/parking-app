@@ -38,7 +38,9 @@ export async function createBooking(
   hostId: string,
   startTime: Date,
   endTime: Date,
-  totalPrice: number
+  totalPrice: number,
+  licensePlate: string,
+  carDescription: string
 ): Promise<Booking> {
   // Fetch renter's name before transaction
   const renterName = await fetchUserNameById(userId);
@@ -73,6 +75,8 @@ export async function createBooking(
       status: "confirmed" as const,
       createdAt: new Date(),
       paidOut: false,
+      licensePlate,
+      carDescription,
     };
 
     const bookingRef = doc(collection(db, "bookings"));
@@ -106,6 +110,9 @@ export async function createBooking(
           endTime: booking.endTime instanceof Date ? booking.endTime.toLocaleString() : String(booking.endTime),
           location: spot.address,
           price: booking.totalPrice,
+          description: spot.description,
+          carDescription: booking.carDescription,
+          licensePlate: booking.licensePlate,
         },
       });
     }

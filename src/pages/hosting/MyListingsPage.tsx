@@ -270,6 +270,9 @@ const MyListingsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [editingDriveway, setEditingDriveway] = useState<Driveway | null>(null);
+  const [bookingInfo, setBookingInfo] = useState<
+    Record<string, { licensePlate: string; carDescription: string }>
+  >({});
 
   useEffect(() => {
     if (!user) {
@@ -310,12 +313,47 @@ const MyListingsPage: React.FC = () => {
           })
         );
 
-        // Sort driveways by creation date (newest first)
+        // Fetch booking info for booked driveways
+        const bookingInfoObj: Record<
+          string,
+          { licensePlate: string; carDescription: string }
+        > = {};
+        await Promise.all(
+          drivewaysWithEvents.map(async (driveway) => {
+            if (driveway.status === "booked" && driveway.bookedBy) {
+              // Find the booking for this spot and user
+              const bookingsQuery = query(
+                collection(db, "bookings"),
+                where("parkingSpotId", "==", driveway.id),
+                where("userId", "==", driveway.bookedBy),
+                where("status", "==", "confirmed")
+              );
+              const bookingsSnapshot = await getDocs(bookingsQuery);
+              if (!bookingsSnapshot.empty) {
+                const bookingData = bookingsSnapshot.docs[0].data();
+                bookingInfoObj[driveway.id] = {
+                  licensePlate: bookingData.licensePlate || "",
+                  carDescription: bookingData.carDescription || "",
+                };
+              }
+            }
+          })
+        );
+        setBookingInfo(bookingInfoObj);
+
+        // Sort driveways by status (booked first), then by creation date (newest first)
         setDriveways(
-          drivewaysWithEvents.sort(
-            (a, b) =>
-              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          )
+          drivewaysWithEvents.sort((a, b) => {
+            if (a.status === b.status) {
+              return (
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime()
+              );
+            }
+            if (a.status === "booked") return -1;
+            if (b.status === "booked") return 1;
+            return 0;
+          })
         );
       } catch (err) {
         console.error("Error fetching driveways:", err);
@@ -493,14 +531,31 @@ const MyListingsPage: React.FC = () => {
                 </div>
 
                 {driveway.status === "booked" && driveway.bookedBy && (
-                  <div className="mt-4">
-                    <Link
-                      to={`/messages?user=${driveway.bookedBy}`}
-                      className="w-full inline-block bg-black text-white py-2 px-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black text-center"
-                    >
-                      Message Renter
-                    </Link>
-                  </div>
+                  <>
+                    {bookingInfo[driveway.id] && (
+                      <div className="mt-2 p-3 bg-blue-50 rounded-md text-sm">
+                        <div className="font-semibold text-primary-900 mb-1">
+                          Renter's Car Info
+                        </div>
+                        <div>
+                          <span className="font-medium">License Plate:</span>{" "}
+                          {bookingInfo[driveway.id].licensePlate}
+                        </div>
+                        <div>
+                          <span className="font-medium">Car:</span>{" "}
+                          {bookingInfo[driveway.id].carDescription}
+                        </div>
+                      </div>
+                    )}
+                    <div className="mt-4">
+                      <Link
+                        to={`/messages?user=${driveway.bookedBy}`}
+                        className="w-full inline-block bg-black text-white py-2 px-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black text-center"
+                      >
+                        Message Renter
+                      </Link>
+                    </div>
+                  </>
                 )}
 
                 <div className="mt-6">

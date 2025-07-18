@@ -36,11 +36,18 @@ const BookingForm: React.FC<{
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [licensePlate, setLicensePlate] = useState("");
+  const [carDescription, setCarDescription] = useState("");
+  const [formError, setFormError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError(null);
     if (!stripe || !elements || !user) return;
-
+    if (!licensePlate.trim() || !carDescription.trim()) {
+      setFormError("Please enter your license plate and car description.");
+      return;
+    }
     try {
       setLoading(true);
       console.log("Starting payment confirmation...");
@@ -68,7 +75,9 @@ const BookingForm: React.FC<{
         spot.ownerId,
         new Date(event.startDate),
         new Date(event.endDate),
-        spot.price
+        spot.price,
+        licensePlate.trim(),
+        carDescription.trim()
       );
 
       console.log("Booking created successfully:", booking.id);
@@ -100,13 +109,38 @@ const BookingForm: React.FC<{
     >
       <Card className="bg-white">
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <h2 className="text-xl font-semibold">Payment Details</h2>
             <div className="text-primary-600">Total: ${spot.price}</div>
+          </div>
+          <div className="flex flex-col gap-4 mt-2">
+            <input
+              type="text"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-black focus:border-black"
+              placeholder="License Plate Number"
+              value={licensePlate}
+              onChange={(e) => setLicensePlate(e.target.value)}
+              required
+              autoComplete="off"
+              inputMode="text"
+            />
+            <input
+              type="text"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-black focus:border-black"
+              placeholder="Color, Make, Model"
+              value={carDescription}
+              onChange={(e) => setCarDescription(e.target.value)}
+              required
+              autoComplete="off"
+              inputMode="text"
+            />
           </div>
           <div className="border-t border-primary-200 pt-4">
             <PaymentElement />
           </div>
+          {formError && (
+            <div className="text-red-600 text-sm mt-2">{formError}</div>
+          )}
         </div>
       </Card>
 

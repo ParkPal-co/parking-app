@@ -42,18 +42,23 @@ export const sendBookingConfirmation = functions.https.onCall(async (data) => {
     },
     subject: 'Your Parking Booking is Confirmed! 🚗',
     html: `
-      <h2>Hi ${renterName || 'there'},</h2>
-      <p>Your booking is confirmed! Here are your details:</p>
-      <ul>
-        <li><b>Location:</b> ${bookingDetails.location}</li>
-        <li><b>Start:</b> ${bookingDetails.startTime}</li>
-        <li><b>End:</b> ${bookingDetails.endTime}</li>
-        <li><b>Price:</b> $${bookingDetails.price}</li>
-      </ul>
-      <p>You can view or manage your bookings <a href="https://parkpal.co/bookings/mybookings">here</a>.</p>
-      <p>If you have any questions, reply to this email or contact support at <a href="mailto:alec@parkpal.co">support@parkpal.co</a>.</p>
-      <br>
-      <p>Thank you for using ParkPal!</p>
+      <div style="color:#000000;">
+        <h2>Hi ${renterName || 'there'},</h2>
+        <p>Your booking is confirmed! Here are your details:</p>
+        <ul>
+          <li><b>Location:</b> ${bookingDetails.location}</li>
+          <li><b>Description:</b> ${bookingDetails.description}</li>
+          <li><b>Start:</b> ${bookingDetails.startTime}</li>
+          <li><b>End:</b> ${bookingDetails.endTime}</li>
+          <li><b>Price:</b> $${bookingDetails.price}</li>
+          <li><b>Car:</b> ${bookingDetails.carDescription}</li>
+          <li><b>License Plate:</b> ${bookingDetails.licensePlate}</li>
+        </ul>
+        <p>You can view or manage your bookings <a href="https://parkpal.co/bookings/mybookings">here</a>.</p>
+        <p>If you have any questions, reply to this email or contact support at <a href="mailto:alec@parkpal.co">support@parkpal.co</a>.</p>
+        <br>
+        <p>Thank you for using ParkPal!</p>
+      </div>
     `,
   };
 
@@ -66,18 +71,23 @@ export const sendBookingConfirmation = functions.https.onCall(async (data) => {
     },
     subject: 'Your Listing Has Been Booked! 🎉',
     html: `
-      <h2>Hi ${hostName || 'there'},</h2>
-      <p>Your parking spot has been booked! Here are the details:</p>
-      <ul>
-        <li><b>Location:</b> ${bookingDetails.location}</li>
-        <li><b>Start:</b> ${bookingDetails.startTime}</li>
-        <li><b>End:</b> ${bookingDetails.endTime}</li>
-        <li><b>Price:</b> $${bookingDetails.price}</li>
-      </ul>
-      <p>You can view your listings <a href="https://parkpal.co/hosting/mylistingspage">here</a>.</p>
-      <p>If you have any questions, reply to this email or contact support at <a href="mailto:alec@parkpal.co">support@parkpal.co</a>.</p>
-      <br>
-      <p>Thank you for being a ParkPal host!</p>
+      <div style="color:#000000;">
+        <h2>Hi ${hostName || 'there'},</h2>
+        <p>Your parking spot has been booked! Here are the details:</p>
+        <ul>
+          <li><b>Location:</b> ${bookingDetails.location}</li>
+          <li><b>Description:</b> ${bookingDetails.description}</li>
+          <li><b>Start:</b> ${bookingDetails.startTime}</li>
+          <li><b>End:</b> ${bookingDetails.endTime}</li>
+          <li><b>Price:</b> $${bookingDetails.price}</li>
+          <li><b>Car:</b> ${bookingDetails.carDescription}</li>
+          <li><b>License Plate:</b> ${bookingDetails.licensePlate}</li>
+        </ul>
+        <p>You can view your listings <a href="https://parkpal.co/hosting/mylistingspage">here</a>.</p>
+        <p>If you have any questions, reply to this email or contact support at <a href="mailto:alec@parkpal.co">support@parkpal.co</a>.</p>
+        <br>
+        <p>Thank you for being a ParkPal host!</p>
+      </div>
     `,
   };
 
