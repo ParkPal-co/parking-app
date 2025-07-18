@@ -37,5 +37,7 @@ scripts/.env
 
 # Staging env service account key
 parking-app-staging-945cc1b03415.json
+# Prod env service account key
+parking-app-49359-firebase-adminsdk-fbsvc-fc564117a3.json
 
 .firebaserc
