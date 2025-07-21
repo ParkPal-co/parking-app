@@ -125,38 +125,33 @@ const MyBookingsPage: React.FC = () => {
       setError("No address found for this booking.");
       return;
     }
-    if (!navigator.geolocation) {
-      setError("Geolocation is not supported by your browser.");
-      return;
-    }
     setError(null);
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        const destination = encodeURIComponent(booking.parkingSpot!.address);
+    const destination = encodeURIComponent(booking.parkingSpot.address);
 
-        // Detect iOS
-        const isIOS =
-          /iPad|iPhone|iPod/.test(navigator.userAgent) &&
-          typeof window !== "undefined" &&
-          (window as any).MSStream === undefined;
+    // Detect iOS
+    const isIOS =
+      /iPad|iPhone|iPod/.test(navigator.userAgent) &&
+      typeof window !== "undefined" &&
+      (window as any).MSStream === undefined;
 
-        if (isIOS) {
-          // Apple Maps URL
-          const appleMapsUrl = `https://maps.apple.com/?saddr=${latitude},${longitude}&daddr=${destination}`;
-          window.open(appleMapsUrl, "_blank");
-        } else {
-          // Google Maps URL
-          const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${latitude},${longitude}&destination=${destination}&travelmode=driving`;
-          window.open(googleMapsUrl, "_blank");
-        }
-      },
-      (_) => {
-        setError(
-          "Failed to get your current location. Please allow location access and try again."
-        );
-      }
-    );
+    let url;
+    if (isIOS) {
+      // Apple Maps URL
+      url = `https://maps.apple.com/?daddr=${destination}`;
+    } else {
+      // Google Maps URL
+      url = `https://www.google.com/maps/dir/?api=1&destination=${destination}&travelmode=driving`;
+    }
+
+    // Detect if on mobile device
+    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+    if (isMobile) {
+      // Open in the same tab on mobile
+      window.location.href = url;
+    } else {
+      // Open in a new tab on desktop
+      window.open(url, "_blank");
+    }
   };
 
   if (!user) {
