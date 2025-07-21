@@ -216,6 +216,17 @@ const AdminPanel: React.FC = () => {
           <h2 className="text-xl font-semibold mb-2">Archived Events</h2>
           <p className="text-gray-600">View and manage all archived events.</p>
         </Link>
+
+        {/* Conversations Management Card */}
+        <Link
+          to="/admin/conversations"
+          className="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
+        >
+          <h2 className="text-xl font-semibold mb-2">Conversations</h2>
+          <p className="text-gray-600">
+            View and monitor conversations between hosts and renters.
+          </p>
+        </Link>
       </div>
 
       {error && (

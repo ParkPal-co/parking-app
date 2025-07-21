@@ -61,6 +61,7 @@ const Contact = React.lazy(() => import("../pages/general/ContactPage"));
 const TermsPage = React.lazy(() => import("../pages/general/TermsPage"));
 
 const FeedbackPage = React.lazy(() => import("../pages/admin/FeedbackPage"));
+const ConversationsPage = React.lazy(() => import("../pages/admin/ConversationsPage"));
 
 const ListingSuccessPage = React.lazy(
   () => import("../pages/hosting/ListingSuccessPage")
@@ -189,6 +190,16 @@ export const routes: RouteObject[] = [
       <ProtectedRoute>
         <PageLayout>
           <FeedbackPage />
+        </PageLayout>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/admin/conversations",
+    element: (
+      <ProtectedRoute>
+        <PageLayout>
+          <ConversationsPage />
         </PageLayout>
       </ProtectedRoute>
     ),

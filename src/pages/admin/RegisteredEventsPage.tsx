@@ -9,6 +9,7 @@ import {
   collection,
   query,
   getDocs,
+  getDoc,
   doc,
   updateDoc,
   deleteDoc,
@@ -50,14 +51,15 @@ interface Event {
 interface ParkingSpot {
   id: string;
   eventId: string;
+  status: "available" | "booked" | "unavailable";
   // other fields not needed for this operation
 }
 
 const RegisteredEventsPage: React.FC = () => {
   const { user } = useAuth();
   const [events, setEvents] = useState<Event[]>([]);
-  const [parkingSpotCounts, setParkingSpotCounts] = useState<
-    Record<string, number>
+  const [parkingSpotStats, setParkingSpotStats] = useState<
+    Record<string, { available: number; booked: number; unavailable: number }>
   >({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -101,18 +103,31 @@ const RegisteredEventsPage: React.FC = () => {
           id: doc.id,
           ...doc.data(),
         })) as Event[];
-        setEvents(eventsData);
 
-        // Fetch parking spot counts for each event
+        // Sort events by start date (earliest first)
+        const sortedEvents = eventsData.sort(
+          (a, b) =>
+            new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+        );
+
+        setEvents(sortedEvents);
+
+        // Fetch parking spot statistics for each event
         const parkingSpotsSnapshot = await getDocs(
           collection(db, "parkingSpots")
         );
-        const counts: Record<string, number> = {};
+        const stats: Record<
+          string,
+          { available: number; booked: number; unavailable: number }
+        > = {};
         parkingSpotsSnapshot.docs.forEach((doc) => {
           const spot = doc.data() as ParkingSpot;
-          counts[spot.eventId] = (counts[spot.eventId] || 0) + 1;
+          if (!stats[spot.eventId]) {
+            stats[spot.eventId] = { available: 0, booked: 0, unavailable: 0 };
+          }
+          stats[spot.eventId][spot.status]++;
         });
-        setParkingSpotCounts(counts);
+        setParkingSpotStats(stats);
       } catch (err) {
         console.error("Error fetching events:", err);
         setError("Failed to load events");
@@ -260,10 +275,10 @@ const RegisteredEventsPage: React.FC = () => {
 
       // Update local state
       setEvents((prev) => prev.filter((event) => event.id !== eventId));
-      setParkingSpotCounts((prev) => {
-        const newCounts = { ...prev };
-        delete newCounts[eventId];
-        return newCounts;
+      setParkingSpotStats((prev) => {
+        const newStats = { ...prev };
+        delete newStats[eventId];
+        return newStats;
       });
 
       setSuccess("Event and associated parking spots deleted successfully");
@@ -315,17 +330,62 @@ const RegisteredEventsPage: React.FC = () => {
     setExpandedBookingsEventId(eventId);
     if (!bookingsByEvent[eventId]) {
       try {
-        const bookingsSnap = await getDocs(
-          query(collection(db, "bookings"), where("eventId", "==", eventId))
+        // First get all parking spots for this event
+        const parkingSpotsSnap = await getDocs(
+          query(collection(db, "parkingSpots"), where("eventId", "==", eventId))
         );
+
+        const parkingSpotIds = parkingSpotsSnap.docs.map((doc) => doc.id);
+
+        if (parkingSpotIds.length === 0) {
+          setBookingsByEvent((prev) => ({ ...prev, [eventId]: [] }));
+          return;
+        }
+
+        // Then get all bookings for these parking spots
+        const bookingsSnap = await getDocs(
+          query(
+            collection(db, "bookings"),
+            where("parkingSpotId", "in", parkingSpotIds)
+          )
+        );
+
+        // Get booking data with additional details
+        const bookingsWithDetails = await Promise.all(
+          bookingsSnap.docs.map(async (bookingDoc) => {
+            const bookingData = bookingDoc.data();
+
+            // Get parking spot details
+            const spotRef = doc(db, "parkingSpots", bookingData.parkingSpotId);
+            const spotDoc = await getDoc(spotRef);
+            const spotData = spotDoc.exists() ? spotDoc.data() : null;
+
+            // Get host details
+            const hostRef = doc(db, "users", bookingData.hostId);
+            const hostDoc = await getDoc(hostRef);
+            const hostData = hostDoc.exists() ? hostDoc.data() : null;
+
+            // Get renter details
+            const renterRef = doc(db, "users", bookingData.userId);
+            const renterDoc = await getDoc(renterRef);
+            const renterData = renterDoc.exists() ? renterDoc.data() : null;
+
+            return {
+              id: bookingDoc.id,
+              ...bookingData,
+              parkingSpot: spotData,
+              host: hostData,
+              renter: renterData,
+            };
+          })
+        );
+
         setBookingsByEvent((prev) => ({
           ...prev,
-          [eventId]: bookingsSnap.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          })),
+          [eventId]: bookingsWithDetails,
         }));
       } catch (err) {
+        console.error("Error fetching bookings:", err);
         setBookingsByEvent((prev) => ({ ...prev, [eventId]: [] }));
       }
     }
@@ -347,16 +407,60 @@ const RegisteredEventsPage: React.FC = () => {
         })) as Event[]
       );
       if (expandedBookingsEventId === eventId) {
-        const bookingsSnap = await getDocs(
-          query(collection(db, "bookings"), where("eventId", "==", eventId))
+        // Refresh bookings data using the same logic as handleToggleBookings
+        const parkingSpotsSnap = await getDocs(
+          query(collection(db, "parkingSpots"), where("eventId", "==", eventId))
         );
-        setBookingsByEvent((prev) => ({
-          ...prev,
-          [eventId]: bookingsSnap.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          })),
-        }));
+
+        const parkingSpotIds = parkingSpotsSnap.docs.map((doc) => doc.id);
+
+        if (parkingSpotIds.length > 0) {
+          const bookingsSnap = await getDocs(
+            query(
+              collection(db, "bookings"),
+              where("parkingSpotId", "in", parkingSpotIds)
+            )
+          );
+
+          // Get booking data with additional details (same logic as handleToggleBookings)
+          const bookingsWithDetails = await Promise.all(
+            bookingsSnap.docs.map(async (bookingDoc) => {
+              const bookingData = bookingDoc.data();
+
+              // Get parking spot details
+              const spotRef = doc(
+                db,
+                "parkingSpots",
+                bookingData.parkingSpotId
+              );
+              const spotDoc = await getDoc(spotRef);
+              const spotData = spotDoc.exists() ? spotDoc.data() : null;
+
+              // Get host details
+              const hostRef = doc(db, "users", bookingData.hostId);
+              const hostDoc = await getDoc(hostRef);
+              const hostData = hostDoc.exists() ? hostDoc.data() : null;
+
+              // Get renter details
+              const renterRef = doc(db, "users", bookingData.userId);
+              const renterDoc = await getDoc(renterRef);
+              const renterData = renterDoc.exists() ? renterDoc.data() : null;
+
+              return {
+                id: bookingDoc.id,
+                ...bookingData,
+                parkingSpot: spotData,
+                host: hostData,
+                renter: renterData,
+              };
+            })
+          );
+
+          setBookingsByEvent((prev) => ({
+            ...prev,
+            [eventId]: bookingsWithDetails,
+          }));
+        }
       }
       setSuccess("Payouts initiated successfully!");
       setTimeout(() => setSuccess(null), 3000);
@@ -621,8 +725,25 @@ const RegisteredEventsPage: React.FC = () => {
                       <p>{event.expectedAttendance.toLocaleString()}</p>
                     </div>
                     <div>
-                      <p className="text-gray-600">Listed Driveways:</p>
-                      <p>{parkingSpotCounts[event.id] || 0}</p>
+                      <p className="text-gray-600">Parking Spots:</p>
+                      <div className="text-xs space-y-1">
+                        <div className="flex justify-between">
+                          <span className="text-green-600">Available:</span>
+                          <span>
+                            {parkingSpotStats[event.id]?.available || 0}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-blue-600">Booked:</span>
+                          <span>{parkingSpotStats[event.id]?.booked || 0}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-red-600">Unavailable:</span>
+                          <span>
+                            {parkingSpotStats[event.id]?.unavailable || 0}
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -686,28 +807,154 @@ const RegisteredEventsPage: React.FC = () => {
                         <h4 className="font-semibold mb-2">Bookings</h4>
                         {bookingsByEvent[event.id] ? (
                           bookingsByEvent[event.id].length > 0 ? (
-                            <ul>
-                              {bookingsByEvent[event.id].map((booking) => (
-                                <li
-                                  key={booking.id}
-                                  className="flex justify-between items-center py-1"
-                                >
-                                  <span>
-                                    {booking.renterName || booking.userId} ($
-                                    {booking.totalPrice})
-                                  </span>
-                                  <span
-                                    className={`text-xs font-semibold ${
-                                      booking.paidOut
-                                        ? "text-green-600"
-                                        : "text-yellow-600"
-                                    }`}
-                                  >
-                                    {booking.paidOut ? "Paid" : "Unpaid"}
-                                  </span>
-                                </li>
-                              ))}
-                            </ul>
+                            <div className="overflow-x-auto">
+                              <table className="min-w-full text-xs">
+                                <thead>
+                                  <tr className="border-b border-gray-300">
+                                    <th className="text-left py-2 px-2 font-semibold">
+                                      Booking ID
+                                    </th>
+                                    <th className="text-left py-2 px-2 font-semibold">
+                                      Renter
+                                    </th>
+                                    <th className="text-left py-2 px-2 font-semibold">
+                                      Host
+                                    </th>
+                                    <th className="text-left py-2 px-2 font-semibold">
+                                      Address
+                                    </th>
+                                    <th className="text-left py-2 px-2 font-semibold">
+                                      Description
+                                    </th>
+                                    <th className="text-left py-2 px-2 font-semibold">
+                                      Start Time
+                                    </th>
+                                    <th className="text-left py-2 px-2 font-semibold">
+                                      End Time
+                                    </th>
+                                    <th className="text-left py-2 px-2 font-semibold">
+                                      Price
+                                    </th>
+                                    <th className="text-left py-2 px-2 font-semibold">
+                                      Status
+                                    </th>
+                                    <th className="text-left py-2 px-2 font-semibold">
+                                      License Plate
+                                    </th>
+                                    <th className="text-left py-2 px-2 font-semibold">
+                                      Car Description
+                                    </th>
+                                    <th className="text-left py-2 px-2 font-semibold">
+                                      Created
+                                    </th>
+                                    <th className="text-left py-2 px-2 font-semibold">
+                                      Payout
+                                    </th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {bookingsByEvent[event.id].map((booking) => (
+                                    <tr
+                                      key={booking.id}
+                                      className="border-b border-gray-200 hover:bg-gray-100"
+                                    >
+                                      <td className="py-2 px-2 font-mono text-xs">
+                                        {booking.id}
+                                      </td>
+                                      <td className="py-2 px-2">
+                                        {booking.renter?.name ||
+                                          booking.renter?.email ||
+                                          booking.bookedByName ||
+                                          booking.userId}
+                                      </td>
+                                      <td className="py-2 px-2">
+                                        {booking.host?.name ||
+                                          booking.host?.email ||
+                                          booking.hostId}
+                                      </td>
+                                      <td
+                                        className="py-2 px-2 max-w-xs truncate"
+                                        title={booking.parkingSpot?.address}
+                                      >
+                                        {booking.parkingSpot?.address || "N/A"}
+                                      </td>
+                                      <td
+                                        className="py-2 px-2 max-w-xs truncate"
+                                        title={booking.parkingSpot?.description}
+                                      >
+                                        {booking.parkingSpot?.description ||
+                                          "N/A"}
+                                      </td>
+                                      <td className="py-2 px-2">
+                                        {booking.startTime?.toDate
+                                          ? booking.startTime
+                                              .toDate()
+                                              .toLocaleString()
+                                          : new Date(
+                                              booking.startTime
+                                            ).toLocaleString()}
+                                      </td>
+                                      <td className="py-2 px-2">
+                                        {booking.endTime?.toDate
+                                          ? booking.endTime
+                                              .toDate()
+                                              .toLocaleString()
+                                          : new Date(
+                                              booking.endTime
+                                            ).toLocaleString()}
+                                      </td>
+                                      <td className="py-2 px-2 font-semibold">
+                                        ${booking.totalPrice}
+                                      </td>
+                                      <td className="py-2 px-2">
+                                        <span
+                                          className={`px-2 py-1 rounded text-xs font-semibold ${
+                                            booking.status === "confirmed"
+                                              ? "bg-green-100 text-green-800"
+                                              : booking.status === "pending"
+                                              ? "bg-yellow-100 text-yellow-800"
+                                              : booking.status === "cancelled"
+                                              ? "bg-red-100 text-red-800"
+                                              : "bg-gray-100 text-gray-800"
+                                          }`}
+                                        >
+                                          {booking.status}
+                                        </span>
+                                      </td>
+                                      <td className="py-2 px-2 font-mono">
+                                        {booking.licensePlate}
+                                      </td>
+                                      <td
+                                        className="py-2 px-2 max-w-xs truncate"
+                                        title={booking.carDescription}
+                                      >
+                                        {booking.carDescription}
+                                      </td>
+                                      <td className="py-2 px-2">
+                                        {booking.createdAt?.toDate
+                                          ? booking.createdAt
+                                              .toDate()
+                                              .toLocaleString()
+                                          : new Date(
+                                              booking.createdAt
+                                            ).toLocaleString()}
+                                      </td>
+                                      <td className="py-2 px-2">
+                                        <span
+                                          className={`text-xs font-semibold ${
+                                            booking.paidOut
+                                              ? "text-green-600"
+                                              : "text-yellow-600"
+                                          }`}
+                                        >
+                                          {booking.paidOut ? "Paid" : "Unpaid"}
+                                        </span>
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
                           ) : (
                             <div className="text-gray-500">
                               No bookings for this event.

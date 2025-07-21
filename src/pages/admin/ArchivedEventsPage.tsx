@@ -41,22 +41,22 @@ interface Event {
 interface ParkingSpot {
   id: string;
   eventId: string;
-  // other fields not needed for this operation
+  status: "available" | "booked" | "unavailable";
 }
 
 const ArchivedEventsPage: React.FC = () => {
   const { user } = useAuth();
   const [events, setEvents] = useState<Event[]>([]);
-  const [parkingSpotCounts, setParkingSpotCounts] = useState<
-    Record<string, number>
+  const [parkingSpotStats, setParkingSpotStats] = useState<
+    Record<string, { available: number; booked: number; unavailable: number }>
   >({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  // Fetch archived events and their associated parking spot counts
+  // Fetch archived events and their associated parking spot stats
   useEffect(() => {
-    const fetchEventsAndCounts = async () => {
+    const fetchEventsAndStats = async () => {
       try {
         // Fetch archived events
         const eventsQuery = query(
@@ -68,20 +68,31 @@ const ArchivedEventsPage: React.FC = () => {
           id: doc.id,
           ...doc.data(),
         })) as Event[];
-        setEvents(eventsData);
+        // Sort by startDate descending (most recent first)
+        const sortedEvents = eventsData.sort(
+          (a, b) =>
+            new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+        );
+        setEvents(sortedEvents);
 
-        // Fetch parking spot counts for each event
+        // Fetch parking spot stats for each event
         const parkingSpotsSnapshot = await getDocs(
           collection(db, "parkingSpots")
         );
-        const counts: Record<string, number> = {};
+        const stats: Record<
+          string,
+          { available: number; booked: number; unavailable: number }
+        > = {};
         parkingSpotsSnapshot.docs.forEach((doc) => {
           const spot = doc.data() as ParkingSpot;
           if (eventsData.some((event) => event.id === spot.eventId)) {
-            counts[spot.eventId] = (counts[spot.eventId] || 0) + 1;
+            if (!stats[spot.eventId]) {
+              stats[spot.eventId] = { available: 0, booked: 0, unavailable: 0 };
+            }
+            stats[spot.eventId][spot.status]++;
           }
         });
-        setParkingSpotCounts(counts);
+        setParkingSpotStats(stats);
       } catch (err) {
         console.error("Error fetching archived events:", err);
         setError("Failed to load archived events");
@@ -90,7 +101,7 @@ const ArchivedEventsPage: React.FC = () => {
       }
     };
 
-    fetchEventsAndCounts();
+    fetchEventsAndStats();
   }, []);
 
   const handleUnarchive = async (eventId: string) => {
@@ -178,8 +189,25 @@ const ArchivedEventsPage: React.FC = () => {
                     <p>{event.expectedAttendance.toLocaleString()}</p>
                   </div>
                   <div>
-                    <p className="text-gray-600">Listed Driveways:</p>
-                    <p>{parkingSpotCounts[event.id] || 0}</p>
+                    <p className="text-gray-600">Parking Spots:</p>
+                    <div className="text-xs space-y-1">
+                      <div className="flex justify-between">
+                        <span className="text-green-600">Available:</span>
+                        <span>
+                          {parkingSpotStats[event.id]?.available || 0}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-blue-600">Booked:</span>
+                        <span>{parkingSpotStats[event.id]?.booked || 0}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-red-600">Unavailable:</span>
+                        <span>
+                          {parkingSpotStats[event.id]?.unavailable || 0}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 

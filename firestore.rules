@@ -59,10 +59,10 @@ service cloud.firestore {
     // Bookings rules
     match /bookings/{bookingId} {
       allow read: if isAuthenticated() && 
-        (isOwner(resource.data.userId) || isOwner(resource.data.hostId));
+        (isOwner(resource.data.userId) || isOwner(resource.data.hostId) || isAdmin());
       allow create: if isAuthenticated();
       allow update: if isAuthenticated() && 
-        (isOwner(resource.data.userId) || isOwner(resource.data.hostId));
+        (isOwner(resource.data.userId) || isOwner(resource.data.hostId) || isAdmin());
     }
 
     // User profiles rules
