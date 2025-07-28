@@ -104,15 +104,7 @@ const EventSearchPage: React.FC = () => {
             </div>
 
             {showResults && filteredEvents.length > 0 && (
-              <div
-                className="absolute w-full max-h-72 overflow-y-auto z-10 mt-2"
-                style={{
-                  WebkitMaskImage:
-                    "linear-gradient(to bottom, black 66%, transparent 100%)",
-                  maskImage:
-                    "linear-gradient(to bottom, black 66%, transparent 100%)",
-                }}
-              >
+              <div className="absolute w-full max-h-72 overflow-y-auto z-10 mt-2">
                 {filteredEvents.map((event) => (
                   <Card
                     key={event.id}
