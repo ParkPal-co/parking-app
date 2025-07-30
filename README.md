@@ -17,8 +17,9 @@ Event Parking App helps event-goers find and book parking spots at local drivewa
 - Driveway listing and management
 - Secure payment processing (Stripe)
 - Interactive maps (Google Maps)
-- User messaging
+- User messaging with push notifications
 - User profiles and settings
+- Real-time notifications for new messages
 
 ## 🛠️ Tech Stack
 
@@ -31,6 +32,14 @@ Event Parking App helps event-goers find and book parking spots at local drivewa
 ## 🤝 Contributing
 
 We welcome contributions! Please fork the repo and open a pull request.
+
+## 📱 Push Notifications
+
+ParkPal now supports push notifications for new messages! Users will receive notifications on their devices when someone sends them a message, even when the app is closed.
+
+### Setup Instructions
+
+See [Push Notifications Setup Guide](docs/push-notifications-setup.md) for detailed setup instructions.
 
 ## 🧩 Cloud Functions Organization
 

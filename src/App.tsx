@@ -10,39 +10,49 @@ import { routes } from "./routes/routes";
 import { ErrorBoundary } from "./components/error/ErrorBoundary";
 import EmailVerificationBanner from "./components/auth/EmailVerificationBanner";
 import { NotificationProvider } from "./components/ui/NotificationProvider";
+import { useNotifications } from "./hooks/useNotifications";
+
+const AppContent: React.FC = () => {
+  // Initialize notifications
+  useNotifications();
+
+  return (
+    <div className="min-h-dvh bg-gray-100">
+      <NavigationBar />
+
+      <EmailVerificationBanner className="sticky top-20 z-40" />
+      <div className="pt-20">
+        <React.Suspense
+          fallback={
+            <div className="flex items-center justify-center  min-h-[calc(100vh-5rem)]">
+              <div className="flex flex-col items-center space-y-4">
+                <div className="w-12 h-12 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-lg text-gray-600">Loading...</p>
+              </div>
+            </div>
+          }
+        >
+          <Routes>
+            {routes.map((route) => (
+              <Route
+                key={route.path}
+                path={route.path}
+                element={route.element}
+              />
+            ))}
+          </Routes>
+        </React.Suspense>
+      </div>
+    </div>
+  );
+};
 
 const App: React.FC = () => {
   return (
     <Router>
       <ErrorBoundary>
         <NotificationProvider>
-          <div className="min-h-dvh bg-gray-100">
-            <NavigationBar />
-
-            <EmailVerificationBanner className="sticky top-20 z-40" />
-            <div className="pt-20">
-              <React.Suspense
-                fallback={
-                  <div className="flex items-center justify-center  min-h-[calc(100vh-5rem)]">
-                    <div className="flex flex-col items-center space-y-4">
-                      <div className="w-12 h-12 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
-                      <p className="text-lg text-gray-600">Loading...</p>
-                    </div>
-                  </div>
-                }
-              >
-                <Routes>
-                  {routes.map((route) => (
-                    <Route
-                      key={route.path}
-                      path={route.path}
-                      element={route.element}
-                    />
-                  ))}
-                </Routes>
-              </React.Suspense>
-            </div>
-          </div>
+          <AppContent />
         </NotificationProvider>
       </ErrorBoundary>
     </Router>
